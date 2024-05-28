@@ -1,5 +1,9 @@
 package com.ebiz.drivel.config;
 
+import com.ebiz.drivel.auth.CustomAuthenticationEntryPoint;
+import com.ebiz.drivel.auth.filter.AuthExceptionHandlerFilter;
+import com.ebiz.drivel.auth.filter.JwtAuthenticationFilter;
+import com.ebiz.drivel.auth.service.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,11 +12,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final JwtProvider jwtProvider;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
@@ -22,9 +30,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests((auth) -> {
-                    auth.anyRequest().permitAll();
-                }
-        );
+                            auth.requestMatchers("/kakao/*").permitAll();
+                            auth.requestMatchers("/auth/*").permitAll();
+                            auth.anyRequest().authenticated();
+                        }
+                ).addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AuthExceptionHandlerFilter(),
+                        JwtAuthenticationFilter.class);
+        http.exceptionHandling(manager -> manager.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new AccessDeniedHandlerImpl()));
 
         return http.build();
     }
