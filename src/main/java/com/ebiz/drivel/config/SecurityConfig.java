@@ -1,9 +1,9 @@
 package com.ebiz.drivel.config;
 
 import com.ebiz.drivel.auth.CustomAuthenticationEntryPoint;
+import com.ebiz.drivel.auth.application.JwtProvider;
 import com.ebiz.drivel.auth.filter.AuthExceptionHandlerFilter;
 import com.ebiz.drivel.auth.filter.JwtAuthenticationFilter;
-import com.ebiz.drivel.auth.service.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -19,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtProvider jwtProvider;
 
     @Bean
@@ -34,13 +37,16 @@ public class SecurityConfig {
                             auth.requestMatchers("/auth/*").permitAll();
                             auth.anyRequest().authenticated();
                         }
-                ).addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new AuthExceptionHandlerFilter(),
-                        JwtAuthenticationFilter.class);
+                ).addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AuthExceptionHandlerFilter(), JwtAuthenticationFilter.class);
         http.exceptionHandling(manager -> manager.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .accessDeniedHandler(new AccessDeniedHandlerImpl()));
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

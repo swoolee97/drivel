@@ -1,4 +1,4 @@
-package com.ebiz.drivel.auth.service;
+package com.ebiz.drivel.auth.application;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

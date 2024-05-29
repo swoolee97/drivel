@@ -1,6 +1,6 @@
 package com.ebiz.drivel.auth.filter;
 
-import com.ebiz.drivel.auth.service.JwtProvider;
+import com.ebiz.drivel.auth.application.JwtProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
