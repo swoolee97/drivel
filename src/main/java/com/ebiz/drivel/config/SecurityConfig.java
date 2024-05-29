@@ -1,9 +1,9 @@
 package com.ebiz.drivel.config;
 
-import com.ebiz.drivel.auth.CustomAuthenticationEntryPoint;
-import com.ebiz.drivel.auth.application.JwtProvider;
-import com.ebiz.drivel.auth.filter.AuthExceptionHandlerFilter;
-import com.ebiz.drivel.auth.filter.JwtAuthenticationFilter;
+import com.ebiz.drivel.domain.auth.CustomAuthenticationEntryPoint;
+import com.ebiz.drivel.domain.auth.application.JwtProvider;
+import com.ebiz.drivel.domain.auth.filter.AuthExceptionHandlerFilter;
+import com.ebiz.drivel.domain.auth.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
