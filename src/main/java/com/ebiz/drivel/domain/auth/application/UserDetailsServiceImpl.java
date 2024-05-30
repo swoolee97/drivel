@@ -7,6 +7,7 @@ import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,6 +31,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private Collection<? extends GrantedAuthority> getAuthorities(Member member) {
         // 권한 정보를 GrantedAuthority 객체의 컬렉션으로 변환
         return Collections.singletonList(new SimpleGrantedAuthority(member.getRole()));
+    }
+
+    public Member getMemberByContextHolder() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails) principal;
+        return memberRepository.findMemberByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE));
     }
 
 }

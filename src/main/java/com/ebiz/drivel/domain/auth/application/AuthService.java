@@ -1,11 +1,14 @@
 package com.ebiz.drivel.domain.auth.application;
 
+import static com.ebiz.drivel.domain.member.exception.MemberExceptionMessage.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE;
+
 import com.ebiz.drivel.domain.auth.constants.ExceptionMessage;
+import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
-import com.ebiz.drivel.domain.auth.dto.SignInResponse;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
 import com.ebiz.drivel.domain.auth.exception.DuplicatedSignUpException;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,11 +41,14 @@ public class AuthService {
         }
     }
 
-    public SignInResponse signIn(SignInRequest request) {
+    public SignInDTO signIn(SignInRequest request) {
         Authentication authentication = authenticate(request);
         String accessToken = jwtProvider.generateAccessToken(authentication);
         String refreshToken = jwtProvider.generateRefreshToken(authentication);
-        return SignInResponse.builder()
+        Member member = memberRepository.findMemberByEmail(request.getEmail())
+                .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
+        return SignInDTO.builder()
+                .nickname(member.getNickname())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
