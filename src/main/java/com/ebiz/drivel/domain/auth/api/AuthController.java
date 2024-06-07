@@ -20,12 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
     private static final String SIGN_IN_SUCCESS_MESSAGE = "로그인 성공";
+    private static final String SIGN_UP_SUCCESS_MESSAGE = "회원가입 성공";
 
     private final AuthService authService;
 
     @PostMapping("/signUp")
-    public void signUp(@Valid @RequestBody SignUpRequest request) {
+    public ResponseEntity<SuccessResponse> signUp(@Valid @RequestBody SignUpRequest request) {
         Member member = authService.signUp(request);
+        return new ResponseEntity<>(SuccessResponse.builder()
+                .message(SIGN_UP_SUCCESS_MESSAGE)
+                .build(), HttpStatus.OK);
     }
 
     @PostMapping("/signIn")
