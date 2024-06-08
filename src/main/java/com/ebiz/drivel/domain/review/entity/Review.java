@@ -48,4 +48,7 @@ public class Review {
     @Column(name = "comment")
     private String comment;
 
+    @Column(name = "imagePath")
+    private String imagePath;
+
 }
