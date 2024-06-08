@@ -1,9 +1,12 @@
 package com.ebiz.drivel.domain.review.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
+import com.ebiz.drivel.domain.course.entity.Course;
+import com.ebiz.drivel.domain.course.repository.CourseRepository;
 import com.ebiz.drivel.domain.review.dto.AddReviewDTO;
 import com.ebiz.drivel.domain.review.entity.Review;
 import com.ebiz.drivel.domain.review.repository.ReviewRepository;
+import com.ebiz.drivel.global.exception.CourseNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +16,16 @@ public class ReviewService {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final ReviewRepository reviewRepository;
+    private final CourseRepository courseRepository;
 
     public Review addReview(AddReviewDTO addReviewDTO) {
+        Course course = courseRepository.findById(addReviewDTO.getCourseId())
+                .orElseThrow(() -> new CourseNotFoundException());
+
         Review review = Review.builder()
                 .comment(addReviewDTO.getComment())
                 .rating(addReviewDTO.getRating())
-                .courseId(addReviewDTO.getCourseId())
+                .course(course)
                 .member(userDetailsService.getMemberByContextHolder())
                 .build();
         return reviewRepository.save(review);

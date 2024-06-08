@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.review.entity;
 
+import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,14 +32,18 @@ public class Review {
     @Column(name = "reviewDate", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime reviewDate;
 
-    private Long courseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "courseId", referencedColumnName = "id")
+    private Course course;
 
+    @Column(name = "rating")
     private int rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId", referencedColumnName = "id")
     private Member member;
 
+    @Column(name = "comment")
     private String comment;
 
 }
