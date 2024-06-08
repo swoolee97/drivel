@@ -1,36 +1,34 @@
-package com.ebiz.drivel.domain.course.entity;
+package com.ebiz.drivel.domain.waypoint.entity;
 
-import com.ebiz.drivel.domain.review.entity.Review;
-import com.ebiz.drivel.domain.waypoint.entity.Waypoint;
+import com.ebiz.drivel.domain.course.entity.Course;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "course")
-public class Course {
-
+@Table(name = "waypoint")
+public class Waypoint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "courseId", referencedColumnName = "id")
+    private Course course;
+
     @Column(name = "name", nullable = false, length = 50)
     private String name;
+
+    @Column(name = "order")
+    private int order;
 
     @Column(name = "latitude", nullable = false, precision = 8, scale = 6)
     private BigDecimal latitude;
@@ -38,12 +36,6 @@ public class Course {
     @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
     private BigDecimal longitude;
 
-    @Column(name = "description", length = 50)
+    @Column(name = "description")
     private String description;
-
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-    private List<Review> reviews;
-
-    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-    private List<Waypoint> waypoints;
 }
