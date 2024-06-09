@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.course.api;
 
+import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.service.CourseService;
 import com.ebiz.drivel.domain.waypoint.dto.WaypointDTO;
@@ -35,4 +36,13 @@ public class CourseController {
         courseService.updateCourseLike(courseId);
         return ResponseEntity.ok(SuccessResponse.builder().build());
     }
+
+    @GetMapping("/liked")
+    public ResponseEntity<SuccessResponse> findLikedCourses() {
+        List<CourseDTO> likedCourses = courseService.findLikedCourses();
+        return ResponseEntity.ok(SuccessResponse.builder()
+                .data(likedCourses)
+                .build());
+    }
+
 }

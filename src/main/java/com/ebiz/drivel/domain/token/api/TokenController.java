@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.token.api;
 
+import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.token.application.TokenService;
 import com.ebiz.drivel.global.dto.SuccessResponse;
@@ -17,12 +18,13 @@ public class TokenController {
     private static final String AUTO_SIGN_IN_SUCCESS_MESSAGE = "자동 로그인 성공";
 
     private final TokenService tokenService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("/signIn")
     public ResponseEntity<SuccessResponse> checkToken() {
-        SignInDTO signInDTO = tokenService.generateTokens();
+        String nickname = userDetailsService.getMemberByContextHolder().getNickname();
         return ResponseEntity.ok(SuccessResponse.builder()
-                .data(signInDTO)
+                .data(SignInDTO.builder().nickname(nickname).build())
                 .message(AUTO_SIGN_IN_SUCCESS_MESSAGE)
                 .build());
     }

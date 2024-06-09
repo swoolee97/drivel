@@ -41,9 +41,16 @@ public class Course {
     @Column(name = "description", length = 50)
     private String description;
 
+    @Column(name = "imagePath")
+    private String imagePath;
+
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Waypoint> waypoints;
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<CourseLike> courseLikes;
+
 }
