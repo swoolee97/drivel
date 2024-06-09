@@ -21,7 +21,7 @@ public class Waypoint {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "courseId", referencedColumnName = "id")
+    @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
     @Column(name = "name", nullable = false, length = 50)

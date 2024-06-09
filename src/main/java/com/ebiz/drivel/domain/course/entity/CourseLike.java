@@ -18,18 +18,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "courseLike")
+@Entity(name = "course_like")
 public class CourseLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "courseId", referencedColumnName = "id")
+    @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
     @ManyToOne
-    @JoinColumn(name = "memberId", referencedColumnName = "id")
+    @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
 }
