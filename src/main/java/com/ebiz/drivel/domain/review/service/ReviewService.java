@@ -49,7 +49,7 @@ public class ReviewService {
 
     public List<ReviewDTO> findMyReviews() {
         Member member = userDetailsService.getMemberByContextHolder();
-        List<Review> myReviews = reviewRepository.findAllByMemberId(member.getId());
+        List<Review> myReviews = member.getReviews();
         return myReviews.stream()
                 .map(ReviewDTO::from)
                 .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())

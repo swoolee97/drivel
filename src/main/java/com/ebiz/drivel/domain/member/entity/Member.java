@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.member.entity;
 
 import com.ebiz.drivel.domain.course.entity.CourseLike;
+import com.ebiz.drivel.domain.review.entity.Review;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,4 +44,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<CourseLike> courseLikes;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<Review> reviews;
 }

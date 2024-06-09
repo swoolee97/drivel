@@ -45,4 +45,9 @@ public class CourseController {
                 .build());
     }
 
+    @GetMapping("/theme")
+    public void abc() {
+        
+    }
+
 }
