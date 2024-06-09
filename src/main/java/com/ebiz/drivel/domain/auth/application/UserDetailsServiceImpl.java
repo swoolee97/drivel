@@ -5,6 +5,7 @@ import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import java.util.Collection;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserDetails userDetails = (UserDetails) principal;
         return memberRepository.findMemberByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE));
+    }
+
+    public Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
 }
