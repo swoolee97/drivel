@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/course")
 public class CourseController {
-
     private final CourseService courseService;
 
     @GetMapping("/{id}")
@@ -28,5 +28,11 @@ public class CourseController {
         return ResponseEntity.ok(SuccessResponse.builder()
                 .data(waypoints)
                 .build());
+    }
+
+    @PutMapping("/like/{courseId}")
+    public ResponseEntity<SuccessResponse> updateCourseLike(@PathVariable Long courseId) {
+        courseService.updateCourseLike(courseId);
+        return ResponseEntity.ok(SuccessResponse.builder().build());
     }
 }
