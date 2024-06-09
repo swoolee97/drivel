@@ -11,6 +11,7 @@ import com.ebiz.drivel.domain.review.repository.ReviewRepository;
 import com.ebiz.drivel.global.exception.CourseNotFoundException;
 import com.ebiz.drivel.global.service.S3Service;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,10 @@ public class ReviewService {
     public List<ReviewDTO> findMyReviews() {
         Member member = userDetailsService.getMemberByContextHolder();
         List<Review> myReviews = reviewRepository.findAllByMemberId(member.getId());
-        return myReviews.stream().map(ReviewDTO::from).collect(Collectors.toList());
+        return myReviews.stream()
+                .map(ReviewDTO::from)
+                .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
+                .collect(Collectors.toList());
     }
 
 }
