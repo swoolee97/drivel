@@ -53,4 +53,7 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseLike> courseLikes;
 
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<CourseTheme> courseThemes;
+
 }
