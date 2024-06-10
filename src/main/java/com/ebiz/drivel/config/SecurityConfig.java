@@ -36,6 +36,7 @@ public class SecurityConfig {
                             auth.requestMatchers("/kakao/*").permitAll();
                             auth.requestMatchers("/auth/*").permitAll();
                             auth.requestMatchers(("/mail/auth")).permitAll();
+                            auth.requestMatchers(("/mail/check")).permitAll();
                             auth.anyRequest().authenticated();
                         }
                 ).addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
