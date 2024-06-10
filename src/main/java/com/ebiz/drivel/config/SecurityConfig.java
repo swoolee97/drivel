@@ -35,6 +35,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests((auth) -> {
                             auth.requestMatchers("/kakao/*").permitAll();
                             auth.requestMatchers("/auth/*").permitAll();
+                            auth.requestMatchers(("/mail/auth")).permitAll();
                             auth.anyRequest().authenticated();
                         }
                 ).addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
