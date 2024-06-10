@@ -1,7 +1,6 @@
 package com.ebiz.drivel.domain.mail.repository;
 
-import com.ebiz.drivel.domain.mail.dto.AuthCodeCheckDTO;
-import java.util.Objects;
+import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
 import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -31,12 +30,7 @@ public class AuthCodeRepository {
         redisTemplate.delete(VERIFICATION_PREFIX + email);
     }
 
-    public boolean checkByEmailAndRandomCode(AuthCodeCheckDTO authCodeCheckDTO) {
-        String randomCode = valueOperations.get(VERIFICATION_PREFIX + authCodeCheckDTO.getEmail());
-        if (!Objects.isNull(randomCode) && authCodeCheckDTO.getRandomCode().equals(randomCode.toString())) {
-            delete(authCodeCheckDTO.getEmail());
-            return true;
-        }
-        return false;
+    public String findCodeByEmailAndRandomCode(CheckCodeDTO checkCodeDTO) {
+        return valueOperations.get(VERIFICATION_PREFIX + checkCodeDTO.getEmail());
     }
 }

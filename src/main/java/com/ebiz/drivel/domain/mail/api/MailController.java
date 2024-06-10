@@ -1,5 +1,7 @@
 package com.ebiz.drivel.domain.mail.api;
 
+import com.ebiz.drivel.domain.auth.application.AuthService;
+import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
 import com.ebiz.drivel.domain.mail.dto.SendAuthCodeRequest;
 import com.ebiz.drivel.domain.mail.service.MailService;
 import com.ebiz.drivel.global.dto.SuccessResponse;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MailController {
     private static final String SEND_AUTH_CODE_MESSAGE = "인증번호가 전송되었습니다";
+    private static final String MAIL_AUTH_SUCCESS_MESSAGE = "인증되었습니다";
 
+    private final AuthService authService;
     private final MailService mailService;
 
     @PostMapping("/auth")
@@ -25,6 +29,14 @@ public class MailController {
         mailService.sendAuthenticationCode(sendAuthCodeRequest.getEmail());
         return ResponseEntity.ok(SuccessResponse.builder()
                 .message(SEND_AUTH_CODE_MESSAGE)
+                .build());
+    }
+
+    @PostMapping("/check")
+    public ResponseEntity<SuccessResponse> checkAuthenticationCode(@Valid @RequestBody CheckCodeDTO checkCodeDTO) {
+        authService.checkCode(checkCodeDTO);
+        return ResponseEntity.ok(SuccessResponse.builder()
+                .message(MAIL_AUTH_SUCCESS_MESSAGE)
                 .build());
     }
 

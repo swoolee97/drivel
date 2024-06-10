@@ -7,6 +7,9 @@ import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
 import com.ebiz.drivel.domain.auth.exception.DuplicatedSignUpException;
+import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
+import com.ebiz.drivel.domain.mail.exception.WrongAuthenticationCodeException;
+import com.ebiz.drivel.domain.mail.repository.AuthCodeRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
@@ -22,9 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private static final String WRONG_CODE_EXCEPTION_MESSAGE = "인증번호가 다릅니다";
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
+    private final AuthCodeRepository authCodeRepository;
     private final PasswordEncoder encoder;
 
     @Transactional
@@ -52,6 +58,14 @@ public class AuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    public void checkCode(CheckCodeDTO checkCodeDTO) {
+        String storedCode = authCodeRepository.findCodeByEmailAndRandomCode(checkCodeDTO);
+        authCodeRepository.delete(checkCodeDTO.getEmail());
+        if (storedCode == null || !checkCodeDTO.getCode().equals(storedCode.toString())) {
+            throw new WrongAuthenticationCodeException(WRONG_CODE_EXCEPTION_MESSAGE);
+        }
     }
 
     private Authentication authenticate(SignInRequest request) {
