@@ -4,9 +4,12 @@ import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.service.CourseService;
+import com.ebiz.drivel.domain.review.dto.ReviewDTO;
+import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
 import com.ebiz.drivel.domain.waypoint.dto.WaypointDTO;
 import com.ebiz.drivel.global.dto.BaseResponse;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +29,18 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
+        CourseDTO courseDTO = CourseDTO.from(course);
+        List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
+        List<ReviewDTO> reviews = course.getReviews().stream().map(ReviewDTO::from)
+                .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
+                .collect(Collectors.toList());
         return ResponseEntity.ok(CourseDetailResponse.builder()
+                .themes(themes)
+                .courseInfo(courseDTO)
                 .waypoints(waypoints)
+                .reviews(reviews)
                 .build());
     }
 
