@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.token.repository;
 
+import com.ebiz.drivel.domain.auth.application.JwtProvider;
 import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class TokenRepository {
-    private final long REFRESH_TOKEN_EXPIRE = 60 * 60 * 24 * 15;
+    private final long REFRESH_TOKEN_EXPIRE = JwtProvider.REFRESH_TOKEN_EXPIRE;
     private final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 
     private RedisTemplate<String, String> redisTemplate;

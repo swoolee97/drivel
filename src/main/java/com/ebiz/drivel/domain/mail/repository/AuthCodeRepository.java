@@ -20,10 +20,8 @@ public class AuthCodeRepository {
     }
 
     public void save(final String email, final String randomCode) {
-        valueOperations.set(VERIFICATION_PREFIX + email,
-                randomCode);
-        redisTemplate.expire(VERIFICATION_PREFIX + email, VERIFICATION_EXPIRE,
-                TimeUnit.SECONDS);
+        valueOperations.set(VERIFICATION_PREFIX + email, randomCode);
+        redisTemplate.expire(VERIFICATION_PREFIX + email, VERIFICATION_EXPIRE, TimeUnit.SECONDS);
     }
 
     public void delete(String email) {

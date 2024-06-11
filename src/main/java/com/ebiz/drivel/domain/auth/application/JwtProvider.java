@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtProvider {
     private final Key key;
+    public static final int ACCESS_TOKEN_EXPIRE = 1000 * 60 * 60 * 24;
+    public static final int REFRESH_TOKEN_EXPIRE = 1000 * 60 * 60 * 24 * 15;
 
     public JwtProvider(@Value("${jwt.secretKey}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -51,11 +53,11 @@ public class JwtProvider {
     }
 
     public String generateAccessToken(Authentication authentication) {
-        return generateToken(authentication, 1000 * 60 * 60 * 24);
+        return generateToken(authentication, ACCESS_TOKEN_EXPIRE);
     }
 
     public String generateRefreshToken(Authentication authentication) {
-        return generateToken(authentication, 1000 * 60 * 60 * 24 * 15);
+        return generateToken(authentication, REFRESH_TOKEN_EXPIRE);
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드

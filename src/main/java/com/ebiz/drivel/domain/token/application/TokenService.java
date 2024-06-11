@@ -9,6 +9,7 @@ import com.ebiz.drivel.domain.token.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -34,16 +35,23 @@ public class TokenService {
 
     public void checkRefreshToken(String refreshToken) {
         Member member = userDetailsService.getMemberByContextHolder();
+        String token = resolveToken(refreshToken);
         String refreshTokenInRedis = tokenRepository.findById(member.getId());
-        if (refreshTokenInRedis == null || !refreshTokenInRedis.equals(refreshToken)) {
-            deleteRefreshToken();
+        if (refreshTokenInRedis == null || !refreshTokenInRedis.equals(token)) {
+            deleteRefreshToken(member.getId());
             throw new DifferentRefreshTokenException(DIFFERENT_REFRESH_TOKEN_EXCEPTION_MESSAGE);
         }
     }
 
-    public void deleteRefreshToken() {
-        Member member = userDetailsService.getMemberByContextHolder();
-        tokenRepository.deleteById(member.getId());
+    public void deleteRefreshToken(Long memberId) {
+        tokenRepository.deleteById(memberId);
+    }
+
+    private String resolveToken(String tokenHeader) {
+        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith("Bearer")) {
+            return tokenHeader.substring(7);
+        }
+        return null;
     }
 
 }

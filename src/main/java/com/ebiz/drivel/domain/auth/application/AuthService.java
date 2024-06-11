@@ -13,6 +13,7 @@ import com.ebiz.drivel.domain.mail.repository.AuthCodeRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
+import com.ebiz.drivel.domain.token.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
+    private final TokenRepository tokenRepository;
     private final AuthCodeRepository authCodeRepository;
     private final PasswordEncoder encoder;
 
@@ -53,6 +55,7 @@ public class AuthService {
         String refreshToken = jwtProvider.generateRefreshToken(authentication);
         Member member = memberRepository.findMemberByEmail(request.getEmail())
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
+        tokenRepository.save(member.getId(), refreshToken);
         return SignInDTO.builder()
                 .nickname(member.getNickname())
                 .accessToken(accessToken)
