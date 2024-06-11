@@ -1,11 +1,12 @@
 package com.ebiz.drivel.domain.auth.dto;
 
-import lombok.Builder;
+import com.ebiz.drivel.global.dto.BaseResponse;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Builder
-public class SignInDTO {
+@SuperBuilder
+public class SignInDTO extends BaseResponse {
     private String nickname;
     private String accessToken;
     private String refreshToken;

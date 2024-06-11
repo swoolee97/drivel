@@ -1,8 +1,8 @@
 package com.ebiz.drivel.domain.theme.api;
 
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
+import com.ebiz.drivel.domain.theme.dto.ThemeResponse;
 import com.ebiz.drivel.domain.theme.service.ThemeService;
-import com.ebiz.drivel.global.dto.SuccessResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +18,10 @@ public class ThemeController {
     private final ThemeService themeService;
 
     @GetMapping("/all")
-    public ResponseEntity<SuccessResponse> getAllThemes() {
+    public ResponseEntity<ThemeResponse> getAllThemes() {
         List<ThemeDTO> themes = themeService.getAllThemes().stream().map(ThemeDTO::from).toList();
-        return ResponseEntity.ok(SuccessResponse.builder()
-                .data(themes)
+        return ResponseEntity.ok(ThemeResponse.builder()
+                .themes(themes)
                 .build());
     }
 

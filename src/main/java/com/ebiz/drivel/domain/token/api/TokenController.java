@@ -3,7 +3,7 @@ package com.ebiz.drivel.domain.token.api;
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.token.application.TokenService;
-import com.ebiz.drivel.global.dto.SuccessResponse;
+import com.ebiz.drivel.global.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,22 +21,19 @@ public class TokenController {
     private final UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("/signIn")
-    public ResponseEntity<SuccessResponse> checkToken() {
+    public ResponseEntity<BaseResponse> checkToken() {
         String nickname = userDetailsService.getMemberByContextHolder().getNickname();
-        return ResponseEntity.ok(SuccessResponse.builder()
-                .data(SignInDTO.builder().nickname(nickname).build())
+        return ResponseEntity.ok(SignInDTO.builder()
                 .message(AUTO_SIGN_IN_SUCCESS_MESSAGE)
+                .nickname(nickname)
                 .build());
     }
 
     @PostMapping("/re-issue")
-    public ResponseEntity<SuccessResponse> reIssueToken(@RequestHeader("Authorization") String refreshToken) {
+    public ResponseEntity<BaseResponse> reIssueToken(@RequestHeader("Authorization") String refreshToken) {
         tokenService.checkRefreshToken(refreshToken);
         SignInDTO signInDTO = tokenService.generateTokens();
-        return ResponseEntity.ok(SuccessResponse.builder()
-                .data(signInDTO)
-                .message(AUTO_SIGN_IN_SUCCESS_MESSAGE)
-                .build());
+        return ResponseEntity.ok(signInDTO);
     }
 
 }

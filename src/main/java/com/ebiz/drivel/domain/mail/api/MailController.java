@@ -4,7 +4,7 @@ import com.ebiz.drivel.domain.auth.application.AuthService;
 import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
 import com.ebiz.drivel.domain.mail.dto.SendAuthCodeRequest;
 import com.ebiz.drivel.domain.mail.service.MailService;
-import com.ebiz.drivel.global.dto.SuccessResponse;
+import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +24,18 @@ public class MailController {
     private final MailService mailService;
 
     @PostMapping("/auth")
-    public ResponseEntity<SuccessResponse> sendAuthenticationCode(
+    public ResponseEntity<BaseResponse> sendAuthenticationCode(
             @Valid @RequestBody SendAuthCodeRequest sendAuthCodeRequest) {
         mailService.sendAuthenticationCode(sendAuthCodeRequest.getEmail());
-        return ResponseEntity.ok(SuccessResponse.builder()
+        return ResponseEntity.ok(BaseResponse.builder()
                 .message(SEND_AUTH_CODE_MESSAGE)
                 .build());
     }
 
     @PostMapping("/check")
-    public ResponseEntity<SuccessResponse> checkAuthenticationCode(@Valid @RequestBody CheckCodeDTO checkCodeDTO) {
+    public ResponseEntity<BaseResponse> checkAuthenticationCode(@Valid @RequestBody CheckCodeDTO checkCodeDTO) {
         authService.checkCode(checkCodeDTO);
-        return ResponseEntity.ok(SuccessResponse.builder()
+        return ResponseEntity.ok(BaseResponse.builder()
                 .message(MAIL_AUTH_SUCCESS_MESSAGE)
                 .build());
     }

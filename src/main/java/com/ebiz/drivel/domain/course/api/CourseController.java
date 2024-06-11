@@ -1,10 +1,12 @@
 package com.ebiz.drivel.domain.course.api;
 
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
+import com.ebiz.drivel.domain.course.dto.CourseResponse;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.service.CourseService;
+import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
 import com.ebiz.drivel.domain.waypoint.dto.WaypointDTO;
-import com.ebiz.drivel.global.dto.SuccessResponse;
+import com.ebiz.drivel.global.dto.BaseResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -22,26 +24,26 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse> findWaypointsByCourse(@PathVariable Long id) {
+    public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(SuccessResponse.builder()
-                .data(waypoints)
+        return ResponseEntity.ok(CourseDetailResponse.builder()
+                .waypoints(waypoints)
                 .build());
     }
 
     @PutMapping("/like/{courseId}")
-    public ResponseEntity<SuccessResponse> updateCourseLike(@PathVariable Long courseId) {
+    public ResponseEntity<BaseResponse> updateCourseLike(@PathVariable Long courseId) {
         courseService.updateCourseLike(courseId);
-        return ResponseEntity.ok(SuccessResponse.builder().build());
+        return ResponseEntity.ok(BaseResponse.builder().build());
     }
 
     @GetMapping("/liked")
-    public ResponseEntity<SuccessResponse> findLikedCourses() {
+    public ResponseEntity<CourseResponse> findLikedCourses() {
         List<CourseDTO> likedCourses = courseService.findLikedCourses();
-        return ResponseEntity.ok(SuccessResponse.builder()
-                .data(likedCourses)
+        return ResponseEntity.ok(CourseResponse.builder()
+                .courses(likedCourses)
                 .build());
     }
 

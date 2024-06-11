@@ -2,9 +2,10 @@ package com.ebiz.drivel.domain.review.api;
 
 import com.ebiz.drivel.domain.review.dto.AddReviewRequest;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
+import com.ebiz.drivel.domain.review.dto.ReviewResponse;
 import com.ebiz.drivel.domain.review.entity.Review;
 import com.ebiz.drivel.domain.review.service.ReviewService;
-import com.ebiz.drivel.global.dto.SuccessResponse;
+import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -28,21 +29,22 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/add")
-    public ResponseEntity<SuccessResponse> addReview(
+    public ResponseEntity<BaseResponse> addReview(
             @Valid @RequestPart("review") AddReviewRequest addReviewRequest,
             @Nullable @RequestPart("image") MultipartFile image) throws IOException {
         addReviewRequest.setImage(image);
         Review review = reviewService.addReview(addReviewRequest);
-        return ResponseEntity.ok(SuccessResponse.builder()
+        return ResponseEntity.ok(BaseResponse.builder()
                 .message(ADD_REVIEW_SUCCESS_MESSAGE)
                 .build());
     }
 
     @GetMapping("/my")
-    public ResponseEntity<SuccessResponse> findMyReviews() {
+    public ResponseEntity<ReviewResponse> findMyReviews() {
         List<ReviewDTO> myReviews = reviewService.findMyReviews();
-        return ResponseEntity.ok(SuccessResponse.builder()
-                .data(myReviews).build());
+        return ResponseEntity.ok(ReviewResponse.builder()
+                .reviews(myReviews)
+                .build());
     }
 
 }
