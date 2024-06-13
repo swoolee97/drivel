@@ -39,7 +39,7 @@ public class CourseController {
         List<ReviewDTO> reviews = course.getReviews().stream().map(ReviewDTO::from)
                 .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
                 .collect(Collectors.toList());
-        List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivals(course);
+        List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         return ResponseEntity.ok(CourseDetailResponse.builder()
                 .themes(themes)
                 .courseInfo(courseDTO)
