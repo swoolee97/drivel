@@ -1,6 +1,11 @@
-package com.ebiz.drivel.domain.festival;
+package com.ebiz.drivel.domain.festival.service;
 
-import com.ebiz.drivel.domain.festival.FestivalApiResponse.Item;
+import com.ebiz.drivel.domain.festival.dto.FestivalDetailResponse;
+import com.ebiz.drivel.domain.festival.dto.FestivalInfoApiResponse;
+import com.ebiz.drivel.domain.festival.dto.FestivalInfoApiResponse.Item;
+import com.ebiz.drivel.domain.festival.entity.Festival;
+import com.ebiz.drivel.domain.festival.exception.FestivalApiException;
+import com.ebiz.drivel.domain.festival.repository.FestivalRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -12,8 +17,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,13 +28,13 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class FestivalService {
+public class FestivalApiService {
 
     @Value("${festival.key}")
     private String key;
-    private static final String FESTIVAL_API_URL =
+    private static final String FESTIVAL_INFO_API_URL =
             "http://apis.data.go.kr/B551011/KorService1/searchFestival1?eventStartDate=%s&eventEndDate=%s&areaCode=&sigunguCode=&ServiceKey=%s&listYN=Y&MobileOS=ETC&MobileApp=drivel&arrange=A&numOfRows=3000&pageNo=1&_type=json";
-
+    private static final String FESTIVAL_DETAIL_API_URL = "http://apis.data.go.kr/B551011/KorService1/detailCommon1?ServiceKey=%s&contentTypeId=15&contentId=%s&MobileOS=ETC&MobileApp=drivel&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&_type=json";
     private static final String UPDATE_FESTIVAL_DATA_SUCCESS_MESSAGE = "페스티벌 데이터 %d개 업데이트 완료";
     private static final String UPDATE_FESTIVAL_DATA_FAIL_MESSAGE = "페스티벌 데이터 업데이트 실패";
 
@@ -39,13 +44,32 @@ public class FestivalService {
     @Scheduled(cron = "0 0 4 * * *") // 매일 새벽 4시에 작동
     public void updateFestivalData() throws IOException {
         initializeFestivalData();
-        FestivalApiResponse festivalApiResponse = getData(getFetchUrl());
-        saveFestivalData(festivalApiResponse);
+        FestivalInfoApiResponse festivalInfoApiResponse = fetchFestivalData(getFestivalInfoFetchUrl(),
+                FestivalInfoApiResponse.class);
+        List<Item> items = festivalInfoApiResponse.getResponse().getBody().getItems().getItem();
+        List<Festival> festivals = fetchFestivalDetails(items);
+        festivalRepository.saveAll(festivals);
         log.info(String.format(UPDATE_FESTIVAL_DATA_SUCCESS_MESSAGE,
-                festivalApiResponse.getResponse().getBody().getNumOfRows()));
+                festivalInfoApiResponse.getResponse().getBody().getNumOfRows()));
     }
 
-    private FestivalApiResponse getData(String fetchUrl) throws IOException {
+    private List<Festival> fetchFestivalDetails(List<Item> items) {
+        List<Festival> festivals = new ArrayList<>();
+        items.forEach(item -> {
+            try {
+                FestivalDetailResponse response = fetchFestivalData(
+                        getFestivalDetailFetchUrl(item), FestivalDetailResponse.class);
+                festivals.add(Festival.from(item,
+                        response.getResponse().getBody().getItems().getItem().get(0).getOverview()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return festivals;
+    }
+
+    private <T> T fetchFestivalData(String fetchUrl, Class<T> responseType)
+            throws IOException {
         try {
             URL url = new URL(fetchUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -62,9 +86,8 @@ public class FestivalService {
                 reader.close();
 
                 String jsonResponse = response.toString();
-
                 ObjectMapper objectMapper = new ObjectMapper();
-                FestivalApiResponse responseObject = objectMapper.readValue(jsonResponse, FestivalApiResponse.class);
+                T responseObject = objectMapper.readValue(jsonResponse, responseType);
                 return responseObject;
             }
         } catch (JsonProcessingException e) {
@@ -76,19 +99,17 @@ public class FestivalService {
         throw new FestivalApiException(UPDATE_FESTIVAL_DATA_FAIL_MESSAGE);
     }
 
-    private void saveFestivalData(FestivalApiResponse festivalApiResponse) {
-        List<Item> items = festivalApiResponse.getResponse().getBody().getItems().getItem();
-        List<Festival> festivals = items.stream().map(Festival::from).collect(Collectors.toList());
-        festivalRepository.saveAll(festivals);
-    }
-
     private void initializeFestivalData() {
         festivalRepository.deleteAll();
     }
 
-    private String getFetchUrl() {
+    private String getFestivalInfoFetchUrl() {
         String stringDate = getStringDate();
-        return String.format(FESTIVAL_API_URL, stringDate, stringDate, key);
+        return String.format(FESTIVAL_INFO_API_URL, stringDate, stringDate, key);
+    }
+
+    private String getFestivalDetailFetchUrl(Item item) {
+        return String.format(FESTIVAL_DETAIL_API_URL, key, item.getContentid());
     }
 
     private String getStringDate() {

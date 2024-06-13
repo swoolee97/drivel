@@ -1,10 +1,8 @@
-package com.ebiz.drivel.domain.festival;
+package com.ebiz.drivel.domain.festival.entity;
 
-import com.ebiz.drivel.domain.festival.FestivalApiResponse.Item;
+import com.ebiz.drivel.domain.festival.dto.FestivalInfoApiResponse.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
@@ -24,8 +22,7 @@ import org.hibernate.annotations.DynamicInsert;
 public class Festival {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(name = "first_address")
     private String firstAddress;
@@ -54,8 +51,12 @@ public class Festival {
     @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
     private BigDecimal longitude;
 
-    public static Festival from(Item item) {
+    @Column(name = "description")
+    private String description;
+
+    public static Festival from(Item item, String description) {
         return Festival.builder()
+                .id(item.getContentid())
                 .firstAddress(item.getAddr1())
                 .secondAddress(item.getAddr2())
                 .title(item.getTitle())
@@ -65,10 +66,11 @@ public class Festival {
                 .secondImagePath(item.getFirstimage2())
                 .latitude(convertCoordinate(item.getMapy()))
                 .longitude(convertCoordinate(item.getMapx()))
+                .description(description)
                 .build();
     }
 
-    public static BigDecimal convertCoordinate(String decimal) {
+    private static BigDecimal convertCoordinate(String decimal) {
         return BigDecimal.valueOf(Double.valueOf(decimal));
     }
 

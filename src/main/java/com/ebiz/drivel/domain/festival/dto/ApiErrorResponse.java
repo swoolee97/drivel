@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.festival;
+package com.ebiz.drivel.domain.festival.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

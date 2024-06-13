@@ -1,5 +1,6 @@
-package com.ebiz.drivel.domain.festival;
+package com.ebiz.drivel.domain.festival.api;
 
+import com.ebiz.drivel.domain.festival.service.FestivalApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FestivalController {
 
-    private final FestivalService festivalService;
+    private final FestivalApiService festivalApiService;
 
     @GetMapping("/test")
     public void abc() throws Exception {
-        festivalService.updateFestivalData();
+        festivalApiService.updateFestivalData();
     }
 
 }
