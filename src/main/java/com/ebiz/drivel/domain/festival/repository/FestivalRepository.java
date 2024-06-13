@@ -16,7 +16,7 @@ public interface FestivalRepository extends JpaRepository<Festival, String> {
             "  COS(RADIANS(:givenLat)) * COS(RADIANS(f.latitude)) * COS(RADIANS(f.longitude) - RADIANS(:givenLon)) " +
             "+ SIN(RADIANS(:givenLat)) * SIN(RADIANS(f.latitude)) " +
             ")) AS distance " +
-            "FROM Festival f " +
+            "FROM festival f " +
             "HAVING distance <= 30 "
             + "ORDER BY 4", nativeQuery = true)
     List<FestivalInfoInterface> findIdTitleFirstImagePathByDistance(@Param("givenLat") double givenLat,
