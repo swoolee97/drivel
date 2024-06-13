@@ -30,10 +30,10 @@ public class Waypoint {
     @Column(name = "order")
     private int order;
 
-    @Column(name = "latitude", nullable = false, precision = 8, scale = 6)
+    @Column(name = "latitude", nullable = false, precision = 12, scale = 10)
     private BigDecimal latitude;
 
-    @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
+    @Column(name = "longitude", nullable = false, precision = 13, scale = 10)
     private BigDecimal longitude;
 
     @Column(name = "description")

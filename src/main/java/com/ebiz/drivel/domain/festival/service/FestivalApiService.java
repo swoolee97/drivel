@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.festival.service;
 
-import com.ebiz.drivel.domain.festival.dto.FestivalDetailResponse;
+import com.ebiz.drivel.domain.festival.dto.FestivalDetailApiResponse;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoApiResponse;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoApiResponse.Item;
 import com.ebiz.drivel.domain.festival.entity.Festival;
@@ -57,8 +57,8 @@ public class FestivalApiService {
         List<Festival> festivals = new ArrayList<>();
         items.forEach(item -> {
             try {
-                FestivalDetailResponse response = fetchFestivalData(
-                        getFestivalDetailFetchUrl(item), FestivalDetailResponse.class);
+                FestivalDetailApiResponse response = fetchFestivalData(
+                        getFestivalDetailFetchUrl(item), FestivalDetailApiResponse.class);
                 festivals.add(Festival.from(item,
                         response.getResponse().getBody().getItems().getItem().get(0).getOverview()));
             } catch (IOException e) {
