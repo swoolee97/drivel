@@ -4,6 +4,8 @@ import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.service.CourseService;
+import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
+import com.ebiz.drivel.domain.festival.service.FestivalService;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/course")
 public class CourseController {
     private final CourseService courseService;
+    private final FestivalService festivalService;
 
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
@@ -36,11 +39,13 @@ public class CourseController {
         List<ReviewDTO> reviews = course.getReviews().stream().map(ReviewDTO::from)
                 .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
                 .collect(Collectors.toList());
+        List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivals(course);
         return ResponseEntity.ok(CourseDetailResponse.builder()
                 .themes(themes)
                 .courseInfo(courseDTO)
                 .waypoints(waypoints)
                 .reviews(reviews)
+                .festivals(festivals)
                 .build());
     }
 
