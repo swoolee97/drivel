@@ -4,11 +4,13 @@ import com.ebiz.drivel.domain.review.dto.AddReviewRequest;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.review.dto.ReviewResponse;
 import com.ebiz.drivel.domain.review.entity.Review;
+import com.ebiz.drivel.domain.review.entity.ReviewImage;
+import com.ebiz.drivel.domain.review.exception.MaxImageLengthExceededException;
+import com.ebiz.drivel.domain.review.service.ReviewImageService;
 import com.ebiz.drivel.domain.review.service.ReviewService;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +27,22 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReviewController {
 
     private static final String ADD_REVIEW_SUCCESS_MESSAGE = "리뷰가 등록되었습니다";
+    private static final String EXCEEDED_IMAGE_MAX_LENGTH_EXCEPTION_MESSAGE = "이미지는 3개까지 등록할 수 있습니다";
+    private static final int IMAGES_MAX_LENGTH = 3;
 
     private final ReviewService reviewService;
+    private final ReviewImageService reviewImageService;
 
     @PostMapping("/add")
     public ResponseEntity<BaseResponse> addReview(
             @Valid @RequestPart("review") AddReviewRequest addReviewRequest,
-            @Nullable @RequestPart("image") MultipartFile image) throws IOException {
-        addReviewRequest.setImage(image);
+            @Nullable @RequestPart("images") List<MultipartFile> images) {
+        if (images != null && images.size() > IMAGES_MAX_LENGTH) {
+            throw new MaxImageLengthExceededException(EXCEEDED_IMAGE_MAX_LENGTH_EXCEPTION_MESSAGE);
+        }
+        addReviewRequest.setImages(images);
         Review review = reviewService.addReview(addReviewRequest);
+        List<ReviewImage> reviewImages = reviewImageService.addReviewImages(review, images);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message(ADD_REVIEW_SUCCESS_MESSAGE)
                 .build());

@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.review.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,5 +20,6 @@ public class AddReviewRequest {
     private String comment;
 
     @Setter
-    private MultipartFile image;
+    @Size(max = 3) // 최대 3개까지 이미지를 받도록 제한
+    private List<MultipartFile> images;
 }

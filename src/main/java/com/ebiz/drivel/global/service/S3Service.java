@@ -15,6 +15,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,19 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class S3Service {
     private final AmazonS3 amazonS3;
+
+    public List<String> uploadImageFiles(List<MultipartFile> images, String bucketName) {
+        List<String> uploadedPaths = new ArrayList<>();
+        images.stream().forEach(image -> {
+            try {
+                String s = uploadImageFile(image, bucketName);
+                uploadedPaths.add(s);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return uploadedPaths;
+    }
 
     public String uploadImageFile(MultipartFile image, String bucketName) throws IOException {
         String fileName = image.getOriginalFilename();
