@@ -73,11 +73,11 @@ public class AuthService {
 
     @Transactional
     public void signOut(Member member, String authorizationHeader) {
-        String storedToken = tokenRepository.findById(member.getId());
         String refreshToken = tokenService.resolveToken(authorizationHeader);
+        String storedToken = tokenRepository.findById(member.getId());
         tokenRepository.delete(member.getId());
         saveBlackList(refreshToken);
-        if (!refreshToken.equals(storedToken)) {
+        if (storedToken != null && !refreshToken.equals(storedToken)) {
             saveBlackList(storedToken);
         }
     }
@@ -85,7 +85,7 @@ public class AuthService {
     private void saveBlackList(String refreshToken) {
         try {
             blackListRepository.save(BlackList.builder()
-                    .refresh_token(refreshToken)
+                    .refreshToken(refreshToken)
                     .build());
         } catch (DuplicateKeyException e) {
             log.info("이미 로그아웃 처리한 토큰: " + refreshToken);

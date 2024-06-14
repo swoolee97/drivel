@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BlackListRepository extends MongoRepository<BlackList, String> {
+    BlackList findBlackListByRefreshToken(String refresh_token);
 }

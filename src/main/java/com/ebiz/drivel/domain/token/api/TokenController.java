@@ -30,8 +30,8 @@ public class TokenController {
     }
 
     @PostMapping("/re-issue")
-    public ResponseEntity<BaseResponse> reIssueToken(@RequestHeader("Authorization") String refreshToken) {
-        tokenService.checkRefreshToken(refreshToken);
+    public ResponseEntity<BaseResponse> reIssueToken(@RequestHeader("Authorization") String authorizationHeader) {
+        tokenService.checkRefreshToken(authorizationHeader);
         SignInDTO signInDTO = tokenService.generateTokens();
         return ResponseEntity.ok(signInDTO);
     }

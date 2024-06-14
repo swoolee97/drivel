@@ -12,7 +12,7 @@ public class BlackList {
     @Id
     private String _id;
 
-    @Field
+    @Field(value = "refresh_token")
     @Indexed(unique = true)
-    private String refresh_token;
+    private String refreshToken;
 }

@@ -23,7 +23,7 @@ public class FestivalController {
         festivalApiService.updateFestivalData();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<FestivalDetailResponse> getFestivalDetail(@PathVariable String id) {
         FestivalDetailResponse festivalDetailResponse = festivalService.getFestivalInfo(id);
         return ResponseEntity.ok(festivalDetailResponse);
