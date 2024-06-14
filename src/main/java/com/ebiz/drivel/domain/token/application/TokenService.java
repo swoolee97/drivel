@@ -47,7 +47,7 @@ public class TokenService {
         tokenRepository.deleteById(memberId);
     }
 
-    private String resolveToken(String tokenHeader) {
+    public String resolveToken(String tokenHeader) {
         if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith("Bearer")) {
             return tokenHeader.substring(7);
         }

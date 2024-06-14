@@ -24,6 +24,10 @@ public class TokenRepository {
         redisTemplate.expire(REFRESH_TOKEN_PREFIX + memberId, REFRESH_TOKEN_EXPIRE, TimeUnit.SECONDS);
     }
 
+    public void delete(Long memberId) {
+        redisTemplate.delete(REFRESH_TOKEN_PREFIX + memberId);
+    }
+
     public String findById(Long memberId) {
         return valueOperations.get(REFRESH_TOKEN_PREFIX + memberId);
     }
