@@ -33,6 +33,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests((auth) -> {
+                            auth.requestMatchers("/healthy").permitAll();
                             auth.requestMatchers("/kakao/*").permitAll();
                             auth.requestMatchers("/auth/*").permitAll();
                             auth.requestMatchers(("/mail/auth")).permitAll();
