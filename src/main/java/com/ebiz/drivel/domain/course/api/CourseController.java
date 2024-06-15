@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.course.api;
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
 import com.ebiz.drivel.domain.course.entity.Course;
+import com.ebiz.drivel.domain.course.service.CourseLikeService;
 import com.ebiz.drivel.domain.course.service.CourseService;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
 import com.ebiz.drivel.domain.festival.service.FestivalService;
@@ -28,10 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseController {
     private final CourseService courseService;
     private final FestivalService festivalService;
+    private final CourseLikeService courseLikeService;
 
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
+        boolean liked = courseLikeService.isCourseLikedByMember(course);
         CourseDTO courseDTO = CourseDTO.from(course);
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
@@ -41,6 +44,7 @@ public class CourseController {
                 .collect(Collectors.toList());
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         return ResponseEntity.ok(CourseDetailResponse.builder()
+                .liked(liked)
                 .themes(themes)
                 .courseInfo(courseDTO)
                 .waypoints(waypoints)

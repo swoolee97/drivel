@@ -29,8 +29,8 @@ public class CourseService {
     public void updateCourseLike(Long courseId) {
         Member member = userDetailsService.getMemberByContextHolder();
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new CourseNotFoundException());
-        CourseLike courseLike = courseLikeRepository.findCourseLikeByCourseIdAndMemberId(courseId, member.getId());
-        if (courseLike == null) {
+        CourseLike courseLike = courseLikeRepository.findByCourseAndMember(course, member).get();
+        if (courseLike != null) {
             saveCourseLike(course, member);
             return;
         }
