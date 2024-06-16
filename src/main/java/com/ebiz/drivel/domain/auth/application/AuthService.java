@@ -7,6 +7,7 @@ import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
 import com.ebiz.drivel.domain.auth.exception.DuplicatedSignUpException;
+import com.ebiz.drivel.domain.auth.util.NicknameGenerator;
 import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
 import com.ebiz.drivel.domain.mail.exception.WrongAuthenticationCodeException;
 import com.ebiz.drivel.domain.mail.repository.AuthCodeRepository;
@@ -43,14 +44,16 @@ public class AuthService {
     private final AuthCodeRepository authCodeRepository;
     private final PasswordEncoder encoder;
     private final BlackListRepository blackListRepository;
+    private final NicknameGenerator nicknameGenerator;
 
     @Transactional
     public Member signUp(SignUpRequest request) {
         try {
+            String nickname = nicknameGenerator.generateUniqueNickname();
             Member member = Member.builder()
                     .email(request.getEmail())
                     .password(encoder.encode(request.getPassword()))
-                    .nickname(request.getNickname())
+                    .nickname(nickname)
                     .build();
             return memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
