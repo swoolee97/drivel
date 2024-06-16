@@ -16,7 +16,7 @@ public class CourseLikeService {
 
     public boolean isCourseLikedByMember(Course course) {
         Member member = userDetailsService.getMemberByContextHolder();
-        return courseLikeRepository.findByCourseAndMember(course, member).isPresent();
+        return courseLikeRepository.findByCourseAndMember(course, member) != null;
     }
 
 }
