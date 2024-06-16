@@ -1,7 +1,6 @@
 package com.ebiz.drivel.domain.auth.api;
 
 import com.ebiz.drivel.domain.auth.application.AuthService;
-import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
@@ -25,7 +24,6 @@ public class AuthController {
     private static final String SIGN_UP_SUCCESS_MESSAGE = "회원가입 성공";
 
     private final AuthService authService;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("/signUp")
     public ResponseEntity<BaseResponse> signUp(@Valid @RequestBody SignUpRequest request) {
@@ -46,8 +44,7 @@ public class AuthController {
      */
     @PostMapping("/signOut")
     public void signOut(@RequestHeader(name = "Authorization") String authorizationHeader) {
-        Member member = userDetailsService.getMemberByContextHolder();
-        authService.signOut(member, authorizationHeader);
+        authService.signOut(authorizationHeader);
     }
 
 }

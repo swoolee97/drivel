@@ -35,6 +35,7 @@ public class AuthService {
     private static final String WRONG_CODE_EXCEPTION_MESSAGE = "인증번호가 다릅니다";
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserDetailsServiceImpl userDetailsService;
     private final JwtProvider jwtProvider;
     private final TokenService tokenService;
     private final MemberRepository memberRepository;
@@ -72,7 +73,8 @@ public class AuthService {
     }
 
     @Transactional
-    public void signOut(Member member, String authorizationHeader) {
+    public void signOut(String authorizationHeader) {
+        Member member = userDetailsService.getMemberByContextHolder();
         String refreshToken = tokenService.resolveToken(authorizationHeader);
         String storedToken = tokenRepository.findById(member.getId());
         tokenRepository.delete(member.getId());
