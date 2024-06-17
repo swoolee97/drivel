@@ -30,7 +30,7 @@ public class CourseController {
     private final CourseService courseService;
     private final FestivalService festivalService;
     private final CourseLikeService courseLikeService;
-
+// 테스트
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
