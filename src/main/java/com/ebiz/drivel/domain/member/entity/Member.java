@@ -39,6 +39,9 @@ public class Member {
     @Column(name = "nickname")
     private String nickname;
 
+    @Column(name = "image_path")
+    private String imagePath;
+
     @Column(name = "role", columnDefinition = "USER")
     private String role;
 

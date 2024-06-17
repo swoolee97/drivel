@@ -11,6 +11,8 @@ import lombok.Getter;
 @Builder
 public class ReviewDTO {
     private Long id;
+    private String reviewerNickname;
+    private String reviewerImagePath;
     private LocalDateTime reviewDate;
     private Long courseId;
     private int rating;
@@ -20,6 +22,8 @@ public class ReviewDTO {
     public static ReviewDTO from(Review review) {
         return ReviewDTO.builder()
                 .id(review.getId())
+                .reviewerNickname(review.getMember().getNickname())
+                .reviewerImagePath(review.getMember().getImagePath())
                 .reviewDate(review.getReviewDate())
                 .courseId(review.getCourse().getId())
                 .rating(review.getRating())
