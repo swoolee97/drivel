@@ -39,6 +39,8 @@ public class CourseController {
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
+        int reviewCount = course.countReviews();
+        double averageRating = course.calculateAverageRating();
         List<ReviewDTO> reviews = course.getReviews().stream().map(ReviewDTO::from)
                 .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
                 .collect(Collectors.toList());
@@ -48,6 +50,8 @@ public class CourseController {
                 .themes(themes)
                 .courseInfo(courseDTO)
                 .waypoints(waypoints)
+                .reviewCount(reviewCount)
+                .averageRating(averageRating)
                 .reviews(reviews)
                 .festivals(festivals)
                 .build());

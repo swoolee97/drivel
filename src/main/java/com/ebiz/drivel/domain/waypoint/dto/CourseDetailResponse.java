@@ -15,6 +15,8 @@ public class CourseDetailResponse {
     private CourseDTO courseInfo;
     private List<ThemeDTO> themes;
     private List<WaypointDTO> waypoints;
+    private int reviewCount;
+    private double averageRating;
     private List<ReviewDTO> reviews;
     private List<FestivalInfoInterface> festivals;
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,5 +56,15 @@ public class Course {
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseTheme> courseThemes;
+
+    public double calculateAverageRating() {
+        double average = reviews.stream().mapToLong(Review::getRating).average().orElse(0);
+        DecimalFormat df = new DecimalFormat("#.#");
+        return Double.parseDouble(df.format(average));
+    }
+
+    public int countReviews() {
+        return reviews.size();
+    }
 
 }
