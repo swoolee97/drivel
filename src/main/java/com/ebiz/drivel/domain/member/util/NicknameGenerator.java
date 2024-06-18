@@ -1,6 +1,7 @@
-package com.ebiz.drivel.domain.auth.util;
+package com.ebiz.drivel.domain.member.util;
 
-import com.ebiz.drivel.domain.member.repository.MemberRepository;
+import com.ebiz.drivel.domain.member.application.MemberService;
+import jakarta.annotation.PostConstruct;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,9 +11,15 @@ import org.springframework.stereotype.Component;
 public class NicknameGenerator {
     private static final String NICKNAME_PREFIX = "user";
     private static final int NICKNAME_SUFFIX_RANGE = 1_000_000;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
+    private static MemberService staticMemberService;
 
-    public String generateUniqueNickname() {
+    @PostConstruct
+    public void init() {
+        staticMemberService = memberService;
+    }
+
+    public static String generateUniqueNickname() {
         while (true) {
             String randomNickname = generateRandomNickname();
             if (!isNicknameDuplicate(randomNickname)) {
@@ -21,14 +28,14 @@ public class NicknameGenerator {
         }
     }
 
-    private String generateRandomNickname() {
+    private static String generateRandomNickname() {
         Random random = new Random();
         int randomNumber = random.nextInt(NICKNAME_SUFFIX_RANGE);
         return NICKNAME_PREFIX + randomNumber;
     }
 
-    private boolean isNicknameDuplicate(String randomNickname) {
-        return memberRepository.existsByNickname(randomNickname);
+    private static boolean isNicknameDuplicate(String randomNickname) {
+        return staticMemberService.isExistsByNickname(randomNickname);
     }
 
 }

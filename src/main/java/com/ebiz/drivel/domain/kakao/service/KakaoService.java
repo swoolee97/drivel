@@ -7,6 +7,8 @@ import com.ebiz.drivel.domain.kakao.dto.KakaoUserInfoResponse;
 import com.ebiz.drivel.domain.kakao.exception.DuplicatedSignUpMemberException;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
+import com.ebiz.drivel.domain.member.util.NicknameGenerator;
+import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +65,8 @@ public class KakaoService {
     public Member signUpWithKakao(String email) {
         return memberRepository.save(Member.builder()
                 .email(email)
+                .nickname(NicknameGenerator.generateUniqueNickname())
+                .imagePath(ProfileImageGenerator.getDefaultProfileImagePath())
                 .build());
     }
 

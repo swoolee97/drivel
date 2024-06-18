@@ -7,13 +7,14 @@ import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
 import com.ebiz.drivel.domain.auth.exception.DuplicatedSignUpException;
-import com.ebiz.drivel.domain.auth.util.NicknameGenerator;
 import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
 import com.ebiz.drivel.domain.mail.exception.WrongAuthenticationCodeException;
 import com.ebiz.drivel.domain.mail.repository.AuthCodeRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
+import com.ebiz.drivel.domain.member.util.NicknameGenerator;
+import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
 import com.ebiz.drivel.domain.token.application.TokenService;
 import com.ebiz.drivel.domain.token.entity.BlackList;
 import com.ebiz.drivel.domain.token.repository.BlackListRepository;
@@ -54,6 +55,7 @@ public class AuthService {
                     .email(request.getEmail())
                     .password(encoder.encode(request.getPassword()))
                     .nickname(nickname)
+                    .imagePath(ProfileImageGenerator.getDefaultProfileImagePath())
                     .build();
             return memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
