@@ -1,5 +1,7 @@
 package com.ebiz.drivel.domain.member.entity;
 
+import static com.ebiz.drivel.domain.profile.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
+
 import com.ebiz.drivel.domain.course.entity.CourseLike;
 import com.ebiz.drivel.domain.review.entity.Review;
 import jakarta.persistence.Column;
@@ -50,4 +52,13 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Review> reviews;
+
+    public boolean hasDefaultProfileImage() {
+        return imagePath.contains(DEFAULT_PROFILE_IMAGE_PREFIX);
+    }
+
+    public void updateProfileImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
 }
