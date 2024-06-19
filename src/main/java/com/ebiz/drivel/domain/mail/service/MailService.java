@@ -18,13 +18,13 @@ public class MailService {
 
     @Value("${spring.mail.username}")
     private String FROM_MAIL;
-    private static final String AUTH_MAIL_SUBJECT = "Drivel 가입 인증번호";
     private static final String MAIL_SEND_EXCEPTION_MESSAGE = "메일 전송 중 오류";
 
     private final JavaMailSender mailSender;
     private final AuthCodeRepository authCodeRepository;
 
-    public void sendAuthenticationCode(String email) {
+
+    public void sendAuthenticationCode(String subject, String email) {
         String toMail = email;
         String randomCode = generateRandomCode();
         try {
@@ -32,7 +32,7 @@ public class MailService {
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "utf-8");
             messageHelper.setFrom(FROM_MAIL);
             messageHelper.setTo(toMail);
-            messageHelper.setSubject(AUTH_MAIL_SUBJECT);
+            messageHelper.setSubject(subject);
             messageHelper.setText(randomCode);
 
             mailSender.send(message);

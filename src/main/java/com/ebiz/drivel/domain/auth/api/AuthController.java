@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.auth.api;
 
 import com.ebiz.drivel.domain.auth.application.AuthService;
+import com.ebiz.drivel.domain.auth.dto.ResetCodeRequest;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
@@ -45,6 +46,13 @@ public class AuthController {
     @PostMapping("/signOut")
     public void signOut(@RequestHeader(name = "Authorization") String authorizationHeader) {
         authService.signOut(authorizationHeader);
+    }
+
+    // 4개
+    // GET POST DELETE PUT
+    @PostMapping("/send-reset-code")
+    public void sendResetCode(@RequestBody ResetCodeRequest request) {
+
     }
 
 }
