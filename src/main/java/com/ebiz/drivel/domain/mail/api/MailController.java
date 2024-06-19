@@ -19,14 +19,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class MailController {
     private static final String SEND_AUTH_CODE_MESSAGE = "인증번호가 전송되었습니다";
     private static final String MAIL_AUTH_SUCCESS_MESSAGE = "인증되었습니다";
+    private static final String PASSWORD_RESET_SUBJECT = "Drivel 비밀번호 재설정 인증번호";
+    private static final String AUTH_MAIL_SUBJECT = "Drivel 가입 인증번호";
 
     private final AuthService authService;
     private final MailService mailService;
 
+    @PostMapping("/send-reset-code")
+    public ResponseEntity<BaseResponse> sendResetCode(@Valid @RequestBody SendAuthCodeRequest sendAuthCodeRequest) {
+        mailService.sendAuthenticationCode(PASSWORD_RESET_SUBJECT, sendAuthCodeRequest.getEmail());
+        return ResponseEntity.ok(BaseResponse.builder()
+                .message(SEND_AUTH_CODE_MESSAGE)
+                .build());
+    }
+
     @PostMapping("/auth")
     public ResponseEntity<BaseResponse> sendAuthenticationCode(
             @Valid @RequestBody SendAuthCodeRequest sendAuthCodeRequest) {
-        mailService.sendAuthenticationCode(sendAuthCodeRequest.getEmail());
+        mailService.sendAuthenticationCode(AUTH_MAIL_SUBJECT, sendAuthCodeRequest.getEmail());
         return ResponseEntity.ok(BaseResponse.builder()
                 .message(SEND_AUTH_CODE_MESSAGE)
                 .build());
