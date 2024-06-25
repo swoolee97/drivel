@@ -3,7 +3,6 @@ package com.ebiz.drivel.domain.auth.application;
 import static com.ebiz.drivel.domain.member.exception.MemberExceptionMessage.MEMBER_NOT_FOUND_EXCEPTION_MESSAGE;
 
 import com.ebiz.drivel.domain.auth.constants.ExceptionMessage;
-import com.ebiz.drivel.domain.auth.dto.ResetCodeRequest;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
@@ -11,7 +10,6 @@ import com.ebiz.drivel.domain.auth.exception.DuplicatedSignUpException;
 import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
 import com.ebiz.drivel.domain.mail.exception.WrongAuthenticationCodeException;
 import com.ebiz.drivel.domain.mail.repository.AuthCodeRepository;
-import com.ebiz.drivel.domain.mail.service.MailService;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
@@ -39,7 +37,6 @@ public class AuthService {
     private static final String WRONG_CODE_EXCEPTION_MESSAGE = "인증번호가 다릅니다";
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final MailService mailService;
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtProvider jwtProvider;
     private final TokenService tokenService;
@@ -117,12 +114,5 @@ public class AuthService {
         );
         return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     }
-
-    public void sendResetCode(ResetCodeRequest request) {
-        Member member = memberRepository.findMemberByEmail(request.getEmail())
-                .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
-        // 메일 보내는 코드
-    }
-
 
 }
