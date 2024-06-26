@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.course.entity;
 
-import com.ebiz.drivel.domain.review.entity.Review;
+import com.ebiz.drivel.domain.review.entity.CourseReview;
 import com.ebiz.drivel.domain.waypoint.entity.Waypoint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +46,7 @@ public class Course {
     private String imagePath;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-    private List<Review> reviews;
+    private List<CourseReview> courseReviews;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Waypoint> waypoints;
@@ -58,13 +58,13 @@ public class Course {
     private List<CourseTheme> courseThemes;
 
     public double calculateAverageRating() {
-        double average = reviews.stream().mapToLong(Review::getRating).average().orElse(0);
+        double average = courseReviews.stream().mapToLong(CourseReview::getRating).average().orElse(0);
         DecimalFormat df = new DecimalFormat("#.#");
         return Double.parseDouble(df.format(average));
     }
 
     public int countReviews() {
-        return reviews.size();
+        return courseReviews.size();
     }
 
 }

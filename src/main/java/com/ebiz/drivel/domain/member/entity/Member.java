@@ -3,7 +3,7 @@ package com.ebiz.drivel.domain.member.entity;
 import static com.ebiz.drivel.domain.profile.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
 
 import com.ebiz.drivel.domain.course.entity.CourseLike;
-import com.ebiz.drivel.domain.review.entity.Review;
+import com.ebiz.drivel.domain.review.entity.CourseReview;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -51,7 +51,7 @@ public class Member {
     private List<CourseLike> courseLikes;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<Review> reviews;
+    private List<CourseReview> courseReviews;
 
     public boolean hasDefaultProfileImage() {
         return imagePath.contains(DEFAULT_PROFILE_IMAGE_PREFIX);

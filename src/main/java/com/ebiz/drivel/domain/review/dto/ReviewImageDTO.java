@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.review.dto;
 
-import com.ebiz.drivel.domain.review.entity.ReviewImage;
+import com.ebiz.drivel.domain.review.entity.CourseReviewImage;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,10 +11,10 @@ public class ReviewImageDTO {
     private Long id;
     private String imagePath;
 
-    public static ReviewImageDTO from(ReviewImage reviewImage) {
+    public static ReviewImageDTO from(CourseReviewImage courseReviewImage) {
         return ReviewImageDTO.builder()
-                .id(reviewImage.getId())
-                .imagePath(reviewImage.getImagePath())
+                .id(courseReviewImage.getId())
+                .imagePath(courseReviewImage.getImagePath())
                 .build();
     }
 

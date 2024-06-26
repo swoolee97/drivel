@@ -26,8 +26,8 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
-@Table(name = "review")
-public class Review {
+@Table(name = "course_review")
+public class CourseReview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +50,7 @@ public class Review {
     @Column(name = "comment")
     private String comment;
 
-    @OneToMany(mappedBy = "review", fetch = FetchType.LAZY)
-    private List<ReviewImage> reviewImages;
+    @OneToMany(mappedBy = "courseReview", fetch = FetchType.LAZY)
+    private List<CourseReviewImage> courseReviewImages;
 
 }

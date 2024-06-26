@@ -41,7 +41,7 @@ public class CourseController {
                 .collect(Collectors.toList());
         int reviewCount = course.countReviews();
         double averageRating = course.calculateAverageRating();
-        List<ReviewDTO> reviews = course.getReviews().stream().map(ReviewDTO::from)
+        List<ReviewDTO> reviews = course.getCourseReviews().stream().map(ReviewDTO::from)
                 .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
                 .collect(Collectors.toList());
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);

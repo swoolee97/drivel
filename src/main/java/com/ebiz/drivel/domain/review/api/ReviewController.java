@@ -3,8 +3,8 @@ package com.ebiz.drivel.domain.review.api;
 import com.ebiz.drivel.domain.review.dto.AddReviewRequest;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.review.dto.ReviewResponse;
-import com.ebiz.drivel.domain.review.entity.Review;
-import com.ebiz.drivel.domain.review.entity.ReviewImage;
+import com.ebiz.drivel.domain.review.entity.CourseReview;
+import com.ebiz.drivel.domain.review.entity.CourseReviewImage;
 import com.ebiz.drivel.domain.review.exception.MaxImageLengthExceededException;
 import com.ebiz.drivel.domain.review.service.ReviewImageService;
 import com.ebiz.drivel.domain.review.service.ReviewService;
@@ -41,8 +41,8 @@ public class ReviewController {
             throw new MaxImageLengthExceededException(EXCEEDED_IMAGE_MAX_LENGTH_EXCEPTION_MESSAGE);
         }
         addReviewRequest.setImages(images);
-        Review review = reviewService.addReview(addReviewRequest);
-        List<ReviewImage> reviewImages = reviewImageService.addReviewImages(review, images);
+        CourseReview courseReview = reviewService.addReview(addReviewRequest);
+        List<CourseReviewImage> courseReviewImages = reviewImageService.addReviewImages(courseReview, images);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message(ADD_REVIEW_SUCCESS_MESSAGE)
                 .build());

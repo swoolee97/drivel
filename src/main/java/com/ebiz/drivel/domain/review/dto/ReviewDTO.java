@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.review.dto;
 
-import com.ebiz.drivel.domain.review.entity.Review;
+import com.ebiz.drivel.domain.review.entity.CourseReview;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,16 +19,17 @@ public class ReviewDTO {
     private String comment;
     private List<ReviewImageDTO> images;
 
-    public static ReviewDTO from(Review review) {
+    public static ReviewDTO from(CourseReview courseReview) {
         return ReviewDTO.builder()
-                .id(review.getId())
-                .reviewerNickname(review.getMember().getNickname())
-                .reviewerImagePath(review.getMember().getImagePath())
-                .reviewDate(review.getReviewDate())
-                .courseId(review.getCourse().getId())
-                .rating(review.getRating())
-                .comment(review.getComment())
-                .images(review.getReviewImages().stream().map(ReviewImageDTO::from).collect(Collectors.toList()))
+                .id(courseReview.getId())
+                .reviewerNickname(courseReview.getMember().getNickname())
+                .reviewerImagePath(courseReview.getMember().getImagePath())
+                .reviewDate(courseReview.getReviewDate())
+                .courseId(courseReview.getCourse().getId())
+                .rating(courseReview.getRating())
+                .comment(courseReview.getComment())
+                .images(courseReview.getCourseReviewImages().stream().map(ReviewImageDTO::from)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

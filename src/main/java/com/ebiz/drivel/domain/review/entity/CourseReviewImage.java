@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "review_image")
-public class ReviewImage {
+@Table(name = "course_review_image")
+public class CourseReviewImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class ReviewImage {
 
     @ManyToOne
     @JoinColumn(name = "review_id", referencedColumnName = "id")
-    private Review review;
+    private CourseReview courseReview;
 
     @Column(name = "image_path")
     private String imagePath;

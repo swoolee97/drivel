@@ -1,7 +1,7 @@
 package com.ebiz.drivel.domain.review.service;
 
-import com.ebiz.drivel.domain.review.entity.Review;
-import com.ebiz.drivel.domain.review.entity.ReviewImage;
+import com.ebiz.drivel.domain.review.entity.CourseReview;
+import com.ebiz.drivel.domain.review.entity.CourseReviewImage;
 import com.ebiz.drivel.domain.review.repository.ReviewImageRepository;
 import com.ebiz.drivel.global.service.S3Service;
 import java.util.ArrayList;
@@ -20,21 +20,21 @@ public class ReviewImageService {
     @Value("${cloud.aws.s3.reviewImageBucketName}")
     private String REVIEW_IMAGE_BUCKET_NAME;
 
-    public List<ReviewImage> addReviewImages(Review review, List<MultipartFile> images) {
+    public List<CourseReviewImage> addReviewImages(CourseReview courseReview, List<MultipartFile> images) {
         List<String> imagePaths = new ArrayList<>();
         if (images != null) {
             imagePaths = s3Service.uploadImageFiles(images, REVIEW_IMAGE_BUCKET_NAME);
         }
-        List<ReviewImage> reviewImages = new ArrayList<>();
+        List<CourseReviewImage> courseReviewImages = new ArrayList<>();
         imagePaths.forEach(imagePath -> {
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .review(review)
+            CourseReviewImage courseReviewImage = CourseReviewImage.builder()
+                    .courseReview(courseReview)
                     .imagePath(imagePath)
                     .build();
-            reviewImages.add(reviewImage);
+            courseReviewImages.add(courseReviewImage);
         });
 
-        return reviewImageRepository.saveAll(reviewImages);
+        return reviewImageRepository.saveAll(courseReviewImages);
     }
 
 }
