@@ -2,6 +2,9 @@ package com.ebiz.drivel.global.api;
 
 import com.ebiz.drivel.global.dto.ErrorResponse;
 import com.ebiz.drivel.global.exception.CourseNotFoundException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -54,6 +57,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity handleMaxUploadSizeExceededException() {
         return new ResponseEntity(ErrorResponse.builder()
                 .message(MAX_UPLOAD_SIZE_EXCEEDED_MESSAGE)
+                .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResponseEntity handleSQLIntegrityConstraintViolationException() {
+        return new ResponseEntity(ErrorResponse.builder()
+                .message(WRONG_REQUEST_EXCEPTION_MESSAGE)
+                .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity handleConstraintViolationException(ConstraintViolationException e) {
+        ConstraintViolation<?> violation = e.getConstraintViolations().iterator().next();
+        String message = violation.getMessage();
+        return new ResponseEntity(ErrorResponse.builder()
+                .message(message)
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
