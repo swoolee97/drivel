@@ -66,4 +66,7 @@ public class Meeting {
     @Column(name = "master_member_id")
     private Long masterMemberId;
 
+    @Column(name = "car_model")
+    private String carModel;
+
 }

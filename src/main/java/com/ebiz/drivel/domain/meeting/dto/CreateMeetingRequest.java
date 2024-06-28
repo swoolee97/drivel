@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.meeting.dto;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import lombok.Builder;
@@ -27,6 +28,8 @@ public class CreateMeetingRequest {
     private Integer startAge;
     @NotNull
     private Integer endAge;
+    @Nullable
+    private String carModel;
 
     public Meeting toEntity() {
         Course course = Course.builder().id(courseId).build();
@@ -39,6 +42,7 @@ public class CreateMeetingRequest {
                 .course(course)
                 .gender(Gender.getGenderById(getGender()))
                 .startAge(getStartAge())
+                .carModel(getCarModel())
                 .endAge(getEndAge()).build();
     }
 }
