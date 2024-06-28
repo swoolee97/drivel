@@ -4,6 +4,7 @@ import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
+import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
@@ -31,7 +32,7 @@ public class MeetingService {
     public Page<MeetingInfoResponse> getMeetings(MeetingListRequest meetingListRequest, Pageable pageable) {
         Page<Meeting> meetings = meetingRepository.findByCondition(
                 meetingListRequest.getAge(),
-                meetingListRequest.getGender(),
+                Gender.getGenderById(meetingListRequest.getGender()),
                 meetingListRequest.getCarModel(), pageable);
         return meetings.map(Meeting::toMeetingInfo);
     }
