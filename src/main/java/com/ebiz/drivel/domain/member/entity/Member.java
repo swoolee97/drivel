@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +53,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<CourseReview> courseReviews;
+
+    @Size(min = 10, max = 50, message = "10자 이상 50자 이내로 적어주세요")
+    private String description;
 
     public boolean hasDefaultProfileImage() {
         return imagePath.contains(DEFAULT_PROFILE_IMAGE_PREFIX);

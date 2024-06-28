@@ -2,14 +2,17 @@ package com.ebiz.drivel.domain.meeting.entity;
 
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
+import com.ebiz.drivel.domain.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -68,8 +71,9 @@ public class Meeting {
     private Integer endAge;
 
     @Setter
-    @Column(name = "master_member_id")
-    private Long masterMemberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "master_member_id", referencedColumnName = "id")
+    private Member masterMember;
 
     @Column(name = "car_model")
     private String carModel;
@@ -81,6 +85,11 @@ public class Meeting {
     @Min(value = 1, message = "1이상의 숫자만 가능합니다")
     @Max(value = 50, message = "50이하의 숫자만 가능합니다")
     private Integer minCarCareer;
+
+    @Column(name = "capacity")
+    @Min(value = 2, message = "최소 두명부터 가능합니다")
+    @Max(value = 20, message = "20명까지만 가능합니다")
+    private Integer capacity;
 
     public static MeetingInfoResponse toMeetingInfo(Meeting meeting) {
         return MeetingInfoResponse.builder()
