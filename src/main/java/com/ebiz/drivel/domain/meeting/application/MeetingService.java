@@ -7,8 +7,6 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,12 +28,12 @@ public class MeetingService {
         return Meeting.toMeetingInfo(meeting);
     }
 
-    public List<MeetingInfoResponse> getMeetings(MeetingListRequest meetingListRequest, Pageable pageable) {
+    public Page<MeetingInfoResponse> getMeetings(MeetingListRequest meetingListRequest, Pageable pageable) {
         Page<Meeting> meetings = meetingRepository.findByCondition(
                 meetingListRequest.getAge(),
                 meetingListRequest.getGender(),
                 meetingListRequest.getCarModel(), pageable);
-        return meetings.stream().map(Meeting::toMeetingInfo).collect(Collectors.toList());
+        return meetings.map(Meeting::toMeetingInfo);
     }
 
     public Meeting insertMeeting(CreateMeetingRequest createMeetingRequest) {
