@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.meeting.entity;
 
 import com.ebiz.drivel.domain.course.entity.Course;
+import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,6 +17,7 @@ import jakarta.validation.constraints.Size;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
@@ -23,6 +25,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Entity
 @Table(name = "meeting")
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
@@ -68,5 +71,21 @@ public class Meeting {
 
     @Column(name = "car_model")
     private String carModel;
+
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    public static MeetingInfoResponse toMeetingInfo(Meeting meeting) {
+        return MeetingInfoResponse.builder()
+                .id(meeting.getId())
+                .title(meeting.getTitle())
+                .gender(meeting.getGender().getDisplayName())
+                .startAge(meeting.getStartAge())
+                .waypoints(meeting.getCourse().getWaypoints())
+                .endAge(meeting.getEndAge())
+                .carModel(meeting.getCarModel())
+                .imagePath(meeting.getCourse().getImagePath())
+                .build();
+    }
 
 }
