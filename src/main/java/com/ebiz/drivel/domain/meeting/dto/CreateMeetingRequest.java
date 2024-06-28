@@ -30,6 +30,8 @@ public class CreateMeetingRequest {
     private Integer endAge;
     @Nullable
     private String carModel;
+    @Nullable
+    private Integer minCarCareer;
 
     public Meeting toEntity() {
         Course course = Course.builder().id(courseId).build();
@@ -43,6 +45,7 @@ public class CreateMeetingRequest {
                 .gender(Gender.getGenderById(getGender()))
                 .startAge(getStartAge())
                 .carModel(getCarModel())
+                .minCarCareer(getMinCarCareer())
                 .endAge(getEndAge()).build();
     }
 }

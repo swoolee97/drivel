@@ -17,4 +17,5 @@ public class MeetingInfoResponse {
     private String gender;
     private String carModel;
     private String imagePath;
+    private Integer minCarCareer;
 }

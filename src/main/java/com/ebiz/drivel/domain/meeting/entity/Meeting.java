@@ -13,6 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
 import lombok.AllArgsConstructor;
@@ -75,6 +77,11 @@ public class Meeting {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Column(name = "min_car_career")
+    @Min(value = 1, message = "1이상의 숫자만 가능합니다")
+    @Max(value = 50, message = "50이하의 숫자만 가능합니다")
+    private Integer minCarCareer;
+
     public static MeetingInfoResponse toMeetingInfo(Meeting meeting) {
         return MeetingInfoResponse.builder()
                 .id(meeting.getId())
@@ -85,6 +92,7 @@ public class Meeting {
                 .endAge(meeting.getEndAge())
                 .carModel(meeting.getCarModel())
                 .imagePath(meeting.getCourse().getImagePath())
+                .minCarCareer(meeting.getMinCarCareer())
                 .build();
     }
 
