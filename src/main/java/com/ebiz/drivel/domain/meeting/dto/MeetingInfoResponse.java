@@ -8,9 +8,10 @@ import lombok.Getter;
 @Builder
 @Getter
 public class MeetingInfoResponse {
-    private Long id;
-    private Boolean liked;
-    private String title;
+    private Long meetingId;
+    private Long courseId;
+    private String meetingTitle;
+    private String courseTitle;
     private List<Waypoint> waypoints;
     private Integer startAge;
     private Integer endAge;

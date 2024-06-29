@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum Gender {
-    NONE(0, "제한없음"),
+    NONE(0, null),
     MALE(1, "남자"),
     FEMALE(2, "여자");
 

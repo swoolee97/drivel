@@ -30,8 +30,8 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
+    @Column(name = "title", nullable = false, length = 50)
+    private String title;
 
     @Column(name = "latitude", nullable = false, precision = 8, scale = 6)
     private BigDecimal latitude;

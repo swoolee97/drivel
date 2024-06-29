@@ -9,7 +9,7 @@ import lombok.Getter;
 public class CourseDTO {
     private Long id;
     private boolean liked;
-    private String name;
+    private String title;
     private String description;
     private String imagePath;
 
@@ -17,7 +17,7 @@ public class CourseDTO {
         return CourseDTO.builder()
                 .id(course.getId())
                 .liked(isLiked)
-                .name(course.getName())
+                .title(course.getTitle())
                 .description(course.getDescription())
                 .imagePath(course.getImagePath())
                 .build();

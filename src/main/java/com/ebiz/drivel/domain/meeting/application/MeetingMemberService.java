@@ -18,12 +18,13 @@ public class MeetingMemberService {
 
     public MeetingMember insertMeetingMember(Meeting meeting) {
         Member member = userDetailsService.getMemberByContextHolder();
+        MeetingMemberId meetingMemberId = MeetingMemberId.builder()
+                .meetingId(meeting.getId())
+                .memberId(member.getId()).build();
         MeetingMember meetingMember = MeetingMember.builder()
-                .meetingMemberId(MeetingMemberId.builder()
-                        .memberId(member.getId())
-                        .meetingId(meeting.getId())
-                        .build())
-                .build();
+                .meetingMemberId(meetingMemberId)
+                .meeting(meeting)
+                .member(member).build();
         return meetingMemberRepository.save(meetingMember);
     }
 

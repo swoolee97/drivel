@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
@@ -60,7 +59,7 @@ public class Meeting {
     @Size(min = 3, max = 30, message = "집결지는 3자 이상 30자 이하로 적어주세요")
     private String meetingPoint;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
@@ -99,15 +98,18 @@ public class Meeting {
     private List<MeetingMember> meetingMembers;
 
     public static MeetingInfoResponse toMeetingInfo(Meeting meeting) {
+        Course course = meeting.getCourse();
         return MeetingInfoResponse.builder()
-                .id(meeting.getId())
-                .title(meeting.getTitle())
+                .meetingId(meeting.getId())
+                .courseId(course.getId())
+                .meetingTitle(meeting.getTitle())
+                .courseTitle(course.getTitle())
                 .gender(meeting.getGender().getDisplayName())
                 .startAge(meeting.getStartAge())
-                .waypoints(meeting.getCourse().getWaypoints())
+                .waypoints(course.getWaypoints())
                 .endAge(meeting.getEndAge())
                 .carModel(meeting.getCarModel())
-                .imagePath(meeting.getCourse().getImagePath())
+                .imagePath(course.getImagePath())
                 .minCarCareer(meeting.getMinCarCareer())
                 .build();
     }
