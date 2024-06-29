@@ -6,6 +6,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class MeetingInfoDTO {
+    private Long id;
     private String description;
     private MeetingConditionDTO condition;
     private MeetingMasterInfoDTO masterInfo;

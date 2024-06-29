@@ -65,6 +65,7 @@ public class MeetingService {
 
         return MeetingDetailResponse.builder()
                 .meetingInfo(MeetingInfoDTO.builder()
+                        .id(meeting.getId())
                         .description(meeting.getDescription())
                         .condition(meetingConditionDTO)
                         .masterInfo(meetingMasterInfoDTO)
