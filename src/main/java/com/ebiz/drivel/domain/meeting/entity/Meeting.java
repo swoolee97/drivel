@@ -85,13 +85,13 @@ public class Meeting {
     private Boolean isActive;
 
     @Column(name = "min_car_career")
-    @Min(value = 1, message = "1이상의 숫자만 가능합니다")
-    @Max(value = 50, message = "50이하의 숫자만 가능합니다")
+    @Min(value = 1, message = "경력은 1이상의 숫자만 가능합니다")
+    @Max(value = 50, message = "경력은 50이하의 숫자만 가능합니다")
     private Integer minCarCareer;
 
     @Column(name = "capacity")
-    @Min(value = 2, message = "최소 두명부터 가능합니다")
-    @Max(value = 20, message = "20명까지 가능합니다")
+    @Min(value = 2, message = "제한인원은 최소 두명입니다")
+    @Max(value = 20, message = "제한인원은 최대 20명입니다")
     private Integer capacity;
 
     @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY)
