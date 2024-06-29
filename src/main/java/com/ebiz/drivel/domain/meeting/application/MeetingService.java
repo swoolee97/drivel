@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.meeting.application;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
+import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingConditionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
@@ -27,16 +28,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class MeetingService {
 
     private static final String MEETING_NOT_FOUND_EXCEPTION_MESSAGE = "찾을 수 없는 모임입니다";
+    private static final String MEETING_CREATE_SUCCESS_MESSAGE = "모임이 생성되었습니다";
 
     private final MeetingRepository meetingRepository;
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
 
     @Transactional
-    public MeetingInfoResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
+    public CreateMeetingResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
         Meeting meeting = insertMeeting(createMeetingRequest);
         meetingMemberService.insertMeetingMember(meeting);
-        return Meeting.toMeetingInfo(meeting);
+        return CreateMeetingResponse.builder()
+                .message(MEETING_CREATE_SUCCESS_MESSAGE)
+                .courseId(meeting.getCourse().getId())
+                .meetingId(meeting.getId())
+                .build();
     }
 
     public Page<MeetingInfoResponse> getMeetings(MeetingListRequest meetingListRequest, Pageable pageable) {

@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.meeting.api;
 
 import com.ebiz.drivel.domain.meeting.application.MeetingService;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
+import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
@@ -25,10 +26,10 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @PostMapping
-    public ResponseEntity<MeetingInfoResponse> createMeeting(
+    public ResponseEntity<CreateMeetingResponse> createMeeting(
             @Valid @RequestBody CreateMeetingRequest createMeetingRequest) {
-        MeetingInfoResponse meetingInfoResponse = meetingService.createMeeting(createMeetingRequest);
-        return ResponseEntity.ok(meetingInfoResponse);
+        CreateMeetingResponse createMeetingResponse = meetingService.createMeeting(createMeetingRequest);
+        return ResponseEntity.ok(createMeetingResponse);
     }
 
     @GetMapping
