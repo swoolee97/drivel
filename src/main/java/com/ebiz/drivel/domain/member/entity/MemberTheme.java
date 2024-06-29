@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.course.entity;
+package com.ebiz.drivel.domain.member.entity;
 
 import com.ebiz.drivel.domain.theme.entity.Theme;
 import jakarta.persistence.EmbeddedId;
@@ -10,17 +10,17 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Getter;
 
-@Entity
 @Getter
-@Table(name = "course_theme")
-public class CourseTheme {
+@Entity
+@Table(name = "member_theme")
+public class MemberTheme {
     @EmbeddedId
-    private CourseThemeId id;
+    private MemberThemeId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("courseId")
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
-    private Course course;
+    @MapsId("memberId")
+    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("themeId")

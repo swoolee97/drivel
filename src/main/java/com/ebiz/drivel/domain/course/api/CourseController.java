@@ -8,6 +8,7 @@ import com.ebiz.drivel.domain.course.service.CourseService;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
 import com.ebiz.drivel.domain.festival.service.FestivalService;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
+import com.ebiz.drivel.domain.theme.dto.CourseThemeDTO;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
 import com.ebiz.drivel.domain.waypoint.dto.WaypointDTO;
@@ -35,7 +36,7 @@ public class CourseController {
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
         boolean liked = courseLikeService.isCourseLikedByMember(course);
-        CourseDTO courseDTO = CourseDTO.from(course);
+        CourseDTO courseDTO = CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course));
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
@@ -59,16 +60,22 @@ public class CourseController {
 
     @PutMapping("/like/{courseId}")
     public ResponseEntity<BaseResponse> updateCourseLike(@PathVariable Long courseId) {
-        courseService.updateCourseLike(courseId);
+        courseLikeService.updateCourseLike(courseId);
         return ResponseEntity.ok(BaseResponse.builder().build());
     }
 
     @GetMapping("/liked")
     public ResponseEntity<CourseResponse> findLikedCourses() {
-        List<CourseDTO> likedCourses = courseService.findLikedCourses();
+        List<CourseDTO> likedCourses = courseLikeService.findLikedCourses();
         return ResponseEntity.ok(CourseResponse.builder()
                 .courses(likedCourses)
                 .build());
     }
 
+    @GetMapping("/my-theme")
+    public ResponseEntity<List<CourseThemeDTO>> getHomeCoursesByThemes() {
+        List<CourseThemeDTO> courseThemes = courseService.getCoursesByTheme();
+        return ResponseEntity.ok(courseThemes);
+    }
+    
 }

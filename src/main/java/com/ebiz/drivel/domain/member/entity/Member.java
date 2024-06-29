@@ -61,6 +61,9 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MeetingMember> meetingMembers;
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<MemberTheme> memberThemes;
+
     public boolean hasDefaultProfileImage() {
         return imagePath.contains(DEFAULT_PROFILE_IMAGE_PREFIX);
     }

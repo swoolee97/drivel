@@ -20,7 +20,7 @@ public class ThemeDTO {
 
     public static ThemeDTO from(CourseTheme courseTheme) {
         return ThemeDTO.builder()
-                .id(courseTheme.getId())
+                .id(courseTheme.getTheme().getId())
                 .displayName(courseTheme.getTheme().getDisplayName())
                 .build();
     }
