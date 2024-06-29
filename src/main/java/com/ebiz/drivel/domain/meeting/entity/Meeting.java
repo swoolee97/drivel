@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.meeting.entity;
 
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
+import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -20,6 +22,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -88,8 +92,11 @@ public class Meeting {
 
     @Column(name = "capacity")
     @Min(value = 2, message = "최소 두명부터 가능합니다")
-    @Max(value = 20, message = "20명까지만 가능합니다")
+    @Max(value = 20, message = "20명까지 가능합니다")
     private Integer capacity;
+
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY)
+    private List<MeetingMember> meetingMembers;
 
     public static MeetingInfoResponse toMeetingInfo(Meeting meeting) {
         return MeetingInfoResponse.builder()
@@ -103,6 +110,14 @@ public class Meeting {
                 .imagePath(meeting.getCourse().getImagePath())
                 .minCarCareer(meeting.getMinCarCareer())
                 .build();
+    }
+
+    public List<MeetingMemberInfoDTO> getParticipantsInfo() {
+        return meetingMembers.stream()
+                .filter(meetingMember -> meetingMember.getIsActive())
+                .map(meetingMember -> meetingMember.getMember())
+                .map(MeetingMemberInfoDTO::from)
+                .collect(Collectors.toList());
     }
 
 }

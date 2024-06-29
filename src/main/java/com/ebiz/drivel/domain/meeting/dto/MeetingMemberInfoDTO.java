@@ -6,13 +6,15 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class MeetingMasterInfoDTO {
+public class MeetingMemberInfoDTO {
+    private Long id;
     private String imagePath;
     private String nickname;
     private String description;
 
-    public static MeetingMasterInfoDTO from(Member member) {
-        return MeetingMasterInfoDTO.builder()
+    public static MeetingMemberInfoDTO from(Member member) {
+        return MeetingMemberInfoDTO.builder()
+                .id(member.getId())
                 .imagePath(member.getImagePath())
                 .nickname(member.getNickname())
                 .description(member.getDescription())

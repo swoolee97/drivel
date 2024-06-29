@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.member.entity;
 import static com.ebiz.drivel.domain.profile.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
 
 import com.ebiz.drivel.domain.course.entity.CourseLike;
+import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,6 +57,9 @@ public class Member {
 
     @Size(min = 10, max = 50, message = "10자 이상 50자 이내로 적어주세요")
     private String description;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<MeetingMember> meetingMembers;
 
     public boolean hasDefaultProfileImage() {
         return imagePath.contains(DEFAULT_PROFILE_IMAGE_PREFIX);

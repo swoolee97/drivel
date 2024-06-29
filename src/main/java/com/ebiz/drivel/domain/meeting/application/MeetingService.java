@@ -8,11 +8,14 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
+import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
+import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,13 +60,24 @@ public class MeetingService {
 
         MeetingConditionDTO meetingConditionDTO = MeetingConditionDTO.from(meeting);
         MeetingMasterInfoDTO meetingMasterInfoDTO = MeetingMasterInfoDTO.from(meeting.getMasterMember());
+        List<MeetingMemberInfoDTO> participantsInfo = meeting.getParticipantsInfo();
+        MeetingParticipantsInfoDTO meetingParticipantsInfo = createParticipantsInfo(meeting, participantsInfo);
 
         return MeetingDetailResponse.builder()
                 .meetingInfo(MeetingInfoDTO.builder()
-                        .meetingDescription(meeting.getDescription())
-                        .meetingCondition(meetingConditionDTO)
-                        .meetingMasterInfo(meetingMasterInfoDTO)
+                        .description(meeting.getDescription())
+                        .condition(meetingConditionDTO)
+                        .masterInfo(meetingMasterInfoDTO)
+                        .participantsInfo(meetingParticipantsInfo)
                         .build())
+                .build();
+    }
+
+    private MeetingParticipantsInfoDTO createParticipantsInfo(Meeting meeting,
+                                                              List<MeetingMemberInfoDTO> participantsInfo) {
+        return MeetingParticipantsInfoDTO.builder()
+                .capacity(meeting.getCapacity())
+                .membersInfo(participantsInfo)
                 .build();
     }
 
