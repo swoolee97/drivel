@@ -13,6 +13,9 @@ public class MeetingInfoResponse {
     private String meetingTitle;
     private String courseTitle;
     private List<Waypoint> waypoints;
+    private String meetingPoint;
+    private Integer capacity;
+    private Long participantsCount;
     private Integer startAge;
     private Integer endAge;
     private String gender;

@@ -104,6 +104,9 @@ public class Meeting {
                 .courseId(course.getId())
                 .meetingTitle(meeting.getTitle())
                 .courseTitle(course.getTitle())
+                .meetingPoint(meeting.getMeetingPoint())
+                .capacity(meeting.getCapacity())
+                .participantsCount(meeting.countParticipants())
                 .gender(meeting.getGender().getDisplayName())
                 .startAge(meeting.getStartAge())
                 .waypoints(course.getWaypoints())
@@ -112,6 +115,10 @@ public class Meeting {
                 .imagePath(course.getImagePath())
                 .minCarCareer(meeting.getMinCarCareer())
                 .build();
+    }
+
+    public Long countParticipants() {
+        return meetingMembers.stream().filter(MeetingMember::getIsActive).count();
     }
 
     public List<MeetingMemberInfoDTO> getParticipantsInfo() {
