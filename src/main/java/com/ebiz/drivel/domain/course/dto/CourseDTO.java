@@ -23,4 +23,13 @@ public class CourseDTO {
                 .build();
     }
 
+    public static CourseDTO from(Course course) {
+        return CourseDTO.builder()
+                .id(course.getId())
+                .title(course.getTitle())
+                .description(course.getDescription())
+                .imagePath(course.getImagePath())
+                .build();
+    }
+
 }

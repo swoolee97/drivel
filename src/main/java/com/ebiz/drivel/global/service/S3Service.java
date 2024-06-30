@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -80,6 +81,25 @@ public class S3Service {
             e.printStackTrace();
             throw new AmazonS3Exception("삭제할 때 오류");
         }
+    }
+    
+    public String uploadJsonToS3(String bucketName, String jsonContent, String uploadFileName) {
+        byte[] jsonBytes = (jsonContent).getBytes(StandardCharsets.UTF_8);
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("application/json; charset=UTF-8");
+        metadata.setContentLength(jsonBytes.length);
+
+        // S3에 업로드할 객체 생성
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadFileName,
+                new ByteArrayInputStream(jsonBytes), metadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead);
+
+        // JSON 파일을 S3에 업로드
+        amazonS3.putObject(putObjectRequest);
+
+        // 업로드된 JSON 파일의 URL 반환
+        return amazonS3.getUrl(bucketName, uploadFileName).toString();
     }
 
     private String getKeyFromProfileImageAddress(String imageUrl) {

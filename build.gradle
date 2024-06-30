@@ -48,6 +48,8 @@ dependencies {
     // xml
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.0'
+    //json parser
+    implementation group: 'org.json', name: 'json', version: '20160810'
 }
 
 tasks.named('test') {

@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,6 +66,13 @@ public class Course {
 
     public int countReviews() {
         return courseReviews.size();
+    }
+
+    public String generateWaypointString() {
+        return String.join("-",
+                waypoints.stream()
+                        .map(waypoint -> waypoint.getName())
+                        .collect(Collectors.toList()));
     }
 
 }
