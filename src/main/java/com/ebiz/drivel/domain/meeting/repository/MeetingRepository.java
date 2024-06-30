@@ -14,6 +14,7 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
             "(:age IS NULL OR (m.startAge IS NULL OR (m.startAge <= :age AND m.endAge >= :age))) AND " +
             "(:gender = 'NONE' OR m.gender = :gender OR m.gender = 'NONE') AND " +
             "(:carModel IS NULL OR m.carModel = :carModel) AND " +
+            "(m.meetingDate >= CURRENT_DATE) AND " +
             "(m.isActive = TRUE)")
     Page<Meeting> findByCondition(@Param("age") Integer age,
                                   @Param("gender") Gender gender,
