@@ -24,9 +24,9 @@ public class CreateMeetingRequest {
     private Long courseId;
     @NotNull
     private Integer gender;
-    @NotNull
+    @Nullable
     private Integer startAge;
-    @NotNull
+    @Nullable
     private Integer endAge;
     @Nullable
     private String carModel;

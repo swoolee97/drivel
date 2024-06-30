@@ -11,14 +11,18 @@ public class MeetingConditionDTO {
     private Integer capacity;
     private String gender;
     private Integer minCarCareer;
+    private Integer startAge;
+    private Integer endAge;
     private String carModel;
 
     public static MeetingConditionDTO from(Meeting meeting) {
         return MeetingConditionDTO.builder()
-                .capacity(meeting.getCapacity())
                 .meetingPoint(meeting.getMeetingPoint())
+                .capacity(meeting.getCapacity())
                 .gender(meeting.getGender().getDisplayName())
                 .minCarCareer(meeting.getMinCarCareer())
+                .startAge(meeting.getStartAge())
+                .endAge(meeting.getEndAge())
                 .carModel(meeting.getCarModel())
                 .build();
     }
