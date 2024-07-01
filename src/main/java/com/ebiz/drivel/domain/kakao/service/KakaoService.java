@@ -9,6 +9,7 @@ import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.member.util.NicknameGenerator;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
+import com.ebiz.drivel.domain.token.repository.TokenRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,11 @@ import reactor.core.publisher.Flux;
 @Service
 @RequiredArgsConstructor
 public class KakaoService {
+    private static final String DUPLICATED_SIGN_UP_EXCEPTION_MESSAGE = "이미 가입된 회원입니다";
+    private static final String TOKEN_URI = "https://kauth.kakao.com/oauth/token";
+    private static final String GRANT_TYPE = "authorization_code";
+    private static final String USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
+
     @Value("${KAKAO_RESTAPI_KEY}")
     private String CLIENT_ID;
     @Value("${KAKAO_REDIRECT_URI}")
@@ -35,11 +41,7 @@ public class KakaoService {
     private final WebClient webClient;
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
-
-    private static final String DUPLICATED_SIGN_UP_EXCEPTION_MESSAGE = "이미 가입된 회원입니다";
-    private static final String TOKEN_URI = "https://kauth.kakao.com/oauth/token";
-    private static final String GRANT_TYPE = "authorization_code";
-    private static final String USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
+    private final TokenRepository tokenRepository;
 
     @Transactional
     public SignInDTO loginWithKakao(String email) {
@@ -54,6 +56,7 @@ public class KakaoService {
 
         String accessToken = jwtProvider.generateAccessToken(authentication);
         String refreshToken = jwtProvider.generateRefreshToken(authentication);
+        tokenRepository.save(member.getId(), refreshToken);
 
         return SignInDTO.builder()
                 .accessToken(accessToken)
