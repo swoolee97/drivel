@@ -11,8 +11,10 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
+import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
+import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
@@ -86,6 +88,19 @@ public class MeetingService {
                 .capacity(meeting.getCapacity())
                 .membersInfo(participantsInfo)
                 .build();
+    }
+
+    public List<UpcomingMeetingResponse> getUpcomingMeetings() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        return member.getMeetingMembers().stream()
+                .map(MeetingMember::getMeeting)
+                .filter(Meeting::isUpcomingMeeting)
+                .map(meeting -> UpcomingMeetingResponse.builder()
+                        .id(meeting.getId())
+                        .title(meeting.getTitle())
+                        .meetingDate(meeting.getMeetingDate())
+                        .build())
+                .toList();
     }
 
 }

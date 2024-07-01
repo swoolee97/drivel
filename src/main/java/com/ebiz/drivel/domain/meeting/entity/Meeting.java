@@ -20,6 +20,7 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -126,6 +127,10 @@ public class Meeting {
                 .map(meetingMember -> meetingMember.getMember())
                 .map(MeetingMemberInfoDTO::from)
                 .collect(Collectors.toList());
+    }
+
+    public boolean isUpcomingMeeting() {
+        return meetingDate.after(Date.from(Instant.now()));
     }
 
 }

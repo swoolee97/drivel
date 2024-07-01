@@ -6,7 +6,9 @@ import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
+import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +45,12 @@ public class MeetingController {
     public ResponseEntity<MeetingDetailResponse> getMeetingDetail(@PathVariable Long id) {
         MeetingDetailResponse meetingDetailResponse = meetingService.getMeetingDetail(id);
         return ResponseEntity.ok(meetingDetailResponse);
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<UpcomingMeetingResponse>> getUpcomingMeetings() {
+        List<UpcomingMeetingResponse> upcomingMeetings = meetingService.getUpcomingMeetings();
+        return ResponseEntity.ok(upcomingMeetings);
     }
 
 }
