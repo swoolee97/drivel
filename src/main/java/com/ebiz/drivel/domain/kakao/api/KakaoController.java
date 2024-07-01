@@ -29,8 +29,7 @@ public class KakaoController {
     @GetMapping("/login")
     public ResponseEntity<BaseResponse> loginWithKakao(@RequestParam("code") String code) {
         KakaoTokenResponse kakaoTokenResponse = kakaoService.getToken(code);
-        KakaoUserInfoResponse userInfoResponse = kakaoService.getUserInfo(
-                kakaoTokenResponse.getAccess_token());
+        KakaoUserInfoResponse userInfoResponse = kakaoService.getUserInfo(kakaoTokenResponse.getAccess_token());
         SignInDTO signInDTO = kakaoService.loginWithKakao(userInfoResponse.getKakao_account().getEmail());
         return ResponseEntity.ok().body(signInDTO);
     }

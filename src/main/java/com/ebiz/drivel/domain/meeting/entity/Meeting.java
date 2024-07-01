@@ -59,7 +59,7 @@ public class Meeting {
     @Size(min = 3, max = 30, message = "집결지는 3자 이상 30자 이하로 적어주세요")
     private String meetingPoint;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
@@ -109,7 +109,6 @@ public class Meeting {
                 .participantsCount(meeting.countParticipants())
                 .gender(meeting.getGender().getDisplayName())
                 .startAge(meeting.getStartAge())
-                .waypoints(course.getWaypoints())
                 .endAge(meeting.getEndAge())
                 .carModel(meeting.getCarModel())
                 .imagePath(course.getImagePath())

@@ -1,7 +1,5 @@
 package com.ebiz.drivel.domain.meeting.dto;
 
-import com.ebiz.drivel.domain.waypoint.entity.Waypoint;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,7 +10,6 @@ public class MeetingInfoResponse {
     private Long courseId;
     private String meetingTitle;
     private String courseTitle;
-    private List<Waypoint> waypoints;
     private String meetingPoint;
     private Integer capacity;
     private Long participantsCount;
