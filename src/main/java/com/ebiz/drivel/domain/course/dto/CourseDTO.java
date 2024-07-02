@@ -11,12 +11,14 @@ public class CourseDTO {
     private boolean liked;
     private String title;
     private String description;
+    private Double distance;
     private String imagePath;
 
     public static CourseDTO from(Course course, boolean isLiked) {
         return CourseDTO.builder()
                 .id(course.getId())
                 .liked(isLiked)
+                .distance(course.getDistance())
                 .title(course.getTitle())
                 .description(course.getDescription())
                 .imagePath(course.getImagePath())
