@@ -28,7 +28,6 @@ public class WaypointDTO {
                 .order(waypoint.getOrder())
                 .latitude(waypoint.getLatitude())
                 .longitude(waypoint.getLongitude())
-                .description(waypoint.getDescription())
                 .build();
     }
 

@@ -36,7 +36,5 @@ public class Waypoint {
 
     @Column(name = "longitude", nullable = false, precision = 13, scale = 10)
     private BigDecimal longitude;
-
-    @Column(name = "description")
-    private String description;
+    
 }
