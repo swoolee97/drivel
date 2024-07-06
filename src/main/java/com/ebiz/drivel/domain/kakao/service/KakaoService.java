@@ -40,8 +40,10 @@ public class KakaoService {
     private String REDIRECT_URI;
     private final WebClient webClient;
     private final MemberRepository memberRepository;
+    private final NicknameGenerator nicknameGenerator;
     private final JwtProvider jwtProvider;
     private final TokenRepository tokenRepository;
+    private final ProfileImageGenerator profileImageGenerator;
 
     @Transactional
     public SignInDTO loginWithKakao(String email) {
@@ -68,8 +70,8 @@ public class KakaoService {
     public Member signUpWithKakao(String email) {
         return memberRepository.save(Member.builder()
                 .email(email)
-                .nickname(NicknameGenerator.generateUniqueNickname())
-                .imagePath(ProfileImageGenerator.getDefaultProfileImagePath())
+                .nickname(nicknameGenerator.generateUniqueNickname())
+                .imagePath(profileImageGenerator.getDefaultProfileImagePath())
                 .build());
     }
 

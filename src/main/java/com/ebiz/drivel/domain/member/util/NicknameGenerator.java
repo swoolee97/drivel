@@ -19,7 +19,7 @@ public class NicknameGenerator {
         staticMemberService = memberService;
     }
 
-    public static String generateUniqueNickname() {
+    public String generateUniqueNickname() {
         while (true) {
             String randomNickname = generateRandomNickname();
             if (!isNicknameDuplicate(randomNickname)) {

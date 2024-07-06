@@ -20,7 +20,7 @@ public class ProfileImageGenerator {
         PROFILE_IMAGE_PATH = profileImagePath;
     }
 
-    public static String getDefaultProfileImagePath() {
+    public String getDefaultProfileImagePath() {
         Random random = new Random();
         String randomNumber = String.valueOf(random.nextInt(3) + 1);
         return PROFILE_IMAGE_PATH + DEFAULT_PROFILE_IMAGE_PREFIX + randomNumber + DEFAULT_PROFILE_IMAGE_SUFFIX;

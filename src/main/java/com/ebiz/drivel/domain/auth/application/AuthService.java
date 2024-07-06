@@ -46,16 +46,20 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final BlackListRepository blackListRepository;
     private final NicknameGenerator nicknameGenerator;
+    private final ProfileImageGenerator profileImageGenerator;
 
     @Transactional
     public Member signUp(SignUpRequest request) {
         try {
             String nickname = nicknameGenerator.generateUniqueNickname();
+            String encodedPassword = encoder.encode(request.getPassword());
+            String defaultImagePath = profileImageGenerator.getDefaultProfileImagePath();
+
             Member member = Member.builder()
                     .email(request.getEmail())
-                    .password(encoder.encode(request.getPassword()))
+                    .password(encodedPassword)
                     .nickname(nickname)
-                    .imagePath(ProfileImageGenerator.getDefaultProfileImagePath())
+                    .imagePath(defaultImagePath)
                     .build();
             return memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {

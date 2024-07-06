@@ -18,13 +18,14 @@ public class ProfileService {
     @Value("${cloud.aws.s3.profileImageBucketName}")
     private String PROFILE_IMAGE_BUCKET_NAME;
     private final S3Service s3Service;
+    private final ProfileImageGenerator profileImageGenerator;
     private final UserDetailsServiceImpl userDetailsService;
 
     @Transactional
     public void changeProfileImage(MultipartFile image) throws IOException {
         Member member = userDetailsService.getMemberByContextHolder();
         String newImagePath =
-                image == null ? ProfileImageGenerator.getDefaultProfileImagePath() : uploadProfileImage(image);
+                image == null ? profileImageGenerator.getDefaultProfileImagePath() : uploadProfileImage(image);
         if (!member.hasDefaultProfileImage()) {
             deleteProfileImage(member.getImagePath());
         }
