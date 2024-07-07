@@ -48,7 +48,7 @@ public class OnboardingService {
         saveMemberThemeInfo(member, request.getThemeIds());
         saveMemberRegionInfo(member, request.getRegionIds());
         saveMemberStyleInfo(member, request.getStyleIds());
-        saveMemberTogetherInfo(member, request.getPartnerIds());
+        saveMemberTogetherInfo(member, request.getTogetherIds());
     }
 
     public void saveMemberThemeInfo(Member member, List<Long> themeIds) {
