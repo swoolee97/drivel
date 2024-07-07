@@ -62,7 +62,16 @@ public class Member {
     private List<MeetingMember> meetingMembers;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<MemberRegion> memberRegions;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<MemberStyle> memberStyles;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberTheme> memberThemes;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<MemberTogether> memberTogethers;
 
     public boolean hasDefaultProfileImage() {
         return imagePath.contains(DEFAULT_PROFILE_IMAGE_PREFIX);
@@ -70,6 +79,13 @@ public class Member {
 
     public void updateProfileImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public boolean isOnboarded() {
+        return !memberRegions.isEmpty() &&
+                !memberStyles.isEmpty() &&
+                !memberThemes.isEmpty() &&
+                !memberTogethers.isEmpty();
     }
 
 }

@@ -64,6 +64,7 @@ public class KakaoService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .nickname(member.getNickname())
+                .onboarded(member.isOnboarded())
                 .build();
     }
 

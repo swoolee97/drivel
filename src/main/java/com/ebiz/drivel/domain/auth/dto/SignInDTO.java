@@ -10,4 +10,5 @@ public class SignInDTO extends BaseResponse {
     private String nickname;
     private String accessToken;
     private String refreshToken;
+    private boolean onboarded;
 }

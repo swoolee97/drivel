@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.token.api;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
+import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.token.application.TokenService;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,11 @@ public class TokenController {
 
     @PostMapping("/signIn")
     public ResponseEntity<BaseResponse> checkToken() {
-        String nickname = userDetailsService.getMemberByContextHolder().getNickname();
+        Member member = userDetailsService.getMemberByContextHolder();
         return ResponseEntity.ok(SignInDTO.builder()
                 .message(AUTO_SIGN_IN_SUCCESS_MESSAGE)
-                .nickname(nickname)
+                .nickname(member.getNickname())
+                .onboarded(member.isOnboarded())
                 .build());
     }
 

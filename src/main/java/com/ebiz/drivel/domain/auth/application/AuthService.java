@@ -78,6 +78,7 @@ public class AuthService {
                 .nickname(member.getNickname())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .onboarded(member.isOnboarded())
                 .build();
     }
 
