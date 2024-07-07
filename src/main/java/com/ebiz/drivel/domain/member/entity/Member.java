@@ -82,10 +82,7 @@ public class Member {
     }
 
     public boolean isOnboarded() {
-        return !memberRegions.isEmpty() &&
-                !memberStyles.isEmpty() &&
-                !memberThemes.isEmpty() &&
-                !memberTogethers.isEmpty();
+        return memberRegions != null && memberStyles != null && memberThemes != null && memberTogethers != null;
     }
 
 }
