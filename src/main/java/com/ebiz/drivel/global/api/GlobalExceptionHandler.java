@@ -19,7 +19,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final String INCLUDED_NULL_DATA_EXCEPTION_MESSAGE = "빈 값이 있습니다";
     private static final String WRONG_USER_EXCEPTION_MESSAGE = "이메일 혹은 비밀번호가 일치하지 않습니다";
     private static final String WRONG_REQUEST_EXCEPTION_MESSAGE = "잘못된 요청입니다";
     private static final String COURSE_NOT_FOUND_EXCEPTION_MESSAGE = "드라이브 코스를 찾을 수 없습니다";
@@ -33,9 +32,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity handleNullRequestException() {
+    public ResponseEntity handleNullRequestException(MethodArgumentNotValidException e) {
         return new ResponseEntity(ErrorResponse.builder()
-                .message(INCLUDED_NULL_DATA_EXCEPTION_MESSAGE)
+                .message(e.getBindingResult().getFieldErrors().get(0).getDefaultMessage())
                 .build(), HttpStatus.BAD_REQUEST);
     }
 

@@ -3,16 +3,14 @@ package com.ebiz.drivel.domain.member.entity;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Embeddable
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class MemberThemeId implements Serializable {
+public class MemberTogetherId implements Serializable {
     private Long memberId;
-    private Long themeId;
+    private Long togetherId;
 }

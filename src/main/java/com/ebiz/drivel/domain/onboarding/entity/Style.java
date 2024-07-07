@@ -1,4 +1,4 @@
-package com.ebiz.drivel.onboarding.entity;
+package com.ebiz.drivel.domain.onboarding.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

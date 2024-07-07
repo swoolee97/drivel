@@ -1,4 +1,4 @@
-package com.ebiz.drivel.onboarding.entity;
+package com.ebiz.drivel.domain.onboarding.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,8 +6,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "region")
-public class Region {
+@Table(name = "view")
+public class View {
 
     @Id
     private Long id;

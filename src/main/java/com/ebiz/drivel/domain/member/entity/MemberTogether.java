@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.member.entity;
 
-import com.ebiz.drivel.domain.theme.entity.Theme;
+import com.ebiz.drivel.domain.onboarding.entity.Together;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,19 +9,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "member_theme")
-public class MemberTheme {
+@AllArgsConstructor
+@Table(name = "member_together")
+public class MemberTogether {
+
     @EmbeddedId
-    private MemberThemeId id;
+    private MemberTogetherId memberTogetherId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("memberId")
@@ -29,8 +28,8 @@ public class MemberTheme {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("themeId")
-    @JoinColumn(name = "theme_id", referencedColumnName = "id")
-    private Theme theme;
+    @MapsId("togetherId")
+    @JoinColumn(name = "together_id", referencedColumnName = "id")
+    private Together together;
 
 }
