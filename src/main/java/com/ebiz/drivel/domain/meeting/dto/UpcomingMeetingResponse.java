@@ -7,7 +7,8 @@ import lombok.Getter;
 @Builder
 @Getter
 public class UpcomingMeetingResponse {
-    private Long id;
+    private Long meetingId;
     private String title;
     private Date meetingDate;
+    private Long courseId;
 }

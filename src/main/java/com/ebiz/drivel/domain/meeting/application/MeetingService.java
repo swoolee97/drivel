@@ -98,9 +98,10 @@ public class MeetingService {
                 .map(MeetingMember::getMeeting)
                 .filter(Meeting::isUpcomingMeeting)
                 .map(meeting -> UpcomingMeetingResponse.builder()
-                        .id(meeting.getId())
+                        .meetingId(meeting.getId())
                         .title(meeting.getTitle())
                         .meetingDate(meeting.getMeetingDate())
+                        .courseId(meeting.getCourse().getId())
                         .build())
                 .toList();
     }
