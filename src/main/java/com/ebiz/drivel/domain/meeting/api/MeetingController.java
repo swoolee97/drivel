@@ -1,11 +1,11 @@
 package com.ebiz.drivel.domain.meeting.api;
 
+import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.application.MeetingService;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
-import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,9 +36,14 @@ public class MeetingController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<MeetingInfoResponse>> getMeetingsInfo(MeetingListRequest meetingListRequest,
+    public ResponseEntity<Page<MeetingInfoResponse>> getMeetingsInfo(@RequestParam(required = false) Long styleId,
+                                                                     @RequestParam(required = false) Integer age,
+                                                                     @RequestParam(required = false) Integer carCareer,
+                                                                     @RequestParam(required = false) String carModel,
+                                                                     @RequestParam(required = false) OrderBy orderBy,
                                                                      Pageable pageable) {
-        Page<MeetingInfoResponse> meetings = meetingService.getMeetings(meetingListRequest, pageable);
+        Page<MeetingInfoResponse> meetings = meetingService.getFilteredMeetings(styleId, age, carCareer, carModel,
+                orderBy, pageable);
         return ResponseEntity.ok(meetings);
     }
 

@@ -1,26 +1,31 @@
 package com.ebiz.drivel.domain.meeting.application;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
+import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingConditionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
-import com.ebiz.drivel.domain.meeting.dto.MeetingListRequest;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
-import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
+import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +40,7 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
+    private final JPAQueryFactory queryFactory;
 
     @Transactional
     public CreateMeetingResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
@@ -45,14 +51,6 @@ public class MeetingService {
                 .courseId(meeting.getCourse().getId())
                 .meetingId(meeting.getId())
                 .build();
-    }
-
-    public Page<MeetingInfoResponse> getMeetings(MeetingListRequest meetingListRequest, Pageable pageable) {
-        Page<Meeting> meetings = meetingRepository.findByCondition(
-                meetingListRequest.getAge(),
-                Gender.getGenderById(meetingListRequest.getGender()),
-                meetingListRequest.getCarModel(), pageable);
-        return meetings.map(Meeting::toMeetingInfo);
     }
 
     public Meeting insertMeeting(CreateMeetingRequest createMeetingRequest) {
@@ -104,6 +102,29 @@ public class MeetingService {
                         .courseId(meeting.getCourse().getId())
                         .build())
                 .toList();
+    }
+
+    public Page<MeetingInfoResponse> getFilteredMeetings(Long styleId, Integer age, Integer carCareer,
+                                                         String carModel, OrderBy orderBy, Pageable pageable) {
+        QMeeting meeting = QMeeting.meeting;
+        BooleanBuilder filterBuilder = MeetingQueryHelper.createFilterBuilder(styleId, age, carCareer, carModel,
+                meeting);
+        OrderSpecifier<?> orderSpecifier = MeetingQueryHelper.getOrderSpecifier(orderBy, meeting);
+
+        long totalCount = queryFactory.selectFrom(meeting)
+                .where(filterBuilder)
+                .fetchCount();
+
+        List<MeetingInfoResponse> meetings = queryFactory.selectFrom(meeting)
+                .where(filterBuilder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(orderSpecifier)
+                .fetch()
+                .stream().map(MeetingInfoResponse::from)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(meetings, pageable, totalCount);
     }
 
 }

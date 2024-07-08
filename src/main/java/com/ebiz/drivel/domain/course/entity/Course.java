@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.course.entity;
 
+import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
 import com.ebiz.drivel.domain.waypoint.entity.Waypoint;
 import jakarta.persistence.Column;
@@ -60,6 +61,12 @@ public class Course {
 
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseTheme> courseThemes;
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Meeting> meetings;
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<CourseStyle> courseStyles;
 
     public double calculateAverageRating() {
         double average = courseReviews.stream().mapToLong(CourseReview::getRating).average().orElse(0);

@@ -35,6 +35,8 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
+        course.getCourseStyles()
+                .forEach(courseStyle -> System.out.println(courseStyle.getCourseStyleId().getStyleId()));
         boolean liked = courseLikeService.isCourseLikedByMember(course);
         CourseDTO courseDTO = CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course));
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
@@ -77,5 +79,5 @@ public class CourseController {
         List<CourseThemeDTO> courseThemes = courseService.getCoursesByTheme();
         return ResponseEntity.ok(courseThemes);
     }
-    
+
 }
