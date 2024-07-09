@@ -40,10 +40,11 @@ public class MeetingController {
                                                                      @RequestParam(required = false) Integer age,
                                                                      @RequestParam(required = false) Integer carCareer,
                                                                      @RequestParam(required = false) String carModel,
+                                                                     @RequestParam(required = false) Integer genderId,
                                                                      @RequestParam(required = false) OrderBy orderBy,
                                                                      Pageable pageable) {
         Page<MeetingInfoResponse> meetings = meetingService.getFilteredMeetings(styleId, age, carCareer, carModel,
-                orderBy, pageable);
+                genderId, orderBy, pageable);
         return ResponseEntity.ok(meetings);
     }
 

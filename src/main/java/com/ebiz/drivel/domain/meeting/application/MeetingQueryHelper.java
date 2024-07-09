@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.meeting.application;
 
+import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
@@ -11,7 +12,7 @@ public class MeetingQueryHelper {
     private static final String WILDCARD_FORMAT = "%%%s%%";
 
     public static BooleanBuilder createFilterBuilder(
-            Long styleId, Integer age, Integer carCareer, String carModel, QMeeting meeting) {
+            Long styleId, Integer age, Integer carCareer, String carModel, Integer genderId, QMeeting meeting) {
         BooleanBuilder filterBuilder = new BooleanBuilder();
 
         // 조건 필터링
@@ -19,6 +20,7 @@ public class MeetingQueryHelper {
         addAgeFilter(age, meeting, filterBuilder);
         addMinCarCareerFilter(carCareer, meeting, filterBuilder);
         addCarModelFilter(carModel, meeting, filterBuilder);
+        addGenderFilter(genderId, meeting, filterBuilder);
         addActiveFilter(meeting, filterBuilder);
 
         return filterBuilder;
@@ -45,6 +47,12 @@ public class MeetingQueryHelper {
     private static void addCarModelFilter(String carModel, QMeeting meeting, BooleanBuilder filterBuilder) {
         if (carModel != null) {
             filterBuilder.and(meeting.carModel.like(String.format(WILDCARD_FORMAT, carModel)));
+        }
+    }
+
+    private static void addGenderFilter(Integer genderId, QMeeting meeting, BooleanBuilder filterBuilder) {
+        if (genderId != null) {
+            filterBuilder.and(meeting.gender.isNull().or(meeting.gender.eq(Gender.getGenderById(genderId))));
         }
     }
 

@@ -105,10 +105,11 @@ public class MeetingService {
     }
 
     public Page<MeetingInfoResponse> getFilteredMeetings(Long styleId, Integer age, Integer carCareer,
-                                                         String carModel, OrderBy orderBy, Pageable pageable) {
+                                                         String carModel, Integer genderId, OrderBy orderBy,
+                                                         Pageable pageable) {
         QMeeting meeting = QMeeting.meeting;
         BooleanBuilder filterBuilder = MeetingQueryHelper.createFilterBuilder(styleId, age, carCareer, carModel,
-                meeting);
+                genderId, meeting);
         OrderSpecifier<?> orderSpecifier = MeetingQueryHelper.getOrderSpecifier(orderBy, meeting);
 
         long totalCount = queryFactory.selectFrom(meeting)
