@@ -52,7 +52,7 @@ public class MeetingQueryHelper {
 
     private static void addGenderFilter(Integer genderId, QMeeting meeting, BooleanBuilder filterBuilder) {
         if (genderId != null) {
-            filterBuilder.and(meeting.gender.isNull().or(meeting.gender.eq(Gender.getGenderById(genderId))));
+            filterBuilder.and(meeting.gender.eq(Gender.NONE).or(meeting.gender.eq(Gender.getGenderById(genderId))));
         }
     }
 
