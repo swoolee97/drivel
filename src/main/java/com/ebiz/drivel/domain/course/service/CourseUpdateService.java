@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -27,6 +28,7 @@ public class CourseUpdateService {
     private final CourseRepository courseRepository;
     private final S3Service s3Service;
 
+    @Transactional
     @Scheduled(cron = "0 0 4 * * ?")
     public void updateCourseData() throws JsonProcessingException {
         List<Course> courses = courseRepository.findAll();
