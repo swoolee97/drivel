@@ -44,9 +44,6 @@ public class Course {
     @Column(name = "description", length = 50)
     private String description;
 
-    @Column(name = "distance")
-    private Double distance;
-
     @Column(name = "image_path")
     private String imagePath;
 
