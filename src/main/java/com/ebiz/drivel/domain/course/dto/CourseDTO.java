@@ -11,6 +11,8 @@ public class CourseDTO {
     private boolean liked;
     private String title;
     private String description;
+    private int reviewCount;
+    private double averageRating;
     private String imagePath;
 
     public static CourseDTO from(Course course, boolean isLiked) {
@@ -19,6 +21,8 @@ public class CourseDTO {
                 .liked(isLiked)
                 .title(course.getTitle())
                 .description(course.getDescription())
+                .reviewCount(course.countReviews())
+                .averageRating(course.calculateAverageRating())
                 .imagePath(course.getImagePath())
                 .build();
     }
@@ -28,6 +32,8 @@ public class CourseDTO {
                 .id(course.getId())
                 .title(course.getTitle())
                 .description(course.getDescription())
+                .reviewCount(course.countReviews())
+                .averageRating(course.calculateAverageRating())
                 .imagePath(course.getImagePath())
                 .build();
     }

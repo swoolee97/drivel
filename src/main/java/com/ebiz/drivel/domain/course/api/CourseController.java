@@ -4,6 +4,7 @@ import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.service.CourseLikeService;
+import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.course.service.CourseService;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
 import com.ebiz.drivel.domain.festival.service.FestivalService;
@@ -17,11 +18,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,7 +39,6 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
-        boolean liked = courseLikeService.isCourseLikedByMember(course);
         CourseDTO courseDTO = CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course));
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
@@ -47,7 +50,6 @@ public class CourseController {
                 .collect(Collectors.toList());
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         return ResponseEntity.ok(CourseDetailResponse.builder()
-                .liked(liked)
                 .themes(themes)
                 .courseInfo(courseDTO)
                 .waypoints(waypoints)
@@ -72,9 +74,19 @@ public class CourseController {
                 .build());
     }
 
+    @GetMapping("/theme")
+    public ResponseEntity<Page<CourseDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
+                                                          @RequestParam(required = false) Long styleId,
+                                                          @RequestParam(required = false) Long togetherId,
+                                                          @RequestParam(required = false) OrderBy orderBy,
+                                                          Pageable pageable) {
+        Page<CourseDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy, pageable);
+        return ResponseEntity.ok(courses);
+    }
+
     @GetMapping("/my-theme")
     public ResponseEntity<List<CourseThemeDTO>> getHomeCoursesByThemes() {
-        List<CourseThemeDTO> courseThemes = courseService.getCoursesByTheme();
+        List<CourseThemeDTO> courseThemes = courseService.getCoursesByMemberTheme();
         return ResponseEntity.ok(courseThemes);
     }
 

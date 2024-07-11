@@ -65,6 +65,9 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseStyle> courseStyles;
 
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<CourseTogether> courseTogethers;
+
     public double calculateAverageRating() {
         double average = courseReviews.stream().mapToLong(CourseReview::getRating).average().orElse(0);
         DecimalFormat df = new DecimalFormat("#.#");
