@@ -19,4 +19,6 @@ public class CourseDetailResponse {
     private double averageRating;
     private List<ReviewDTO> reviews;
     private List<FestivalInfoInterface> festivals;
+    private String regionName;
+    private String regionDescription;
 }

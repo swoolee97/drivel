@@ -57,6 +57,8 @@ public class CourseController {
                 .averageRating(averageRating)
                 .reviews(reviews)
                 .festivals(festivals)
+                .regionName(course.getRegionName())
+                .regionDescription(course.getRegionDescription())
                 .build());
     }
 

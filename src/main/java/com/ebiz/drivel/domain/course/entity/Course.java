@@ -47,6 +47,12 @@ public class Course {
     @Column(name = "image_path")
     private String imagePath;
 
+    @Column(name = "region_name")
+    private String regionName;
+
+    @Column(name = "region_description")
+    private String regionDescription;
+
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseReview> courseReviews;
 
