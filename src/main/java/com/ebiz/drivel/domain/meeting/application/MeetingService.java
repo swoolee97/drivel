@@ -21,6 +21,7 @@ import com.ebiz.drivel.domain.member.entity.Member;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -95,6 +96,7 @@ public class MeetingService {
         return member.getMeetingMembers().stream()
                 .map(MeetingMember::getMeeting)
                 .filter(Meeting::isUpcomingMeeting)
+                .sorted(Comparator.comparing(meeting -> meeting.getMeetingDate()))
                 .map(meeting -> UpcomingMeetingResponse.builder()
                         .meetingId(meeting.getId())
                         .title(meeting.getTitle())
