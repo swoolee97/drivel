@@ -36,6 +36,16 @@ public class CourseController {
     private final FestivalService festivalService;
     private final CourseLikeService courseLikeService;
 
+    @GetMapping
+    public ResponseEntity<Page<CourseDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
+                                                          @RequestParam(required = false) Long styleId,
+                                                          @RequestParam(required = false) Long togetherId,
+                                                          @RequestParam(required = false) OrderBy orderBy,
+                                                          Pageable pageable) {
+        Page<CourseDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy, pageable);
+        return ResponseEntity.ok(courses);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
         Course course = courseService.findCourse(id);
@@ -76,15 +86,6 @@ public class CourseController {
                 .build());
     }
 
-    @GetMapping("/theme")
-    public ResponseEntity<Page<CourseDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
-                                                          @RequestParam(required = false) Long styleId,
-                                                          @RequestParam(required = false) Long togetherId,
-                                                          @RequestParam(required = false) OrderBy orderBy,
-                                                          Pageable pageable) {
-        Page<CourseDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy, pageable);
-        return ResponseEntity.ok(courses);
-    }
 
     @GetMapping("/my-theme")
     public ResponseEntity<List<CourseThemeDTO>> getHomeCoursesByThemes() {

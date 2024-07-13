@@ -9,9 +9,6 @@ public class CourseQueryHelper {
     public static BooleanBuilder createQueryFilter(Long themeId, Long styleId, Long togetherId) {
         BooleanBuilder filterBuilder = new BooleanBuilder();
         QCourse course = QCourse.course;
-        if (themeId == null) {
-            return filterBuilder;
-        }
 
         addThemeFilter(themeId, course, filterBuilder);
         addStyleFilter(styleId, course, filterBuilder);
