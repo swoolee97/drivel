@@ -2,21 +2,13 @@ package com.ebiz.drivel.domain.course.api;
 
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
-import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.service.CourseLikeService;
 import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.course.service.CourseService;
-import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
-import com.ebiz.drivel.domain.festival.service.FestivalService;
-import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.theme.dto.CourseThemeDTO;
-import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
-import com.ebiz.drivel.domain.waypoint.dto.WaypointDTO;
 import com.ebiz.drivel.global.dto.BaseResponse;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/course")
 public class CourseController {
     private final CourseService courseService;
-    private final FestivalService festivalService;
     private final CourseLikeService courseLikeService;
 
     @GetMapping
@@ -42,34 +33,15 @@ public class CourseController {
                                                           @RequestParam(required = false) Long togetherId,
                                                           @RequestParam(required = false) OrderBy orderBy,
                                                           Pageable pageable) {
-        Page<CourseDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy, pageable);
+        Page<CourseDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy,
+                pageable);
         return ResponseEntity.ok(courses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourseDetailResponse> findWaypointsByCourse(@PathVariable Long id) {
-        Course course = courseService.findCourse(id);
-        CourseDTO courseDTO = CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course));
-        List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
-        List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
-                .collect(Collectors.toList());
-        int reviewCount = course.countReviews();
-        double averageRating = course.calculateAverageRating();
-        List<ReviewDTO> reviews = course.getCourseReviews().stream().map(ReviewDTO::from)
-                .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
-                .collect(Collectors.toList());
-        List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
-        return ResponseEntity.ok(CourseDetailResponse.builder()
-                .themes(themes)
-                .courseInfo(courseDTO)
-                .waypoints(waypoints)
-                .reviewCount(reviewCount)
-                .averageRating(averageRating)
-                .reviews(reviews)
-                .festivals(festivals)
-                .regionName(course.getRegionName())
-                .regionDescription(course.getRegionDescription())
-                .build());
+    public ResponseEntity<CourseDetailResponse> getCourseDetail(@PathVariable Long id) {
+        CourseDetailResponse courseDetailResponse = courseService.getCourseDetail(id);
+        return ResponseEntity.ok(courseDetailResponse);
     }
 
     @PutMapping("/like/{courseId}")

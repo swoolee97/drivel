@@ -21,4 +21,5 @@ public class CourseDetailResponse {
     private List<FestivalInfoInterface> festivals;
     private String regionName;
     private String regionDescription;
+    private List<String> tags;
 }
