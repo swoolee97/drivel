@@ -12,11 +12,14 @@ public class MeetingQueryHelper {
     private static final String WILDCARD_FORMAT = "%%%s%%";
 
     public static BooleanBuilder createFilterBuilder(
-            Long styleId, Integer age, Integer carCareer, String carModel, Integer genderId, QMeeting meeting) {
+            Long styleId, Long themeId, Long togetherId, Integer age, Integer carCareer, String carModel,
+            Integer genderId, QMeeting meeting) {
         BooleanBuilder filterBuilder = new BooleanBuilder();
 
         // 조건 필터링
         addStyleFilter(styleId, meeting, filterBuilder);
+        addThemeFilter(themeId, meeting, filterBuilder);
+        addTogetherFilter(togetherId, meeting, filterBuilder);
         addAgeFilter(age, meeting, filterBuilder);
         addMinCarCareerFilter(carCareer, meeting, filterBuilder);
         addCarModelFilter(carModel, meeting, filterBuilder);
@@ -29,6 +32,18 @@ public class MeetingQueryHelper {
     private static void addStyleFilter(Long styleId, QMeeting meeting, BooleanBuilder filterBuilder) {
         if (styleId != null) {
             filterBuilder.and(meeting.course.courseStyles.any().style.id.eq(styleId));
+        }
+    }
+
+    private static void addThemeFilter(Long themeId, QMeeting meeting, BooleanBuilder filterBuilder) {
+        if (themeId != null) {
+            filterBuilder.and(meeting.course.courseThemes.any().theme.id.eq(themeId));
+        }
+    }
+
+    private static void addTogetherFilter(Long togetherId, QMeeting meeting, BooleanBuilder filterBuilder) {
+        if (togetherId != null) {
+            filterBuilder.and(meeting.course.courseTogethers.any().together.id.eq(togetherId));
         }
     }
 

@@ -106,11 +106,13 @@ public class MeetingService {
                 .toList();
     }
 
-    public Page<MeetingInfoResponse> getFilteredMeetings(Long styleId, Integer age, Integer carCareer,
+    public Page<MeetingInfoResponse> getFilteredMeetings(Long styleId, Long themeId, Long togetherId, Integer age,
+                                                         Integer carCareer,
                                                          String carModel, Integer genderId, OrderBy orderBy,
                                                          Pageable pageable) {
         QMeeting meeting = QMeeting.meeting;
-        BooleanBuilder filterBuilder = MeetingQueryHelper.createFilterBuilder(styleId, age, carCareer, carModel,
+        BooleanBuilder filterBuilder = MeetingQueryHelper.createFilterBuilder(styleId, themeId, togetherId, age,
+                carCareer, carModel,
                 genderId, meeting);
         OrderSpecifier<?> orderSpecifier = MeetingQueryHelper.getOrderSpecifier(orderBy, meeting);
 
