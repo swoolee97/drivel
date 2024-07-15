@@ -11,14 +11,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FestivalRepository extends JpaRepository<Festival, String> {
 
-    @Query(value = "SELECT f.id AS id, f.title AS title, f.first_image_path AS firstImagePath, " +
-            "(6371 * ACOS(" +
-            "  COS(RADIANS(:givenLat)) * COS(RADIANS(f.latitude)) * COS(RADIANS(f.longitude) - RADIANS(:givenLon)) " +
-            "+ SIN(RADIANS(:givenLat)) * SIN(RADIANS(f.latitude)) " +
-            ")) AS distance " +
-            "FROM festival f " +
-            "HAVING distance <= 30 "
-            + "ORDER BY 4", nativeQuery = true)
+    @Query(value =
+            "SELECT f.id AS id, f.title AS title, f.start_date AS startDate, f.end_date AS endDate, f.first_image_path AS firstImagePath, "
+                    +
+                    "(6371 * ACOS(" +
+                    "  COS(RADIANS(:givenLat)) * COS(RADIANS(f.latitude)) * COS(RADIANS(f.longitude) - RADIANS(:givenLon)) "
+                    +
+                    "+ SIN(RADIANS(:givenLat)) * SIN(RADIANS(f.latitude)) " +
+                    ")) AS distance " +
+                    "FROM festival f " +
+                    "HAVING distance <= 30 "
+                    + "ORDER BY 4", nativeQuery = true)
     List<FestivalInfoInterface> findIdTitleFirstImagePathByDistance(@Param("givenLat") double givenLat,
                                                                     @Param("givenLon") double givenLon);
 }

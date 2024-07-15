@@ -8,4 +8,8 @@ public interface FestivalInfoInterface {
     String getFirstImagePath();
 
     double getDistance();
+
+    String getStartDate();
+
+    String getEndDate();
 }
