@@ -30,6 +30,6 @@ public class MemberStyle {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("styleId")
     @JoinColumn(name = "style_id", referencedColumnName = "id")
-    private Style theme;
+    private Style style;
 
 }

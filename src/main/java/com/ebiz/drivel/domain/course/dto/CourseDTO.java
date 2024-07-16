@@ -1,18 +1,16 @@
 package com.ebiz.drivel.domain.course.dto;
 
 import com.ebiz.drivel.domain.course.entity.Course;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Builder
+@SuperBuilder
 public class CourseDTO {
     private Long id;
     private boolean liked;
     private String title;
     private String description;
-    private int reviewCount;
-    private double averageRating;
     private String imagePath;
 
     public static CourseDTO from(Course course, boolean isLiked) {
@@ -21,8 +19,6 @@ public class CourseDTO {
                 .liked(isLiked)
                 .title(course.getTitle())
                 .description(course.getDescription())
-                .reviewCount(course.countReviews())
-                .averageRating(course.calculateAverageRating())
                 .imagePath(course.getImagePath())
                 .build();
     }
@@ -32,8 +28,6 @@ public class CourseDTO {
                 .id(course.getId())
                 .title(course.getTitle())
                 .description(course.getDescription())
-                .reviewCount(course.countReviews())
-                .averageRating(course.calculateAverageRating())
                 .imagePath(course.getImagePath())
                 .build();
     }

@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.course.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
+import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.entity.CourseTheme;
 import com.ebiz.drivel.domain.course.entity.QCourse;
@@ -10,9 +11,12 @@ import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
 import com.ebiz.drivel.domain.festival.service.FestivalService;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.member.entity.MemberStyle;
 import com.ebiz.drivel.domain.member.entity.MemberTheme;
+import com.ebiz.drivel.domain.member.entity.MemberTogether;
+import com.ebiz.drivel.domain.onboarding.entity.Style;
+import com.ebiz.drivel.domain.onboarding.entity.Together;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
-import com.ebiz.drivel.domain.theme.dto.CourseThemeDTO;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
 import com.ebiz.drivel.domain.theme.entity.Theme;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
@@ -45,7 +49,7 @@ public class CourseService {
 
     public CourseDetailResponse getCourseDetail(Long id) {
         Course course = courseRepository.findById(id).orElseThrow(() -> new CourseNotFoundException());
-        CourseDTO courseDTO = CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course));
+        CourseDetailDTO courseDTO = CourseDetailDTO.from(course, courseLikeService.isCourseLikedByMember(course));
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
@@ -86,40 +90,64 @@ public class CourseService {
         return tags;
     }
 
-    public Page<CourseDTO> getFilteredCourses(Long themeId, Long styleId, Long togetherId, OrderBy orderBy,
-                                              Pageable pageable) {
-        QCourse course = QCourse.course;
-        BooleanBuilder filterBuilder = CourseQueryHelper.createQueryFilter(themeId, styleId, togetherId);
+    public Page<CourseDetailDTO> getFilteredCourses(Long themeId, Long styleId, Long togetherId, OrderBy orderBy,
+                                                    Pageable pageable) {
+        QCourse qCourse = QCourse.course;
+        BooleanBuilder filterBuilder = new BooleanBuilder();
 
-        OrderSpecifier<?> orderSpecifier = CourseQueryHelper.getOrderSpecifier(orderBy, course);
+        if (themeId != null) {
+            CourseQueryHelper.addThemeFilter(List.of(themeId), qCourse, filterBuilder);
+        }
 
-        long totalCount = queryFactory.selectFrom(course)
+        if (styleId != null) {
+            CourseQueryHelper.addStyleFilter(List.of(styleId), qCourse, filterBuilder);
+        }
+
+        if (togetherId != null) {
+            CourseQueryHelper.addTogetherFilter(List.of(togetherId), qCourse, filterBuilder);
+        }
+
+        OrderSpecifier<?> orderSpecifier = CourseQueryHelper.getOrderSpecifier(orderBy, qCourse);
+
+        long totalCount = queryFactory.selectFrom(qCourse)
                 .where(filterBuilder)
                 .fetchCount();
 
-        List<CourseDTO> courses = queryFactory.selectFrom(course)
+        List<CourseDetailDTO> courses = queryFactory.selectFrom(qCourse)
                 .where(filterBuilder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(orderSpecifier)
                 .fetch()
-                .stream().map(CourseDTO::from)
+                .stream().map(course -> CourseDetailDTO.from(course, courseLikeService.isCourseLikedByMember(course)))
                 .toList();
 
         return new PageImpl<>(courses, pageable, totalCount);
     }
 
-    public List<CourseThemeDTO> getCoursesByMemberTheme() {
+    public List<CourseDTO> getCoursesByMemberTheme() {
         Member member = userDetailsService.getMemberByContextHolder();
-        List<Theme> themes = member.getMemberThemes().stream().map(MemberTheme::getTheme).toList();
-        List<CourseThemeDTO> courseThemes = new ArrayList<>();
-        for (Theme theme : themes) {
-            courseThemes.add(CourseThemeDTO.builder()
-                    .theme(ThemeDTO.from(theme))
-                    .courses(getRandomCoursesByTheme(theme))
-                    .build());
-        }
-        return courseThemes;
+
+        QCourse course = QCourse.course;
+        List<Long> themeIds = member.getMemberThemes().stream().map(MemberTheme::getTheme).map(Theme::getId).toList();
+        List<Long> styleIds = member.getMemberStyles().stream().map(MemberStyle::getStyle).map(Style::getId).toList();
+        List<Long> togetherIds = member.getMemberTogethers().stream().map(MemberTogether::getTogether)
+                .map(Together::getId).toList();
+
+        BooleanBuilder filterBuilder = CourseQueryHelper.createQueryFilter(themeIds, styleIds, togetherIds);
+
+        List<CourseDTO> courses = queryFactory.selectFrom(course)
+                .where(filterBuilder)
+                .fetch()
+                .stream().map(CourseDTO::from)
+                .toList();
+
+        courses = new ArrayList<>(courses);
+        Collections.shuffle(courses, new Random());
+
+        List<CourseDTO> randomCourses = courses.stream().limit(6).toList();
+
+        return randomCourses;
     }
 
     private List<CourseDTO> getRandomCoursesByTheme(Theme theme) {

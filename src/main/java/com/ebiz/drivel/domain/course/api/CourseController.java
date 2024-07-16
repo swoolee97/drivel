@@ -1,11 +1,11 @@
 package com.ebiz.drivel.domain.course.api;
 
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
+import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
 import com.ebiz.drivel.domain.course.service.CourseLikeService;
 import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.course.service.CourseService;
-import com.ebiz.drivel.domain.theme.dto.CourseThemeDTO;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import java.util.List;
@@ -28,12 +28,12 @@ public class CourseController {
     private final CourseLikeService courseLikeService;
 
     @GetMapping
-    public ResponseEntity<Page<CourseDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
-                                                          @RequestParam(required = false) Long styleId,
-                                                          @RequestParam(required = false) Long togetherId,
-                                                          @RequestParam(required = false) OrderBy orderBy,
-                                                          Pageable pageable) {
-        Page<CourseDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy,
+    public ResponseEntity<Page<CourseDetailDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
+                                                                @RequestParam(required = false) Long styleId,
+                                                                @RequestParam(required = false) Long togetherId,
+                                                                @RequestParam(required = false) OrderBy orderBy,
+                                                                Pageable pageable) {
+        Page<CourseDetailDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy,
                 pageable);
         return ResponseEntity.ok(courses);
     }
@@ -58,10 +58,10 @@ public class CourseController {
                 .build());
     }
 
-
+    // 멤버가 선택한 테마 기반으로 랜덤 6개 드라이브코스 반환하는 api
     @GetMapping("/my-theme")
-    public ResponseEntity<List<CourseThemeDTO>> getHomeCoursesByThemes() {
-        List<CourseThemeDTO> courseThemes = courseService.getCoursesByMemberTheme();
+    public ResponseEntity<List<CourseDTO>> getHomeCoursesByMemberThemes() {
+        List<CourseDTO> courseThemes = courseService.getCoursesByMemberTheme();
         return ResponseEntity.ok(courseThemes);
     }
 

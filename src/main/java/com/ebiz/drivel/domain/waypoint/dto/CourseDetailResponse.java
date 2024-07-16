@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.waypoint.dto;
 
-import com.ebiz.drivel.domain.course.dto.CourseDTO;
+import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
@@ -12,7 +12,7 @@ import lombok.Getter;
 @Builder
 public class CourseDetailResponse {
     private boolean liked;
-    private CourseDTO courseInfo;
+    private CourseDetailDTO courseInfo;
     private List<ThemeDTO> themes;
     private List<WaypointDTO> waypoints;
     private int reviewCount;
