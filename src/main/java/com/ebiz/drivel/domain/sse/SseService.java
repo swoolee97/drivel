@@ -48,4 +48,17 @@ public class SseService {
         }
     }
 
+    public void sendToClient(Long targetId, String category, Object data) {
+        SseEmitter emitter = sseRepository.findById(targetId);
+        if (emitter != null) {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name(category)
+                        .data(data));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -18,6 +18,11 @@ import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.sse.Alert;
+import com.ebiz.drivel.domain.sse.Notification;
+import com.ebiz.drivel.domain.sse.NotificationDTO;
+import com.ebiz.drivel.domain.sse.NotificationRepository;
+import com.ebiz.drivel.domain.sse.SseService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -42,6 +47,8 @@ public class MeetingService {
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
     private final JPAQueryFactory queryFactory;
+    private final SseService sseService;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public CreateMeetingResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
@@ -130,6 +137,27 @@ public class MeetingService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(meetings, pageable, totalCount);
+    }
+
+    @Transactional
+    public void requestJoinMeeting(Long id) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        Long masterMemberId = meetingRepository.findById(id)
+                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE))
+                .getMasterMember().getId();
+
+        Notification notification = Notification.builder()
+                .receiverId(masterMemberId)
+                .category(Alert.JOIN)
+                .title("모임 가입 신청")
+                .content(String.format("%s님이 모임 가입 신청을 했어요", member.getNickname()))
+                .build();
+
+        notification = notificationRepository.save(notification);
+
+        NotificationDTO notificationDTO = NotificationDTO.from(notification);
+
+        sseService.sendToClient(masterMemberId, Alert.JOIN.toString(), notificationDTO);
     }
 
 }

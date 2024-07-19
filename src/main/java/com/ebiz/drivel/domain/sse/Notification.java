@@ -9,10 +9,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@DynamicInsert
 @Table(name = "notification")
 public class Notification {
 
@@ -24,7 +32,7 @@ public class Notification {
     private Long receiverId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "alert_id")
+    @Column(name = "category")
     private Alert category;
 
     @Column(name = "title")

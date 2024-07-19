@@ -4,6 +4,7 @@ import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.application.MeetingService;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
+import com.ebiz.drivel.domain.meeting.dto.JoinMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
@@ -61,6 +62,13 @@ public class MeetingController {
     public ResponseEntity<List<UpcomingMeetingResponse>> getUpcomingMeetings() {
         List<UpcomingMeetingResponse> upcomingMeetings = meetingService.getUpcomingMeetings();
         return ResponseEntity.ok(upcomingMeetings);
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<List<UpcomingMeetingResponse>> joinMeeting(
+            @RequestBody JoinMeetingRequest joinMeetingRequest) {
+        meetingService.requestJoinMeeting(joinMeetingRequest.getId());
+        return null;
     }
 
 }
