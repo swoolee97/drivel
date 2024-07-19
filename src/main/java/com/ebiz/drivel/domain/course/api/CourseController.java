@@ -65,4 +65,10 @@ public class CourseController {
         return ResponseEntity.ok(courseThemes);
     }
 
+    // 멤버가 선택한 지역 기반으로 랜덤 6개 드라이브코스 반환하는 api
+    @GetMapping("/my-region")
+    public void getHomeCoursesByRegions() {
+
+    }
+
 }

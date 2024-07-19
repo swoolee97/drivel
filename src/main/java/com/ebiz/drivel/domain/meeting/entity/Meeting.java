@@ -65,7 +65,7 @@ public class Meeting {
     private Course course;
 
     @Column(name = "gender")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Gender gender;
 
     @Column(name = "start_age")
