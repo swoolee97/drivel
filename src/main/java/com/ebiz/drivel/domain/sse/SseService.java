@@ -19,7 +19,15 @@ public class SseService {
     @Transactional
     public SseEmitter subscribe() {
         Long memberId = userDetailsService.getMemberByContextHolder().getId();
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+
+        SseEmitter existingEmitter = sseRepository.findById(memberId);
+
+        if (existingEmitter != null) {
+            existingEmitter.complete();
+            sseRepository.deleteById(memberId);
+        }
+
+        SseEmitter emitter = new SseEmitter(1000 * 60 * 60 * 2L);
         sseRepository.save(memberId, emitter);
         try {
             emitter.send(SseEmitter.event()
@@ -34,8 +42,8 @@ public class SseService {
         });
 
         emitter.onTimeout(() -> {
-            sseRepository.deleteById(memberId);
             emitter.complete();
+            sseRepository.deleteById(memberId);
         });
 
         return emitter;
@@ -43,6 +51,8 @@ public class SseService {
 
     public void unsubscribe() {
         Long memberId = userDetailsService.getMemberByContextHolder().getId();
+        SseEmitter emitter = sseRepository.findById(memberId);
+        emitter.complete();
         if (memberId != null) {
             sseRepository.deleteById(memberId);
         }
