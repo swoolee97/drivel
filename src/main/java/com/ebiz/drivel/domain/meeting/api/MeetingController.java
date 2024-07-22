@@ -8,6 +8,7 @@ import com.ebiz.drivel.domain.meeting.dto.JoinMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
+import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -65,10 +66,12 @@ public class MeetingController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<List<UpcomingMeetingResponse>> joinMeeting(
+    public ResponseEntity<BaseResponse> joinMeeting(
             @RequestBody JoinMeetingRequest joinMeetingRequest) {
         meetingService.requestJoinMeeting(joinMeetingRequest.getId());
-        return null;
+        return ResponseEntity.ok(BaseResponse.builder()
+                .message("모임 가입 신청이 완료되었습니다")
+                .build());
     }
 
 }

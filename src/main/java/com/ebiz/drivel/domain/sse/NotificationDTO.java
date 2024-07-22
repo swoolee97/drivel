@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.sse;
 
+import com.ebiz.drivel.domain.sse.MeetingNotification.AlertCategory;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,20 +10,20 @@ import lombok.Getter;
 public class NotificationDTO {
 
     private Long id;
-    private Alert category;
+    private AlertCategory category;
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private boolean isRead;
 
-    public static NotificationDTO from(Notification notification) {
+    public static NotificationDTO from(MeetingNotification meetingNotification) {
         return NotificationDTO.builder()
-                .id(notification.getId())
-                .category(notification.getCategory())
-                .title(notification.getTitle())
-                .content(notification.getContent())
-                .createdAt(notification.getCreatedAt())
-                .isRead(notification.isRead())
+                .id(meetingNotification.getId())
+                .category(meetingNotification.getAlertCategory())
+                .title(meetingNotification.getTitle())
+                .content(meetingNotification.getContent())
+                .createdAt(meetingNotification.getCreatedAt())
+                .isRead(meetingNotification.isRead())
                 .build();
 
     }

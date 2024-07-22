@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 @RequestMapping("/sse")
 public class SseController {
-    private final SseService sseService;
+    private final SseServiceImpl sseService;
 
     /*
      * 실시간 알림용 sse 연결하는 api 연결 할 때 더미데이터라도 send를 꼭 해줘야 함. 아니면 timeout 연결시 못받은 알림들을 다 보내줘야함.

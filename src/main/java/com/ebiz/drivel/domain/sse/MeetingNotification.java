@@ -22,18 +22,21 @@ import org.hibernate.annotations.DynamicInsert;
 @NoArgsConstructor
 @DynamicInsert
 @Table(name = "notification")
-public class Notification {
+public class MeetingNotification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "meeting_id")
+    private Long meetingId;
 
     @Column(name = "receiver_id")
     private Long receiverId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private Alert category;
+    private AlertCategory alertCategory;
 
     @Column(name = "title")
     private String title;
@@ -46,5 +49,13 @@ public class Notification {
 
     @Column(name = "is_read", columnDefinition = "boolean default false")
     private boolean isRead;
+
+    public enum AlertCategory {
+        JOIN, CONFIRM, END, REVIEW
+    }
+
+    public void read() {
+        isRead = true;
+    }
 
 }

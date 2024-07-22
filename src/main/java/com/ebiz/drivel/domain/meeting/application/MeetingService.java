@@ -13,13 +13,16 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
+import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest;
+import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest.Status;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
+import com.ebiz.drivel.domain.meeting.repository.MeetingJoinRequestRepository;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
-import com.ebiz.drivel.domain.sse.Alert;
-import com.ebiz.drivel.domain.sse.Notification;
+import com.ebiz.drivel.domain.sse.MeetingNotification;
+import com.ebiz.drivel.domain.sse.MeetingNotification.AlertCategory;
 import com.ebiz.drivel.domain.sse.NotificationDTO;
 import com.ebiz.drivel.domain.sse.NotificationRepository;
 import com.ebiz.drivel.domain.sse.SseService;
@@ -49,6 +52,7 @@ public class MeetingService {
     private final JPAQueryFactory queryFactory;
     private final SseService sseService;
     private final NotificationRepository notificationRepository;
+    private final MeetingJoinRequestRepository meetingJoinRequestRepository;
 
     @Transactional
     public CreateMeetingResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
@@ -142,22 +146,36 @@ public class MeetingService {
     @Transactional
     public void requestJoinMeeting(Long id) {
         Member member = userDetailsService.getMemberByContextHolder();
-        Long masterMemberId = meetingRepository.findById(id)
-                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE))
-                .getMasterMember().getId();
+        Meeting meeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
+        sendMeetingJoinRequestAlert(member, meeting);
+        saveMeetingJoinRequest(member, meeting);
+    }
 
-        Notification notification = Notification.builder()
+    private void sendMeetingJoinRequestAlert(Member member, Meeting meeting) {
+        Long masterMemberId = meeting.getMasterMember().getId();
+
+        MeetingNotification meetingNotification = MeetingNotification.builder()
+                .meetingId(meeting.getId())
                 .receiverId(masterMemberId)
-                .category(Alert.JOIN)
+                .alertCategory(AlertCategory.JOIN)
                 .title("모임 가입 신청")
                 .content(String.format("%s님이 모임 가입 신청을 했어요", member.getNickname()))
                 .build();
+        meetingNotification = notificationRepository.save(meetingNotification);
 
-        notification = notificationRepository.save(notification);
+        NotificationDTO notificationDTO = NotificationDTO.from(meetingNotification);
 
-        NotificationDTO notificationDTO = NotificationDTO.from(notification);
+        sseService.sendToClient(masterMemberId, AlertCategory.JOIN.toString(), notificationDTO);
+    }
 
-        sseService.sendToClient(masterMemberId, Alert.JOIN.toString(), notificationDTO);
+    private void saveMeetingJoinRequest(Member member, Meeting meeting) {
+        MeetingJoinRequest meetingJoinRequest = MeetingJoinRequest.builder()
+                .meeting(meeting)
+                .member(member)
+                .status(Status.NONE)
+                .build();
+        meetingJoinRequestRepository.save(meetingJoinRequest);
     }
 
 }
