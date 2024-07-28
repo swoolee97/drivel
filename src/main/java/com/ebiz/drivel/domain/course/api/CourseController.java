@@ -6,6 +6,8 @@ import com.ebiz.drivel.domain.course.dto.CourseResponse;
 import com.ebiz.drivel.domain.course.service.CourseLikeService;
 import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.course.service.CourseService;
+import com.ebiz.drivel.domain.review.dto.ReviewDTO;
+import com.ebiz.drivel.domain.review.service.ReviewService;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import java.util.List;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseController {
     private final CourseService courseService;
     private final CourseLikeService courseLikeService;
+    private final ReviewService reviewService;
 
     @GetMapping
     public ResponseEntity<Page<CourseDetailDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
@@ -69,6 +72,12 @@ public class CourseController {
     @GetMapping("/my-region")
     public void getHomeCoursesByRegions() {
 
+    }
+
+    @GetMapping("/{id}/reviews")
+    public ResponseEntity<Page<ReviewDTO>> getReviewsByCourse(@PathVariable Long id, Pageable pageable) {
+        Page<ReviewDTO> reviews = reviewService.findReviewsByCourse(id, pageable);
+        return ResponseEntity.ok(reviews);
     }
 
 }
