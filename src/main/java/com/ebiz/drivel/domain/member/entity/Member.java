@@ -3,10 +3,13 @@ package com.ebiz.drivel.domain.member.entity;
 import static com.ebiz.drivel.domain.profile.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
 
 import com.ebiz.drivel.domain.course.entity.CourseLike;
+import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -48,6 +51,16 @@ public class Member {
 
     @Column(name = "role", columnDefinition = "USER")
     private String role;
+
+    @Column(name = "car_model")
+    private String carModel;
+
+    @Column(name = "car_career")
+    private Integer carCareer;
+
+    @Column(name = "gender", columnDefinition = "NONE")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<CourseLike> courseLikes;

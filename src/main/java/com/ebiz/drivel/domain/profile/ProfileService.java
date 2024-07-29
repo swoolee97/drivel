@@ -21,6 +21,12 @@ public class ProfileService {
     private final ProfileImageGenerator profileImageGenerator;
     private final UserDetailsServiceImpl userDetailsService;
 
+    public ProfileDTO getMyProfileDetails() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        ProfileDTO profileDTO = ProfileDTO.from(member);
+        return profileDTO;
+    }
+
     @Transactional
     public void changeProfileImage(MultipartFile image) throws IOException {
         Member member = userDetailsService.getMemberByContextHolder();
