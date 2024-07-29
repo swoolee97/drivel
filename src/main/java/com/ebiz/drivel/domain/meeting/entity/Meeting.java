@@ -1,7 +1,6 @@
 package com.ebiz.drivel.domain.meeting.entity;
 
 import com.ebiz.drivel.domain.course.entity.Course;
-import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.member.entity.Member;
 import jakarta.persistence.Column;
@@ -98,24 +97,8 @@ public class Meeting {
     @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY)
     private List<MeetingMember> meetingMembers;
 
-    public static MeetingInfoResponse toMeetingInfo(Meeting meeting) {
-        Course course = meeting.getCourse();
-        return MeetingInfoResponse.builder()
-                .meetingId(meeting.getId())
-                .courseId(course.getId())
-                .meetingTitle(meeting.getTitle())
-                .courseTitle(course.getTitle())
-                .meetingPoint(meeting.getMeetingPoint())
-                .capacity(meeting.getCapacity())
-                .participantsCount(meeting.countParticipants())
-                .gender(meeting.getGender().getDisplayName())
-                .startAge(meeting.getStartAge())
-                .endAge(meeting.getEndAge())
-                .carModel(meeting.getCarModel())
-                .imagePath(course.getImagePath())
-                .minCarCareer(meeting.getMinCarCareer())
-                .build();
-    }
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY)
+    private List<MeetingJoinRequest> joinRequests;
 
     public Long countParticipants() {
         return meetingMembers.stream().filter(MeetingMember::getIsActive).count();
@@ -129,8 +112,18 @@ public class Meeting {
                 .collect(Collectors.toList());
     }
 
+    public boolean isAlreadyRequested(Member member) {
+        return joinRequests.stream().anyMatch(
+                joinRequest -> joinRequest.getMember().equals(member) && !joinRequest.isAlreadyDecidedRequest());
+    }
+
     public boolean isUpcomingMeeting() {
         return meetingDate.after(Date.from(Instant.now()));
+    }
+
+    public boolean isAlreadyJoinedMember(Member member) {
+        return meetingMembers.stream()
+                .anyMatch(meetingMember -> meetingMember.getIsActive() && meetingMember.getMember().equals(member));
     }
 
 }

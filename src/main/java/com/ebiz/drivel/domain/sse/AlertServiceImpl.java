@@ -11,10 +11,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SseServiceImpl implements SseService {
+public class AlertServiceImpl implements AlertService {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final SseRepository sseRepository;
+    private final AlertRepository alertRepository;
 
     @Override
     @Transactional
@@ -28,7 +29,7 @@ public class SseServiceImpl implements SseService {
             sseRepository.deleteById(memberId);
         }
 
-        SseEmitter emitter = new SseEmitter(1000 * 60 * 60 * 2L);
+        SseEmitter emitter = new SseEmitter(1000 * 60L);
         sseRepository.save(memberId, emitter);
         try {
             emitter.send(SseEmitter.event()
@@ -71,6 +72,13 @@ public class SseServiceImpl implements SseService {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Transactional
+    @Override
+    public void read(Long id) {
+        Alert alert = alertRepository.findById(id).orElseThrow(() -> new AlertNotFoundException("찾을 수 없는 알람입니다"));
+        alert.read();
     }
 
 }

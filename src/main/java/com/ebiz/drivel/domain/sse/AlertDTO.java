@@ -1,0 +1,27 @@
+package com.ebiz.drivel.domain.sse;
+
+import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+public class AlertDTO {
+
+    private Long id;
+    private String title;
+    private String content;
+    private LocalDateTime createdAt;
+    private boolean isRead;
+
+    public static AlertDTO from(Alert alert) {
+        return AlertDTO.builder()
+                .id(alert.getId())
+                .title(alert.getTitle())
+                .content(alert.getContent())
+                .createdAt(alert.getCreatedAt())
+                .isRead(alert.isRead())
+                .build();
+
+    }
+}

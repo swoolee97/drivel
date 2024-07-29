@@ -13,11 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(name = "meeting_join_request")
 @Entity
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class MeetingJoinRequest {
@@ -38,6 +40,18 @@ public class MeetingJoinRequest {
 
     public enum Status {
         NONE, REJECTED, ACCEPTED
+    }
+
+    public boolean isAlreadyDecidedRequest() {
+        return !status.equals(Status.NONE);
+    }
+
+    public void accept() {
+        this.status = Status.ACCEPTED;
+    }
+
+    public void reject() {
+        this.status = Status.REJECTED;
     }
 
 }

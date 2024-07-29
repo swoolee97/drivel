@@ -4,7 +4,8 @@ import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.application.MeetingService;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
-import com.ebiz.drivel.domain.meeting.dto.JoinMeetingRequest;
+import com.ebiz.drivel.domain.meeting.dto.JoinRequestDTO;
+import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
@@ -66,12 +67,16 @@ public class MeetingController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<BaseResponse> joinMeeting(
-            @RequestBody JoinMeetingRequest joinMeetingRequest) {
-        meetingService.requestJoinMeeting(joinMeetingRequest.getId());
+    public ResponseEntity<BaseResponse> joinMeeting(@RequestBody JoinRequestDTO joinRequestDTO) {
+        meetingService.requestJoinMeeting(joinRequestDTO.getId());
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임 가입 신청이 완료되었습니다")
                 .build());
+    }
+
+    @PostMapping("/accept")
+    public void decideJoinMeeting(@RequestBody JoinRequestDecisionDTO joinRequestDecisionDTO) {
+        meetingService.acceptJoinMeeting(joinRequestDecisionDTO);
     }
 
 }

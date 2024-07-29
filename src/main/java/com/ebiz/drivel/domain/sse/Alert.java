@@ -21,8 +21,8 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
-@Table(name = "notification")
-public class MeetingNotification {
+@Table(name = "alert")
+public class Alert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class MeetingNotification {
     private boolean isRead;
 
     public enum AlertCategory {
-        JOIN, CONFIRM, END, REVIEW
+        JOIN, ACCEPTED, REJECTED, END, REVIEW
     }
 
     public void read() {
