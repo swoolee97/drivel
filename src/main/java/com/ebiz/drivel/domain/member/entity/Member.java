@@ -116,4 +116,32 @@ public class Member {
         this.description = description;
     }
 
+    public void updateCarModel(String carModel) {
+        if (carModel == null) {
+            return;
+        }
+        this.carModel = carModel;
+    }
+
+    public void updateCarCareer(Integer carCareer) {
+        if (carCareer == null) {
+            return;
+        }
+        this.carCareer = carCareer;
+    }
+
+    public void updateGender(Integer gender) {
+        if (gender == null) {
+            return;
+        }
+        this.gender = Gender.getGenderById(gender);
+    }
+
+    public void updateBirth(Date birth) {
+        if (birth == null) {
+            return;
+        }
+        this.birth = birth;
+    }
+
 }

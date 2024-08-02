@@ -4,6 +4,8 @@ import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
+import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
+import com.ebiz.drivel.domain.profile.dto.UpdateGenderDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
 import com.ebiz.drivel.global.service.S3Service;
 import java.io.IOException;
@@ -34,6 +36,22 @@ public class ProfileService {
         Member member = userDetailsService.getMemberByContextHolder();
         member.updateNickname(updateNicknameDTO.getNickname());
         member.updateDescription(updateNicknameDTO.getDescription());
+    }
+
+    @Transactional
+    public void updateCarInfo(UpdateCarDTO updateCarDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.updateCarModel(updateCarDTO.getCarModel());
+        member.updateCarCareer(updateCarDTO.getCarCareer());
+    }
+
+    @Transactional
+    public void updateGenderAndBirth(UpdateGenderDTO updateGenderDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        System.out.println(updateGenderDTO.getGender());
+        System.out.println(updateGenderDTO.getBirth());
+        member.updateGender(updateGenderDTO.getGender());
+        member.updateBirth(updateGenderDTO.getBirth());
     }
 
     @Transactional

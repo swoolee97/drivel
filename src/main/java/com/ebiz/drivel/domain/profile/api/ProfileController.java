@@ -1,6 +1,8 @@
 package com.ebiz.drivel.domain.profile.api;
 
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
+import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
+import com.ebiz.drivel.domain.profile.dto.UpdateGenderDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
 import jakarta.annotation.Nullable;
@@ -37,6 +39,18 @@ public class ProfileController {
     @PatchMapping("/nickname")
     public ResponseEntity<Void> updateNicknameAndDescription(@RequestBody UpdateNicknameDTO updateNicknameDTO) {
         profileService.updateNicknameAndDescription(updateNicknameDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/car")
+    public ResponseEntity<Void> updateCarInfo(@RequestBody UpdateCarDTO updateCarDTO) {
+        profileService.updateCarInfo(updateCarDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/gender")
+    public ResponseEntity<Void> updateGenderAndBirth(@RequestBody UpdateGenderDTO updateGenderDTO) {
+        profileService.updateGenderAndBirth(updateGenderDTO);
         return ResponseEntity.ok().build();
     }
 
