@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.profile;
 
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.onboarding.RegionDTO;
 import com.ebiz.drivel.domain.onboarding.StyleDTO;
 import com.ebiz.drivel.domain.onboarding.TogetherDTO;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
@@ -17,6 +18,7 @@ public class ProfileDTO {
     private Integer carCareer;
     private String gender;
     private String description;
+    private List<RegionDTO> regions;
     private List<StyleDTO> styles;
     private List<ThemeDTO> themes;
     private List<TogetherDTO> togethers;
@@ -29,6 +31,7 @@ public class ProfileDTO {
                 .carCareer(member.getCarCareer())
                 .gender(member.getGender().getDisplayName())
                 .description(member.getDescription())
+                .regions(member.getMemberRegions().stream().map(RegionDTO::from).toList())
                 .styles(member.getMemberStyles().stream().map(StyleDTO::from).toList())
                 .themes(member.getMemberThemes().stream().map(ThemeDTO::from).toList())
                 .togethers(member.getMemberTogethers().stream().map(TogetherDTO::from).toList())
