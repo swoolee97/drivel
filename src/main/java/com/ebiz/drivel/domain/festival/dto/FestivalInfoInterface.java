@@ -5,7 +5,7 @@ public interface FestivalInfoInterface {
 
     String getTitle();
 
-    String getFirstImagePath();
+    String getImagePath();
 
     double getDistance();
 

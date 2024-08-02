@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface FestivalRepository extends JpaRepository<Festival, String> {
 
     @Query(value =
-            "SELECT f.id AS id, f.title AS title, f.start_date AS startDate, f.end_date AS endDate, f.first_image_path AS firstImagePath, "
+            "SELECT f.id AS id, f.title AS title, f.start_date AS startDate, f.end_date AS endDate, f.first_image_path AS imagePath, "
                     +
                     "(6371 * ACOS(" +
                     "  COS(RADIANS(:givenLat)) * COS(RADIANS(f.latitude)) * COS(RADIANS(f.longitude) - RADIANS(:givenLon)) "

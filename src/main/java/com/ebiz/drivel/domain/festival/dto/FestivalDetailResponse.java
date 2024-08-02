@@ -14,7 +14,7 @@ public class FestivalDetailResponse {
     private String title;
     private String startDate;
     private String endDate;
-    private String firstImagePath;
+    private String imagePath;
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String description;
@@ -27,7 +27,7 @@ public class FestivalDetailResponse {
                 .title(festival.getTitle())
                 .startDate(festival.getStartDate())
                 .endDate(festival.getEndDate())
-                .firstImagePath(festival.getFirstImagePath())
+                .imagePath(festival.getFirstImagePath())
                 .latitude(festival.getLatitude())
                 .longitude(festival.getLongitude())
                 .description(festival.getDescription())
