@@ -5,6 +5,7 @@ import com.ebiz.drivel.domain.onboarding.RegionDTO;
 import com.ebiz.drivel.domain.onboarding.StyleDTO;
 import com.ebiz.drivel.domain.onboarding.TogetherDTO;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
+import java.util.Date;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class ProfileDTO {
     private Integer carCareer;
     private String gender;
     private String description;
+    private Date birth;
     private List<RegionDTO> regions;
     private List<StyleDTO> styles;
     private List<ThemeDTO> themes;
@@ -31,6 +33,7 @@ public class ProfileDTO {
                 .carCareer(member.getCarCareer())
                 .gender(member.getGender().getDisplayName())
                 .description(member.getDescription())
+                .birth(member.getBirth())
                 .regions(member.getMemberRegions().stream().map(RegionDTO::from).toList())
                 .styles(member.getMemberStyles().stream().map(StyleDTO::from).toList())
                 .themes(member.getMemberThemes().stream().map(ThemeDTO::from).toList())

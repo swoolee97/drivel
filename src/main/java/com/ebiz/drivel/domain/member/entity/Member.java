@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +52,9 @@ public class Member {
 
     @Column(name = "role", columnDefinition = "USER")
     private String role;
+
+    @Column(name = "birth")
+    private Date birth;
 
     @Column(name = "car_model")
     private String carModel;
