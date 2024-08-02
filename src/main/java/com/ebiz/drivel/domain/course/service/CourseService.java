@@ -16,6 +16,8 @@ import com.ebiz.drivel.domain.member.entity.MemberTheme;
 import com.ebiz.drivel.domain.member.entity.MemberTogether;
 import com.ebiz.drivel.domain.onboarding.entity.Style;
 import com.ebiz.drivel.domain.onboarding.entity.Together;
+import com.ebiz.drivel.domain.place.dto.PlaceInterface;
+import com.ebiz.drivel.domain.place.service.PlaceService;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
 import com.ebiz.drivel.domain.theme.entity.Theme;
@@ -45,6 +47,7 @@ public class CourseService {
     private final UserDetailsServiceImpl userDetailsService;
     private final CourseLikeService courseLikeService;
     private final FestivalService festivalService;
+    private final PlaceService placeService;
     private final JPAQueryFactory queryFactory;
 
     public CourseDetailResponse getCourseDetail(Long id) {
@@ -60,6 +63,7 @@ public class CourseService {
                 .collect(Collectors.toList());
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         List<String> tags = getTagsByCourse(course);
+        List<PlaceInterface> places = placeService.getPlacesNearByCourse(course.getLatitude(), course.getLongitude());
         return CourseDetailResponse.builder()
                 .themes(themes)
                 .courseInfo(courseDTO)
@@ -70,6 +74,7 @@ public class CourseService {
                 .festivals(festivals)
                 .regionName(course.getRegionName())
                 .regionDescription(course.getRegionDescription())
+                .places(places)
                 .tags(tags)
                 .build();
     }
