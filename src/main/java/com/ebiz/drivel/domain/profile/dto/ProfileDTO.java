@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.profile;
+package com.ebiz.drivel.domain.profile.dto;
 
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.onboarding.RegionDTO;

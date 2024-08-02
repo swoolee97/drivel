@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.member.entity;
 
-import static com.ebiz.drivel.domain.profile.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
+import static com.ebiz.drivel.domain.profile.constant.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
 
 import com.ebiz.drivel.domain.course.entity.CourseLike;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
@@ -100,6 +100,20 @@ public class Member {
 
     public boolean isOnboarded() {
         return memberRegions != null && memberStyles != null && memberThemes != null && memberTogethers != null;
+    }
+
+    public void updateNickname(String nickname) {
+        if (nickname == null) {
+            return;
+        }
+        this.nickname = nickname;
+    }
+
+    public void updateDescription(String description) {
+        if (description == null) {
+            return;
+        }
+        this.description = description;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.profile;
+package com.ebiz.drivel.domain.profile.constant;
 
 public class ProfileConstant {
     public static final String DEFAULT_PROFILE_IMAGE_PREFIX = "DEFAULT_PHOTO_";

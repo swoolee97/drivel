@@ -1,8 +1,10 @@
-package com.ebiz.drivel.domain.profile;
+package com.ebiz.drivel.domain.profile.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
+import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
+import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
 import com.ebiz.drivel.global.service.S3Service;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,13 @@ public class ProfileService {
         Member member = userDetailsService.getMemberByContextHolder();
         ProfileDTO profileDTO = ProfileDTO.from(member);
         return profileDTO;
+    }
+
+    @Transactional
+    public void updateNicknameAndDescription(UpdateNicknameDTO updateNicknameDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.updateNickname(updateNicknameDTO.getNickname());
+        member.updateDescription(updateNicknameDTO.getDescription());
     }
 
     @Transactional

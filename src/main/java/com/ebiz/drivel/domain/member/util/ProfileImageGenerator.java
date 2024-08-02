@@ -1,7 +1,7 @@
 package com.ebiz.drivel.domain.member.util;
 
-import static com.ebiz.drivel.domain.profile.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
-import static com.ebiz.drivel.domain.profile.ProfileConstant.DEFAULT_PROFILE_IMAGE_SUFFIX;
+import static com.ebiz.drivel.domain.profile.constant.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
+import static com.ebiz.drivel.domain.profile.constant.ProfileConstant.DEFAULT_PROFILE_IMAGE_SUFFIX;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Random;
