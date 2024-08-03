@@ -3,12 +3,17 @@ package com.ebiz.drivel.domain.profile.service;
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
+import com.ebiz.drivel.domain.onboarding.RegionRepository;
+import com.ebiz.drivel.domain.onboarding.entity.Region;
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateGenderDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
+import com.ebiz.drivel.domain.profile.dto.UpdateRegionDTO;
 import com.ebiz.drivel.global.service.S3Service;
+import jakarta.persistence.EntityManager;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,8 @@ public class ProfileService {
     private final S3Service s3Service;
     private final ProfileImageGenerator profileImageGenerator;
     private final UserDetailsServiceImpl userDetailsService;
+    private final EntityManager entityManager;
+    private final RegionRepository regionRepository;
 
     public ProfileDTO getMyProfileDetails() {
         Member member = userDetailsService.getMemberByContextHolder();
@@ -48,10 +55,17 @@ public class ProfileService {
     @Transactional
     public void updateGenderAndBirth(UpdateGenderDTO updateGenderDTO) {
         Member member = userDetailsService.getMemberByContextHolder();
-        System.out.println(updateGenderDTO.getGender());
-        System.out.println(updateGenderDTO.getBirth());
         member.updateGender(updateGenderDTO.getGender());
         member.updateBirth(updateGenderDTO.getBirth());
+    }
+
+    @Transactional
+    public void updateMemberRegion(UpdateRegionDTO updateRegionDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.getMemberRegions().clear();
+        entityManager.flush();
+        List<Region> regions = regionRepository.findAllById(updateRegionDTO.getRegionIds());
+        member.updateRegion(regions);
     }
 
     @Transactional

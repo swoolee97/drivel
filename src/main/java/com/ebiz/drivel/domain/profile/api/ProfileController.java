@@ -4,6 +4,7 @@ import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateGenderDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
+import com.ebiz.drivel.domain.profile.dto.UpdateRegionDTO;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
 import jakarta.annotation.Nullable;
 import java.io.IOException;
@@ -51,6 +52,12 @@ public class ProfileController {
     @PatchMapping("/gender")
     public ResponseEntity<Void> updateGenderAndBirth(@RequestBody UpdateGenderDTO updateGenderDTO) {
         profileService.updateGenderAndBirth(updateGenderDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/region")
+    public ResponseEntity<Void> updateRegion(@RequestBody UpdateRegionDTO updateRegionDTO) {
+        profileService.updateMemberRegion(updateRegionDTO);
         return ResponseEntity.ok().build();
     }
 

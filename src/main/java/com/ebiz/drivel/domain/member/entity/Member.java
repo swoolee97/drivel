@@ -5,7 +5,9 @@ import static com.ebiz.drivel.domain.profile.constant.ProfileConstant.DEFAULT_PR
 import com.ebiz.drivel.domain.course.entity.CourseLike;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
+import com.ebiz.drivel.domain.onboarding.entity.Region;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -78,7 +80,7 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MeetingMember> meetingMembers;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRegion> memberRegions;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
@@ -142,6 +144,16 @@ public class Member {
             return;
         }
         this.birth = birth;
+    }
+
+    public void updateRegion(List<Region> regions) {
+        memberRegions.clear();
+        regions.forEach(region -> memberRegions.add(
+                MemberRegion.builder()
+                        .memberRegionId(new MemberRegionId(this.id, region.getId()))
+                        .member(this)
+                        .region(region)
+                        .build()));
     }
 
 }
