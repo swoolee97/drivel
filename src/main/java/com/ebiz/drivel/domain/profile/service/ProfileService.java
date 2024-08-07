@@ -2,18 +2,27 @@ package com.ebiz.drivel.domain.profile.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.member.entity.MemberStyle;
+import com.ebiz.drivel.domain.member.entity.MemberTheme;
+import com.ebiz.drivel.domain.member.entity.MemberTogether;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
 import com.ebiz.drivel.domain.onboarding.RegionRepository;
+import com.ebiz.drivel.domain.onboarding.StyleRepository;
+import com.ebiz.drivel.domain.onboarding.ThemeRepository;
+import com.ebiz.drivel.domain.onboarding.TogetherRepository;
 import com.ebiz.drivel.domain.onboarding.entity.Region;
-import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateGenderDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateRegionDTO;
+import com.ebiz.drivel.domain.onboarding.entity.Style;
+import com.ebiz.drivel.domain.onboarding.entity.Together;
+import com.ebiz.drivel.domain.profile.dto.*;
+import com.ebiz.drivel.domain.theme.entity.Theme;
 import com.ebiz.drivel.global.service.S3Service;
 import jakarta.persistence.EntityManager;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ProfileService {
 
+    private final ThemeRepository themeRepository;
+    private final StyleRepository styleRepository;
+    private final TogetherRepository togetherRepository;
     @Value("${cloud.aws.s3.profileImageBucketName}")
     private String PROFILE_IMAGE_BUCKET_NAME;
     private final S3Service s3Service;
@@ -66,6 +78,33 @@ public class ProfileService {
         entityManager.flush();
         List<Region> regions = regionRepository.findAllById(updateRegionDTO.getRegionIds());
         member.updateRegion(regions);
+    }
+
+    @Transactional
+    public void updateMemberStyle(UpdateStyleDTO updateStyleDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.getMemberStyles().clear();
+        entityManager.flush();
+        List<Style> memberStyles = styleRepository.findAllById(updateStyleDTO.getStyleIds());
+        member.updateStyles(memberStyles);
+    }
+
+    @Transactional
+    public void updateMemberTheme(UpdateThemeDTO updateThemeDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.getMemberThemes().clear();
+        entityManager.flush();
+        List<Theme> memberTheme = themeRepository.findAllById(updateThemeDTO.getThemeIds());
+        member.updateTheme(memberTheme);
+    }
+
+    @Transactional
+    public void updateMemberTogether(UpdateTogetherDTO updateTogetherDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.getMemberTogethers().clear();
+        entityManager.flush();
+        List<Together> memberTogether = togetherRepository.findAllById(updateTogetherDTO.getTogetherIds());
+        member.updateTogether(memberTogether);
     }
 
     @Transactional

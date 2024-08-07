@@ -6,7 +6,10 @@ import com.ebiz.drivel.domain.course.entity.CourseLike;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.onboarding.entity.Region;
+import com.ebiz.drivel.domain.onboarding.entity.Style;
+import com.ebiz.drivel.domain.onboarding.entity.Together;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
+import com.ebiz.drivel.domain.theme.entity.Theme;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -156,4 +159,34 @@ public class Member {
                         .build()));
     }
 
+    // 메서드 신규 구현
+    public void updateStyles(List<Style> styles){
+        memberStyles.clear();
+        styles.forEach(style -> memberStyles.add(
+                MemberStyle.builder()
+                        .memberStyleId(new MemberStyleId(this.id, style.getId()))
+                        .member(this)
+                        .style(style)
+                        .build()));
+    }
+
+    public void updateTheme(List<Theme> themes) {
+        memberThemes.clear();
+        themes.forEach(theme -> memberThemes.add(
+                MemberTheme.builder()
+                        .memberThemeId(new MemberThemeId(this.id, theme.getId()))
+                        .member(this)
+                        .theme(theme)
+                        .build()));
+    }
+
+    public void updateTogether(List<Together> togethers) {
+        memberTogethers.clear();
+        togethers.forEach(together -> memberTogethers.add(
+                MemberTogether.builder()
+                        .memberTogetherId(new MemberTogetherId(this.id, together.getId()))
+                        .member(this)
+                        .together(together)
+                        .build()));
+    }
 }

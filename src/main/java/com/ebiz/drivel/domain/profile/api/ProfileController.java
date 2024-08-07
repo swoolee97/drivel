@@ -1,10 +1,6 @@
 package com.ebiz.drivel.domain.profile.api;
 
-import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateGenderDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
-import com.ebiz.drivel.domain.profile.dto.UpdateRegionDTO;
+import com.ebiz.drivel.domain.profile.dto.*;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
 import jakarta.annotation.Nullable;
 import java.io.IOException;
@@ -61,4 +57,21 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/style")
+    public ResponseEntity<Void> updateStyle(@RequestBody UpdateStyleDTO updateStyleDTO){
+        profileService.updateMemberStyle(updateStyleDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/theme")
+    public ResponseEntity<Void> updateTheme(@RequestBody UpdateThemeDTO updateThemeDTO){
+        profileService.updateMemberTheme(updateThemeDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/together")
+    public ResponseEntity<Void> updateTogether(@RequestBody UpdateTogetherDTO updateTogetherDTO){
+        profileService.updateMemberTogether(updateTogetherDTO);
+        return ResponseEntity.ok().build();
+    }
 }

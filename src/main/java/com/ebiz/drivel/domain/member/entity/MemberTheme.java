@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "member_theme")
 public class MemberTheme {
     @EmbeddedId
-    private MemberThemeId id;
+    private MemberThemeId memberThemeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("memberId")
