@@ -16,6 +16,8 @@ public class CourseDetailDTO extends CourseDTO {
                 .liked(isLiked)
                 .title(course.getTitle())
                 .description(course.getDescription())
+                .reviewCount(course.countReviews())
+                .averageRating(course.calculateAverageRating())
                 .imagePath(course.getImagePath())
                 .build();
     }
