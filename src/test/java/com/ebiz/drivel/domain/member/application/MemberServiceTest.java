@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.member.application;
 import static javax.security.auth.callback.ConfirmationCallback.OK;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -54,18 +55,29 @@ class MemberServiceTest {
         // then
         verify(memberRepository, times(1)).existsByNickname("nonexistent_nickname");
     }
-    @DisplayName("존재하지_않는_닉네임_테스트")
+    @DisplayName("닉네임 중복 테스트")
     @Test
     void testCheckNicknameNotExists(){
         // when
-        when(memberRepository.existsByNickname(any(String.class))).thenReturn(false);
+        when(memberRepository.existsByNickname(anyString())).thenReturn(false);
 
         // given
         ResponseEntity<String> response = memberService.checkNickname("nonexistent_nickname");
 
         // then
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("사용 가능한 닉네임입니다.", response.getBody());
         verify(memberRepository).existsByNickname("nonexistent_nickname");
+    }
+
+    @DisplayName("빈 문자열 닉네임에 대한 응답 테스트")
+    @Test
+    void testCheckNicknameEmptyString(){
+        // given
+        ResponseEntity<String> response = memberService.checkNickname("");
+
+        // then
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("닉네임이 빈 문자열이거나 유효하지 않습니다.", response.getBody());
     }
 }
