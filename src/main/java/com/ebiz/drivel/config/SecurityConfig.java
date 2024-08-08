@@ -40,6 +40,7 @@ public class SecurityConfig {
                             auth.requestMatchers(("/mail/check")).permitAll();
                             auth.requestMatchers(("/mail/password-reset")).permitAll();
                             auth.requestMatchers(("/sse/connect")).permitAll();
+                            auth.requestMatchers(("/ws/*")).permitAll();
                             auth.anyRequest().authenticated();
                         }
                 ).addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
