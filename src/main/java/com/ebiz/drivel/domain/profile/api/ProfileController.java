@@ -70,20 +70,32 @@ public class ProfileController {
     }
 
     @PostMapping("/{userid}/block")
-    public ResponseEntity<?> blockUser(@PathVariable Long userid, @RequestBody BlockProfileDTO blockProfileDTO){
-        blockService.blockUser(userid, blockProfileDTO);
-        return ResponseEntity.ok().body("유저가 차단되었습니다.");
+    public ResponseEntity<String> blockUser(@PathVariable Long userId, @RequestBody BlockProfileDTO blockProfileDTO) {
+        try {
+            blockService.blockUser(userId, blockProfileDTO);
+            return ResponseEntity.ok("유저가 차단되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("차단에 실패했습니다: " + e.getMessage());
+        }
     }
 
-    @DeleteMapping("/{userId}/isBlcoked/{blockedUserId}")
-    public ResponseEntity<?> isUserBlocked(@PathVariable Long userId, @PathVariable Long blockedUserId){
-        boolean isBlocked = blockService.isUserBlocked(userId, blockedUserId);
-        return ResponseEntity.ok().body(isBlocked);
+    @GetMapping("/{userId}/isBlocked/{blockedUserId}")
+    public ResponseEntity<Boolean> isUserBlocked(@PathVariable Long userId, @PathVariable Long blockedUserId) {
+        try {
+            boolean isBlocked = blockService.isUserBlocked(userId, blockedUserId);
+            return ResponseEntity.ok(isBlocked);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(false);
+        }
     }
 
     @PostMapping("/{profileId}/report")
-    public ResponseEntity<?> reportProfile(@PathVariable Long profileId, @RequestBody ReportProfileDTO reportProfileDTO){
-        reportService.reportProfile(profileId, reportProfileDTO);
-        return ResponseEntity.ok().body("유저를 신고하였습니다.");
+    public ResponseEntity<String> reportProfile(@PathVariable Long profileId, @RequestBody ReportProfileDTO reportProfileDTO) {
+        try {
+            reportService.reportProfile(profileId, reportProfileDTO);
+            return ResponseEntity.ok("유저가 신고되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("신고 처리에 실패했습니다: " + e.getMessage());
+        }
     }
 }
