@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.profile.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
+import com.ebiz.drivel.domain.member.application.MemberService;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.entity.MemberStyle;
 import com.ebiz.drivel.domain.member.entity.MemberTheme;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,7 @@ public class ProfileService {
     private final ThemeRepository themeRepository;
     private final StyleRepository styleRepository;
     private final TogetherRepository togetherRepository;
+    private final MemberService memberService;
     @Value("${cloud.aws.s3.profileImageBucketName}")
     private String PROFILE_IMAGE_BUCKET_NAME;
     private final S3Service s3Service;
@@ -81,30 +84,25 @@ public class ProfileService {
     }
 
     @Transactional
-    public void updateMemberStyle(UpdateStyleDTO updateStyleDTO) {
+    public void updateMemberProfile(UpdateProfileDTO updateProfileDTO){
         Member member = userDetailsService.getMemberByContextHolder();
+
+        // style 업데이트
         member.getMemberStyles().clear();
-        entityManager.flush();
-        List<Style> memberStyles = styleRepository.findAllById(updateStyleDTO.getStyleIds());
+        List<Style> memberStyles = styleRepository.findAllById(updateProfileDTO.getStyleIds());
         member.updateStyles(memberStyles);
-    }
 
-    @Transactional
-    public void updateMemberTheme(UpdateThemeDTO updateThemeDTO) {
-        Member member = userDetailsService.getMemberByContextHolder();
+        // Themes 업데이트
         member.getMemberThemes().clear();
-        entityManager.flush();
-        List<Theme> memberTheme = themeRepository.findAllById(updateThemeDTO.getThemeIds());
-        member.updateTheme(memberTheme);
-    }
+        List<Theme> memberThemes = themeRepository.findAllById(updateProfileDTO.getThemeIds());
+        member.updateTheme(memberThemes);
 
-    @Transactional
-    public void updateMemberTogether(UpdateTogetherDTO updateTogetherDTO) {
-        Member member = userDetailsService.getMemberByContextHolder();
+        // Together 업데이트
         member.getMemberTogethers().clear();
+        List<Together> memberTogethers = togetherRepository.findAllById(updateProfileDTO.getTogetherIds());
+        member.updateTogether(memberTogethers);
+
         entityManager.flush();
-        List<Together> memberTogether = togetherRepository.findAllById(updateTogetherDTO.getTogetherIds());
-        member.updateTogether(memberTogether);
     }
 
     @Transactional
@@ -116,6 +114,11 @@ public class ProfileService {
             deleteProfileImage(member.getImagePath());
         }
         member.updateProfileImagePath(newImagePath);
+    }
+
+    // MemberService의 getProfileById를 호출
+    public ResponseEntity<ProfileDTO> getProfileById(Long id){
+        return memberService.getProfileById(id);
     }
 
     private String uploadProfileImage(MultipartFile image) throws IOException {
