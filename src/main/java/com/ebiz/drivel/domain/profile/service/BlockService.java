@@ -27,9 +27,7 @@ public class BlockService {
         Member user = findMemberById(userId);
         Member blockedUser = findMemberById(blockProfileDTO.getBlockedUserId());
 
-        Block block = new Block();
-        block.setUser(user);
-        block.setBlockedUser(blockedUser);
+        Block block = new Block(user, blockedUser);
         blockRepository.save(block);
     }
 
