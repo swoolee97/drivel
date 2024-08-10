@@ -1,18 +1,16 @@
 package com.ebiz.drivel.domain.profile.api;
 
+import com.ebiz.drivel.domain.member.application.MemberService;
 import com.ebiz.drivel.domain.profile.dto.*;
+import com.ebiz.drivel.domain.profile.entity.Block;
+import com.ebiz.drivel.domain.profile.service.BlockService;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
+import com.ebiz.drivel.domain.profile.service.ReportService;
 import jakarta.annotation.Nullable;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -21,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final MemberService memberService;
+    private final BlockService blockService;
+    private final ReportService reportService;
 
     @PostMapping("/image")
     public void changeProfileImage(@Nullable @RequestPart("image") MultipartFile image) throws IOException {
@@ -57,21 +58,44 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/style")
-    public ResponseEntity<Void> updateStyle(@RequestBody UpdateStyleDTO updateStyleDTO){
-        profileService.updateMemberStyle(updateStyleDTO);
+    @PatchMapping("/profileUpdate")
+    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileDTO updateProfileDTO) {
+        profileService.updateMemberProfile(updateProfileDTO);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/theme")
-    public ResponseEntity<Void> updateTheme(@RequestBody UpdateThemeDTO updateThemeDTO){
-        profileService.updateMemberTheme(updateThemeDTO);
-        return ResponseEntity.ok().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<ProfileDTO> getProfileById(@PathVariable Long id){
+        return memberService.getProfileById(id);
     }
 
-    @PatchMapping("/together")
-    public ResponseEntity<Void> updateTogether(@RequestBody UpdateTogetherDTO updateTogetherDTO){
-        profileService.updateMemberTogether(updateTogetherDTO);
-        return ResponseEntity.ok().build();
+    @PostMapping("/{userid}/block")
+    public ResponseEntity<String> blockUser(@PathVariable Long userId, @RequestBody BlockProfileDTO blockProfileDTO) {
+        try {
+            blockService.blockUser(userId, blockProfileDTO);
+            return ResponseEntity.ok("유저가 차단되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("차단에 실패했습니다: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/{userId}/isBlocked/{blockedUserId}")
+    public ResponseEntity<Boolean> isUserBlocked(@PathVariable Long userId, @PathVariable Long blockedUserId) {
+        try {
+            boolean isBlocked = blockService.isUserBlocked(userId, blockedUserId);
+            return ResponseEntity.ok(isBlocked);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(false);
+        }
+    }
+
+    @PostMapping("/{profileId}/report")
+    public ResponseEntity<String> reportProfile(@PathVariable Long profileId, @RequestBody ReportProfileDTO reportProfileDTO) {
+        try {
+            reportService.reportProfile(profileId, reportProfileDTO);
+            return ResponseEntity.ok("유저가 신고되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("신고 처리에 실패했습니다: " + e.getMessage());
+        }
     }
 }
