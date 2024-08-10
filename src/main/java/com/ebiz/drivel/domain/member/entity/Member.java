@@ -86,13 +86,13 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRegion> memberRegions;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberStyle> memberStyles;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberTheme> memberThemes;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberTogether> memberTogethers;
 
     public boolean hasDefaultProfileImage() {
@@ -150,7 +150,6 @@ public class Member {
     }
 
     public void updateRegion(List<Region> regions) {
-        memberRegions.clear();
         regions.forEach(region -> memberRegions.add(
                 MemberRegion.builder()
                         .memberRegionId(new MemberRegionId(this.id, region.getId()))
@@ -160,8 +159,7 @@ public class Member {
     }
 
     // 메서드 신규 구현
-    public void updateStyles(List<Style> styles){
-        memberStyles.clear();
+    public void updateStyles(List<Style> styles) {
         styles.forEach(style -> memberStyles.add(
                 MemberStyle.builder()
                         .memberStyleId(new MemberStyleId(this.id, style.getId()))
@@ -171,7 +169,6 @@ public class Member {
     }
 
     public void updateTheme(List<Theme> themes) {
-        memberThemes.clear();
         themes.forEach(theme -> memberThemes.add(
                 MemberTheme.builder()
                         .memberThemeId(new MemberThemeId(this.id, theme.getId()))
@@ -181,7 +178,6 @@ public class Member {
     }
 
     public void updateTogether(List<Together> togethers) {
-        memberTogethers.clear();
         togethers.forEach(together -> memberTogethers.add(
                 MemberTogether.builder()
                         .memberTogetherId(new MemberTogetherId(this.id, together.getId()))
