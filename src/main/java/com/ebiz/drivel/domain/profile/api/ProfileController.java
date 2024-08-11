@@ -84,41 +84,25 @@ public class ProfileController {
 
     @PostMapping("/block")
     public ResponseEntity<String> blockUser(@RequestBody BlockProfileDTO blockProfileDTO) {
-        try {
-            blockService.blockUser(blockProfileDTO);
-            return ResponseEntity.ok("유저가 차단되었습니다.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("차단에 실패했습니다: " + e.getMessage());
-        }
+        blockService.blockUser(blockProfileDTO);
+        return ResponseEntity.ok("유저가 차단되었습니다.");
     }
 
     @PostMapping("/unblock")
     public ResponseEntity<String> unblockUser(@RequestBody BlockProfileDTO blockProfileDTO) {
-        try {
-            blockService.unblockUser(blockProfileDTO.getUserId(), blockProfileDTO.getBlockedUserId());
-            return ResponseEntity.ok("유저의 차단이 해제되었습니다.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("차단 해제에 실패했습니다: " + e.getMessage());
-        }
+        blockService.unblockUser(blockProfileDTO.getMemberId(), blockProfileDTO.getBlockedUserId());
+        return ResponseEntity.ok("유저의 차단이 해제되었습니다.");
     }
 
     @GetMapping("/{userId}/isBlocked/{blockedUserId}")
     public ResponseEntity<Boolean> isUserBlocked(@PathVariable Long userId, @PathVariable Long blockedUserId) {
-        try {
-            boolean isBlocked = blockService.isUserBlocked(userId, blockedUserId);
-            return ResponseEntity.ok(isBlocked);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(false);
-        }
+        boolean isBlocked = blockService.isUserBlocked(userId, blockedUserId);
+        return ResponseEntity.ok(isBlocked);
     }
 
     @PostMapping("/report")
     public ResponseEntity<String> reportProfile(@RequestBody ReportProfileDTO reportProfileDTO) {
-        try {
-            reportService.reportProfile(reportProfileDTO);
-            return ResponseEntity.ok("유저가 신고되었습니다.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("신고 처리에 실패했습니다: " + e.getMessage());
-        }
+        reportService.reportProfile(reportProfileDTO);
+        return ResponseEntity.ok("유저가 신고되었습니다.");
     }
 }

@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,9 @@ import lombok.ToString;
 @Entity
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"user", "blockUser"})
+@Builder
+@AllArgsConstructor
+@EqualsAndHashCode(of = {"member", "blockUser"})
 @ToString
 public class Block {
 
@@ -31,9 +35,4 @@ public class Block {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_member_id", nullable = false)
     private Member blockedMember;
-
-    public Block(Member user, Member blockedUser) {
-        this.member = user;
-        this.blockedMember = blockedUser;
-    }
 }

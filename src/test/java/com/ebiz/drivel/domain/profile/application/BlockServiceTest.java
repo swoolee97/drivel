@@ -38,7 +38,7 @@ public class BlockServiceTest {
         Long userId = 1L;
         Long blockedUserId = 2L;
         BlockProfileDTO dto = new BlockProfileDTO();
-        dto.setUserId(userId);
+        dto.setMemberId(userId);
         dto.setBlockedUserId(blockedUserId);
 
         Member user = new Member();
@@ -67,6 +67,6 @@ public class BlockServiceTest {
 
         blockService.unblockUser(userId, blockedUserId);
 
-        verify(blockRepository).deleteByUserAndBlockedUser(user, blockedUser);
+        verify(blockRepository).deleteByMemberAndBlockedMember(user, blockedUser);
     }
 }

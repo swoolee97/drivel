@@ -4,35 +4,34 @@ import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.profile.dto.BlockProfileDTO;
 import com.ebiz.drivel.domain.profile.entity.Block;
+import com.ebiz.drivel.domain.profile.exception.ProfileException;
 import com.ebiz.drivel.domain.profile.repository.BlockRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class BlockService {
     private final BlockRepository blockRepository;
     private final MemberRepository memberRepository;
 
-    @Autowired
-    public BlockService(BlockRepository blockRepository, MemberRepository memberRepository) {
-        this.blockRepository = blockRepository;
-        this.memberRepository = memberRepository;
-    }
-
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(ProfileException::userNotFound);
     }
 
     public void blockUser(BlockProfileDTO blockProfileDTO) {
-        Long userId = blockProfileDTO.getUserId();
+        Long userId = blockProfileDTO.getMemberId();
         Long blockedUserId = blockProfileDTO.getBlockedUserId();
 
         Member user = findMemberById(userId);
         Member blockedUser = findMemberById(blockedUserId);
 
-        Block block = new Block(user, blockedUser);
+        Block block = Block.builder()
+                .member(user)
+                .blockedMember(blockedUser)
+                .build();
         blockRepository.save(block);
     }
 
@@ -41,13 +40,13 @@ public class BlockService {
         Member user = findMemberById(userId);
         Member blockedUser = findMemberById(blockedUserId);
 
-        blockRepository.deleteByUserAndBlockedUser(user, blockedUser);
+        blockRepository.deleteByMemberAndBlockedMember(user, blockedUser);
     }
 
     public boolean isUserBlocked(Long userId, Long blockedUserId) {
         Member user = findMemberById(userId);
         Member blockedUser = findMemberById(blockedUserId);
 
-        return blockRepository.existsByUserAndBlockedUser(user, blockedUser);
+        return blockRepository.existsByMemberAndBlockedMember(user, blockedUser);
     }
 }
