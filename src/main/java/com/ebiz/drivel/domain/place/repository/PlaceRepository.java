@@ -11,15 +11,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query(value =
-            "SELECT p.id AS id, p.name AS name, p.image_path AS imagePath, "
+            "SELECT p.id AS id, p.name AS name, p.image_path AS imagePath, " +
+                    "(6371 * ACOS(COS(RADIANS(:firstWaypointLat)) * COS(RADIANS(p.latitude)) * COS(RADIANS(p.longitude) - RADIANS(:firstWaypointLon)) + SIN(RADIANS(:firstWaypointLat)) * SIN(RADIANS(p.latitude)))) AS distanceFromFirstWaypoint, "
                     +
-                    "(6371 * ACOS(" +
-                    "  COS(RADIANS(:givenLat)) * COS(RADIANS(p.latitude)) * COS(RADIANS(p.longitude) - RADIANS(:givenLon)) "
+                    "(6371 * ACOS(COS(RADIANS(:lastWaypointLat)) * COS(RADIANS(p.latitude)) * COS(RADIANS(p.longitude) - RADIANS(:lastWaypointLon)) + SIN(RADIANS(:lastWaypointLat)) * SIN(RADIANS(p.latitude)))) AS distanceFromLastWaypoint "
                     +
-                    "+ SIN(RADIANS(:givenLat)) * SIN(RADIANS(p.latitude)) " +
-                    ")) AS distance " +
                     "FROM place p " +
-                    "HAVING distance <= 10 "
-                    + "ORDER BY 4", nativeQuery = true)
-    List<PlaceInterface> findPlacesNearby(@Param("givenLat") double givenLat, @Param("givenLon") double givenLon);
+                    "WHERE (6371 * ACOS(COS(RADIANS(:firstWaypointLat)) * COS(RADIANS(p.latitude)) * COS(RADIANS(p.longitude) - RADIANS(:firstWaypointLon)) + SIN(RADIANS(:firstWaypointLat)) * SIN(RADIANS(p.latitude)))) <= 10 "
+                    +
+                    "OR (6371 * ACOS(COS(RADIANS(:lastWaypointLat)) * COS(RADIANS(p.latitude)) * COS(RADIANS(p.longitude) - RADIANS(:lastWaypointLon)) + SIN(RADIANS(:lastWaypointLat)) * SIN(RADIANS(p.latitude)))) <= 10 "
+                    +
+                    "ORDER BY distanceFromFirstWaypoint, distanceFromLastWaypoint", nativeQuery = true)
+    List<PlaceInterface> findPlacesNearby(@Param("firstWaypointLat") double firstWaypointLat,
+                                          @Param("firstWaypointLon") double firstWaypointLon,
+                                          @Param("lastWaypointLat") double lastWaypointLat,
+                                          @Param("lastWaypointLon") double lastWaypointLon);
 }

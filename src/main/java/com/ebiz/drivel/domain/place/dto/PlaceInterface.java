@@ -7,5 +7,7 @@ public interface PlaceInterface {
 
     String getImagePath();
 
-    double getDistance();
+    double getDistanceFromFirstWaypoint();
+
+    double getDistanceFromLastWaypoint();
 }
