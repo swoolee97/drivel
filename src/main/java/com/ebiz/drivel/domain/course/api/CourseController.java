@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.course.api;
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
+import com.ebiz.drivel.domain.course.dto.CourseTagDTO;
 import com.ebiz.drivel.domain.course.service.CourseLikeService;
 import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.course.service.CourseService;
@@ -70,8 +71,9 @@ public class CourseController {
 
     // 멤버가 선택한 지역 기반으로 랜덤 6개 드라이브코스 반환하는 api
     @GetMapping("/my-region")
-    public void getHomeCoursesByRegions() {
-
+    public ResponseEntity<List<CourseTagDTO>> getHomeCoursesByRegions() {
+        List<CourseTagDTO> coursesByRegions = courseService.getCoursesByMemberRegion();
+        return ResponseEntity.ok(coursesByRegions);
     }
 
     @GetMapping("/{id}/reviews")
