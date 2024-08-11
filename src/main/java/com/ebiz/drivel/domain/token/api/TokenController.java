@@ -25,6 +25,7 @@ public class TokenController {
     public ResponseEntity<BaseResponse> checkToken() {
         Member member = userDetailsService.getMemberByContextHolder();
         return ResponseEntity.ok(SignInDTO.builder()
+                .id(member.getId())
                 .message(AUTO_SIGN_IN_SUCCESS_MESSAGE)
                 .nickname(member.getNickname())
                 .onboarded(member.isOnboarded())

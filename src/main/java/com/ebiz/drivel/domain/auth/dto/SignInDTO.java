@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 public class SignInDTO extends BaseResponse {
+    private Long id;
     private String nickname;
     private String accessToken;
     private String refreshToken;
