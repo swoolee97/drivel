@@ -66,7 +66,8 @@ public class CourseService {
                 .collect(Collectors.toList());
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         List<String> tags = getTagsByCourse(course);
-        List<PlaceInterface> places = placeService.getPlacesNearByCourse(course.getLatitude(), course.getLongitude());
+        List<PlaceInterface> places = placeService.getPlacesNearByCourse(waypoints.get(0),
+                waypoints.get(waypoints.size() - 1));
         List<SpotInterface> spots = spotService.getSpotsByCourse(waypoints.get(0), waypoints.get(waypoints.size() - 1));
 
         return CourseDetailResponse.builder()
