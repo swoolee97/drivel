@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.course.service;
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
+import com.ebiz.drivel.domain.course.dto.CourseTagDTO;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.entity.CourseTheme;
 import com.ebiz.drivel.domain.course.entity.QCourse;
@@ -11,6 +12,7 @@ import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoInterface;
 import com.ebiz.drivel.domain.festival.service.FestivalService;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.member.entity.MemberRegion;
 import com.ebiz.drivel.domain.member.entity.MemberStyle;
 import com.ebiz.drivel.domain.member.entity.MemberTheme;
 import com.ebiz.drivel.domain.member.entity.MemberTogether;
@@ -160,6 +162,23 @@ public class CourseService {
         List<CourseDTO> randomCourses = courses.stream().limit(6).toList();
 
         return randomCourses;
+    }
+
+    public List<CourseTagDTO> getCoursesByMemberRegion() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        List<MemberRegion> memberRegions = member.getMemberRegions();
+
+        List<CourseTagDTO> tagCourses = new ArrayList<>();
+        memberRegions.forEach(memberRegion -> {
+            Long id = memberRegion.getRegion().getId();
+            List<Course> courses = courseRepository.findCoursesByRegionId(id);
+            Collections.shuffle(courses, new Random());
+            List<CourseDTO> courseDTOs = courses.stream().limit(6)
+                    .map(course -> CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course)))
+                    .toList();
+            tagCourses.add(CourseTagDTO.from(courseDTOs, memberRegion.getRegion()));
+        });
+        return tagCourses;
     }
 
     private List<CourseDTO> getRandomCoursesByTheme(Theme theme) {

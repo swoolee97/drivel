@@ -47,6 +47,9 @@ public class Course {
     @Column(name = "image_path")
     private String imagePath;
 
+    @Column(name = "region_id")
+    private Long regionId;
+
     @Column(name = "region_name")
     private String regionName;
 
