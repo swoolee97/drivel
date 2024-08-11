@@ -75,6 +75,7 @@ public class AuthService {
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
         tokenRepository.save(member.getId(), refreshToken);
         return SignInDTO.builder()
+                .id(member.getId())
                 .nickname(member.getNickname())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

@@ -61,6 +61,7 @@ public class KakaoService {
         tokenRepository.save(member.getId(), refreshToken);
 
         return SignInDTO.builder()
+                .id(member.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .nickname(member.getNickname())
