@@ -19,6 +19,8 @@ import com.ebiz.drivel.domain.onboarding.entity.Together;
 import com.ebiz.drivel.domain.place.dto.PlaceInterface;
 import com.ebiz.drivel.domain.place.service.PlaceService;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
+import com.ebiz.drivel.domain.spot.application.SpotService;
+import com.ebiz.drivel.domain.spot.dto.SpotInterface;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
 import com.ebiz.drivel.domain.theme.entity.Theme;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
@@ -45,6 +47,7 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final UserDetailsServiceImpl userDetailsService;
+    private final SpotService spotService;
     private final CourseLikeService courseLikeService;
     private final FestivalService festivalService;
     private final PlaceService placeService;
@@ -64,6 +67,8 @@ public class CourseService {
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         List<String> tags = getTagsByCourse(course);
         List<PlaceInterface> places = placeService.getPlacesNearByCourse(course.getLatitude(), course.getLongitude());
+        List<SpotInterface> spots = spotService.getSpotsByCourse(waypoints.get(0), waypoints.get(waypoints.size() - 1));
+
         return CourseDetailResponse.builder()
                 .themes(themes)
                 .courseInfo(courseDTO)
@@ -75,6 +80,7 @@ public class CourseService {
                 .regionName(course.getRegionName())
                 .regionDescription(course.getRegionDescription())
                 .places(places)
+                .spots(spots)
                 .tags(tags)
                 .build();
     }
