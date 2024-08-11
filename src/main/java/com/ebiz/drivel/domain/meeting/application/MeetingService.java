@@ -9,6 +9,7 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingConditionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
+import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
@@ -32,6 +33,7 @@ import com.ebiz.drivel.domain.sse.AlertService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -231,9 +233,23 @@ public class MeetingService {
         MeetingJoinRequest meetingJoinRequest = MeetingJoinRequest.builder()
                 .meeting(meeting)
                 .member(member)
-                .status(Status.NONE)
+                .status(Status.WAITING)
                 .build();
         meetingJoinRequestRepository.save(meetingJoinRequest);
     }
 
+    public List<MeetingJoinRequestDTO> getJoinRequests() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        List<Meeting> meetings = meetingRepository.findByMasterMemberAndIsActiveIsTrue(member);
+        List<MeetingJoinRequestDTO> requests = new ArrayList<>();
+        meetings.forEach(meeting -> {
+            List<MeetingJoinRequest> joinRequests = meeting.getJoinRequests().stream()
+                    .filter(request -> !request.isAlreadyDecidedRequest()).toList();
+            if (!joinRequests.isEmpty()) {
+                List<Member> requestedMembers = joinRequests.stream().map(request -> request.getMember()).toList();
+                requests.add(MeetingJoinRequestDTO.from(meeting, requestedMembers));
+            }
+        });
+        return requests;
+    }
 }

@@ -8,6 +8,7 @@ import com.ebiz.drivel.domain.meeting.dto.JoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
+import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.validation.Valid;
@@ -77,6 +78,12 @@ public class MeetingController {
     @PostMapping("/accept")
     public void decideJoinMeeting(@RequestBody JoinRequestDecisionDTO joinRequestDecisionDTO) {
         meetingService.acceptJoinMeeting(joinRequestDecisionDTO);
+    }
+
+    @GetMapping("/requests")
+    public ResponseEntity<List<MeetingJoinRequestDTO>> getJoinRequests() {
+        List<MeetingJoinRequestDTO> joinRequests = meetingService.getJoinRequests();
+        return ResponseEntity.ok(joinRequests);
     }
 
 }
