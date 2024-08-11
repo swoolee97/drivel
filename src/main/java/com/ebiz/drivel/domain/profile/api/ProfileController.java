@@ -83,20 +83,20 @@ public class ProfileController {
     }
 
     @PostMapping("/block")
-    public ResponseEntity<String> blockUser(@RequestBody BlockProfileDTO blockProfileDTO) {
-        blockService.blockUser(blockProfileDTO);
+    public ResponseEntity<String> blockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
+        blockService.blockMember(blockProfileDTO);
         return ResponseEntity.ok("유저가 차단되었습니다.");
     }
 
     @PostMapping("/unblock")
-    public ResponseEntity<String> unblockUser(@RequestBody BlockProfileDTO blockProfileDTO) {
-        blockService.unblockUser(blockProfileDTO.getMemberId(), blockProfileDTO.getBlockedUserId());
+    public ResponseEntity<String> unblockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
+        blockService.unblockMember(blockProfileDTO.getMemberId(), blockProfileDTO.getBlockedMemberId());
         return ResponseEntity.ok("유저의 차단이 해제되었습니다.");
     }
 
-    @GetMapping("/{userId}/isBlocked/{blockedUserId}")
-    public ResponseEntity<Boolean> isUserBlocked(@PathVariable Long userId, @PathVariable Long blockedUserId) {
-        boolean isBlocked = blockService.isUserBlocked(userId, blockedUserId);
+    @GetMapping("/{memberId}/isBlocked/{blockedMemberId}")
+    public ResponseEntity<Boolean> isMemberBlocked(@PathVariable Long memberId, @PathVariable Long blockedMemberId) {
+        boolean isBlocked = blockService.isMemberBlocked(memberId, blockedMemberId);
         return ResponseEntity.ok(isBlocked);
     }
 

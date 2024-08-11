@@ -20,7 +20,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"member", "blockUser"})
+@EqualsAndHashCode(of = {"member", "blockMember"})
 @ToString
 public class Block {
 

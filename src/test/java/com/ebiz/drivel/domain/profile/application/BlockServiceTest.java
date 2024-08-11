@@ -39,7 +39,7 @@ public class BlockServiceTest {
         Long blockedUserId = 2L;
         BlockProfileDTO dto = new BlockProfileDTO();
         dto.setMemberId(userId);
-        dto.setBlockedUserId(blockedUserId);
+        dto.setBlockedMemberId(blockedUserId);
 
         Member user = new Member();
         Member blockedUser = new Member();
@@ -47,7 +47,7 @@ public class BlockServiceTest {
         when(memberRepository.findById(userId)).thenReturn(Optional.of(user));
         when(memberRepository.findById(blockedUserId)).thenReturn(Optional.of(blockedUser));
 
-        blockService.blockUser(dto);
+        blockService.blockMember(dto);
 
         verify(blockRepository).save(argThat(block ->
                 block.getMember().equals(user) &&
@@ -65,7 +65,7 @@ public class BlockServiceTest {
         when(memberRepository.findById(userId)).thenReturn(Optional.of(user));
         when(memberRepository.findById(blockedUserId)).thenReturn(Optional.of(blockedUser));
 
-        blockService.unblockUser(userId, blockedUserId);
+        blockService.unblockMember(userId, blockedUserId);
 
         verify(blockRepository).deleteByMemberAndBlockedMember(user, blockedUser);
     }

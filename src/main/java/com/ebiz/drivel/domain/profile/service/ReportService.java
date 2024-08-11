@@ -22,10 +22,10 @@ public class ReportService {
         Long profileId = reportProfileDTO.getProfileId();
 
         Member profile = memberRepository.findById(profileId)
-                .orElseThrow(ProfileException::userNotFound);
+                .orElseThrow(ProfileException::memberNotFound);
 
         Report report = Report.builder()
-                .profile(profile)
+                .member(profile)
                 .reason(reportProfileDTO.getReason())
                 .details(reportProfileDTO.getDetails())
                 .build();

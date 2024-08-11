@@ -1,22 +1,20 @@
 package com.ebiz.drivel.domain.profile.application;
 
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.profile.dto.ReportProfileDTO;
-import com.ebiz.drivel.domain.profile.entity.Report;
 import com.ebiz.drivel.domain.profile.repository.ReportRepository;
 import com.ebiz.drivel.domain.profile.service.ReportService;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class ReportServiceTest {
 
@@ -48,7 +46,7 @@ public class ReportServiceTest {
         reportService.reportProfile(dto);
 
         verify(reportRepository).save(argThat(report ->
-                report.getProfile().equals(profile) &&
+                report.getMember().equals(profile) &&
                         report.getReason().equals("부적절한 콘텐츠") &&
                         report.getDetails().equals("음란물 게시")));
     }

@@ -18,35 +18,35 @@ public class BlockService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(ProfileException::userNotFound);
+                .orElseThrow(ProfileException::memberNotFound);
     }
 
-    public void blockUser(BlockProfileDTO blockProfileDTO) {
-        Long userId = blockProfileDTO.getMemberId();
-        Long blockedUserId = blockProfileDTO.getBlockedUserId();
+    public void blockMember(BlockProfileDTO blockProfileDTO) {
+        Long memberId = blockProfileDTO.getMemberId();
+        Long blockedMemberId = blockProfileDTO.getBlockedMemberId();
 
-        Member user = findMemberById(userId);
-        Member blockedUser = findMemberById(blockedUserId);
+        Member member = findMemberById(memberId);
+        Member blockedMember = findMemberById(blockedMemberId);
 
         Block block = Block.builder()
-                .member(user)
-                .blockedMember(blockedUser)
+                .member(member)
+                .blockedMember(blockedMember)
                 .build();
         blockRepository.save(block);
     }
 
     @Transactional
-    public void unblockUser(Long userId, Long blockedUserId) {
-        Member user = findMemberById(userId);
-        Member blockedUser = findMemberById(blockedUserId);
+    public void unblockMember(Long memberId, Long blockedMemberId) {
+        Member Member = findMemberById(memberId);
+        Member blockedMember = findMemberById(blockedMemberId);
 
-        blockRepository.deleteByMemberAndBlockedMember(user, blockedUser);
+        blockRepository.deleteByMemberAndBlockedMember(Member, blockedMember);
     }
 
-    public boolean isUserBlocked(Long userId, Long blockedUserId) {
-        Member user = findMemberById(userId);
-        Member blockedUser = findMemberById(blockedUserId);
+    public boolean isMemberBlocked(Long memberId, Long blockedMemberId) {
+        Member member = findMemberById(memberId);
+        Member blockedMember = findMemberById(blockedMemberId);
 
-        return blockRepository.existsByMemberAndBlockedMember(user, blockedUser);
+        return blockRepository.existsByMemberAndBlockedMember(member, blockedMember);
     }
 }

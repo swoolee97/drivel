@@ -24,8 +24,8 @@ public class Report {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", nullable = false)
-    private Member profile;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     private String reason;
     private String details;

@@ -6,11 +6,11 @@ public class ProfileException extends RuntimeException {
         super(message);
     }
 
-    public static ProfileException blockUserFailed() {
+    public static ProfileException blockMemberFailed() {
         return new ProfileException(ExceptionMessage.BLOCK_USER_FAILED);
     }
 
-    public static ProfileException unblockUserFailed() {
+    public static ProfileException unblockMemberFailed() {
         return new ProfileException(ExceptionMessage.UNBLOCK_USER_FAILED);
     }
 
@@ -18,7 +18,7 @@ public class ProfileException extends RuntimeException {
         return new ProfileException(ExceptionMessage.REPORT_PROFILE_FAILED);
     }
 
-    public static ProfileException userNotFound() {
+    public static ProfileException memberNotFound() {
         return new ProfileException(ExceptionMessage.USER_NOT_FOUND);
     }
 }
