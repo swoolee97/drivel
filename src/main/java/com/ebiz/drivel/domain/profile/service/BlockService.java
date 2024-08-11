@@ -11,21 +11,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BlockService {
-    @Autowired
-    private BlockRepository blockRepository;
+    private final BlockRepository blockRepository;
+    private final MemberRepository memberRepository;
 
     @Autowired
-    private MemberRepository memberRepository;
+    public BlockService(BlockRepository blockRepository, MemberRepository memberRepository) {
+        this.blockRepository = blockRepository;
+        this.memberRepository = memberRepository;
+    }
 
-    // 유저 조회 메서드
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
     }
 
-    public void blockUser(Long userId, BlockProfileDTO blockProfileDTO) {
+    public void blockUser(BlockProfileDTO blockProfileDTO) {
+        Long userId = blockProfileDTO.getUserId();
+        Long blockedUserId = blockProfileDTO.getBlockedUserId();
+
         Member user = findMemberById(userId);
-        Member blockedUser = findMemberById(blockProfileDTO.getBlockedUserId());
+        Member blockedUser = findMemberById(blockedUserId);
 
         Block block = new Block(user, blockedUser);
         blockRepository.save(block);

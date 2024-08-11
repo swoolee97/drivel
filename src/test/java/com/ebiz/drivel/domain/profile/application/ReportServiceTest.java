@@ -1,10 +1,12 @@
-package com.ebiz.drivel.domain.profile.service;
+package com.ebiz.drivel.domain.profile.application;
 
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.profile.dto.ReportProfileDTO;
 import com.ebiz.drivel.domain.profile.entity.Report;
 import com.ebiz.drivel.domain.profile.repository.ReportRepository;
+import com.ebiz.drivel.domain.profile.service.ReportService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,7 +18,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 public class ReportServiceTest {
 
     @InjectMocks
@@ -28,25 +29,27 @@ public class ReportServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
-    public ReportServiceTest() {
+    @BeforeEach
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
     public void testReportProfile() {
         Long profileId = 1L;
-        ReportProfileDTO dto = new ReportProfileDTO();
-        dto.setReason("Inappropriate content");
-        dto.setDetails("Details about the inappropriate content");
+        ReportProfileDTO dto = new ReportProfileDTO(profileId, "부적절한 콘텐츠", "음란물 게시");
 
-        Member profile = new Member();
+        Member profile = Member.builder()
+                .id(profileId)
+                .build();
 
         when(memberRepository.findById(profileId)).thenReturn(Optional.of(profile));
 
-        reportService.reportProfile(profileId, dto);
+        reportService.reportProfile(dto);
 
-        verify(reportRepository).save(argThat(report -> report.getProfile().equals(profile) &&
-                report.getReason().equals("Inappropriate content") &&
-                report.getDetails().equals("Details about the inappropriate content")));
+        verify(reportRepository).save(argThat(report ->
+                report.getProfile().equals(profile) &&
+                        report.getReason().equals("부적절한 콘텐츠") &&
+                        report.getDetails().equals("음란물 게시")));
     }
 }

@@ -5,26 +5,34 @@ import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.profile.dto.ReportProfileDTO;
 import com.ebiz.drivel.domain.profile.entity.Report;
 import com.ebiz.drivel.domain.profile.repository.ReportRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ReportService {
 
-    @Autowired
-    private ReportRepository reportRepository;
+    private final ReportRepository reportRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    public ReportService(ReportRepository reportRepository, MemberRepository memberRepository) {
+        this.reportRepository = reportRepository;
+        this.memberRepository = memberRepository;
+    }
 
-    public void reportProfile(Long profileId, ReportProfileDTO reportRequest) {
+    @Transactional
+    public void reportProfile(ReportProfileDTO reportProfileDTO) {
+        Long profileId = reportProfileDTO.getProfileId();
+
         Member profile = memberRepository.findById(profileId)
                 .orElseThrow(() -> new IllegalArgumentException("프로필을 찾을 수 없습니다."));
 
-        Report report = new Report();
-        report.setProfile(profile);
-        report.setReason(reportRequest.getReason());
-        report.setDetails(reportRequest.getDetails());
+        Report report = Report.builder()
+                .profile(profile)
+                .reason(reportProfileDTO.getReason())
+                .details(reportProfileDTO.getDetails())
+                .build();
+
         reportRepository.save(report);
     }
 }
