@@ -18,8 +18,9 @@ public class BlockService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(ProfileException::memberNotFound);
+                .orElseThrow(() -> ProfileException.userNotFound());
     }
+
 
     public void blockMember(BlockProfileDTO blockProfileDTO) {
         Long memberId = blockProfileDTO.getMemberId();
@@ -41,12 +42,5 @@ public class BlockService {
         Member blockedMember = findMemberById(blockedMemberId);
 
         blockRepository.deleteByMemberAndBlockedMember(Member, blockedMember);
-    }
-
-    public boolean isMemberBlocked(Long memberId, Long blockedMemberId) {
-        Member member = findMemberById(memberId);
-        Member blockedMember = findMemberById(blockedMemberId);
-
-        return blockRepository.existsByMemberAndBlockedMember(member, blockedMember);
     }
 }

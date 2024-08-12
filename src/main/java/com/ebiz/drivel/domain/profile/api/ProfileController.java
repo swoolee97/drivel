@@ -12,6 +12,7 @@ import com.ebiz.drivel.domain.profile.dto.UpdateRegionDTO;
 import com.ebiz.drivel.domain.profile.service.BlockService;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
 import com.ebiz.drivel.domain.profile.service.ReportService;
+import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.annotation.Nullable;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,10 @@ public class ProfileController {
     private final MemberService memberService;
     private final BlockService blockService;
     private final ReportService reportService;
+
+    public static final String BLOCK_MEMBER_SUCCESS = "유저가 차단되었습니다.";
+    public static final String UNBLOCK_MEMBER_SUCCESS = "유저의 차단이 해제되었습니다.";
+    public static final String REPORT_PROFILE_SUCCESS = "유저가 신고되었습니다.";
 
     @PostMapping("/image")
     public void changeProfileImage(@Nullable @RequestPart("image") MultipartFile image) throws IOException {
@@ -83,26 +88,29 @@ public class ProfileController {
     }
 
     @PostMapping("/block")
-    public ResponseEntity<String> blockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
+    public ResponseEntity<BaseResponse> blockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
         blockService.blockMember(blockProfileDTO);
-        return ResponseEntity.ok("유저가 차단되었습니다.");
+        BaseResponse response = BaseResponse.builder()
+                .message(BLOCK_MEMBER_SUCCESS)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/unblock")
-    public ResponseEntity<String> unblockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
+    public ResponseEntity<BaseResponse> unblockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
         blockService.unblockMember(blockProfileDTO.getMemberId(), blockProfileDTO.getBlockedMemberId());
-        return ResponseEntity.ok("유저의 차단이 해제되었습니다.");
-    }
-
-    @GetMapping("/{memberId}/isBlocked/{blockedMemberId}")
-    public ResponseEntity<Boolean> isMemberBlocked(@PathVariable Long memberId, @PathVariable Long blockedMemberId) {
-        boolean isBlocked = blockService.isMemberBlocked(memberId, blockedMemberId);
-        return ResponseEntity.ok(isBlocked);
+        BaseResponse response = BaseResponse.builder()
+                .message(UNBLOCK_MEMBER_SUCCESS)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/report")
-    public ResponseEntity<String> reportProfile(@RequestBody ReportProfileDTO reportProfileDTO) {
+    public ResponseEntity<BaseResponse> reportProfile(@RequestBody ReportProfileDTO reportProfileDTO) {
         reportService.reportProfile(reportProfileDTO);
-        return ResponseEntity.ok("유저가 신고되었습니다.");
+        BaseResponse response = BaseResponse.builder()
+                .message(REPORT_PROFILE_SUCCESS)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }

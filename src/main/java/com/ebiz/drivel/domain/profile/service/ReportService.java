@@ -22,7 +22,7 @@ public class ReportService {
         Long profileId = reportProfileDTO.getProfileId();
 
         Member profile = memberRepository.findById(profileId)
-                .orElseThrow(ProfileException::memberNotFound);
+                .orElseThrow(() -> ProfileException.userNotFound());
 
         Report report = Report.builder()
                 .member(profile)
