@@ -98,7 +98,7 @@ public class ProfileController {
 
     @PostMapping("/unblock")
     public ResponseEntity<BaseResponse> unblockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
-        blockService.unblockMember(blockProfileDTO.getMemberId(), blockProfileDTO.getBlockedMemberId());
+        blockService.unblockMember(blockProfileDTO.getBlockedMemberId());
         BaseResponse response = BaseResponse.builder()
                 .message(UNBLOCK_MEMBER_SUCCESS)
                 .build();
@@ -107,7 +107,7 @@ public class ProfileController {
 
     @PostMapping("/report")
     public ResponseEntity<BaseResponse> reportProfile(@RequestBody ReportProfileDTO reportProfileDTO) {
-        reportService.reportProfile(reportProfileDTO);
+        reportService.reportMember(reportProfileDTO);
         BaseResponse response = BaseResponse.builder()
                 .message(REPORT_PROFILE_SUCCESS)
                 .build();
