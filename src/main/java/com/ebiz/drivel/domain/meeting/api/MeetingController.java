@@ -90,7 +90,7 @@ public class MeetingController {
         List<MeetingJoinRequestDTO> joinRequests = meetingService.getJoinRequests();
         return ResponseEntity.ok(joinRequests);
     }
-
+  
     @PostMapping("/reportMeeting")
     public ResponseEntity<BaseResponse> reportMeeting(@RequestBody ReportMeetingDTO reportMeetingDTO) {
         reportMeetingService.reportMeeting(reportMeetingDTO);
@@ -99,4 +99,5 @@ public class MeetingController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
 }
