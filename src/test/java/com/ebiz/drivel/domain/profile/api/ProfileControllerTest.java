@@ -1,23 +1,30 @@
 package com.ebiz.drivel.domain.profile.api;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.ebiz.drivel.domain.member.application.MemberService;
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
+import com.ebiz.drivel.domain.profile.dto.ReportProfileDTO;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
+import com.ebiz.drivel.domain.profile.service.ReportService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
+import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Collections;
-import java.util.Date;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -30,7 +37,13 @@ class ProfileControllerTest {
     private ProfileService profileService;
 
     @MockBean
+    private ReportService reportService;
+
+    @MockBean
     private MemberService memberService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void checkingProfile() throws Exception {
@@ -67,6 +80,20 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.themes").isEmpty())
                 .andExpect(jsonPath("$.togethers").isEmpty())
                 .andReturn();
+    }
+
+    @Test
+    void reportProfileSuccess() throws Exception {
+        ReportProfileDTO dto = new ReportProfileDTO(1L, "부적절한 콘텐츠", "음란물 게시");
+
+        doNothing().when(reportService).reportProfile(dto);
+
+        mockMvc.perform(post("/profile/report")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)) // Serialize DTO to JSON
+                        .with(user("user").password("password").roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(content().string("유저가 신고되었습니다."));
     }
 }
 

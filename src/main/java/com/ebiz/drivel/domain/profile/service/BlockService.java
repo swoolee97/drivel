@@ -4,45 +4,62 @@ import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.profile.dto.BlockProfileDTO;
 import com.ebiz.drivel.domain.profile.entity.Block;
+import com.ebiz.drivel.domain.profile.exception.ProfileException;
 import com.ebiz.drivel.domain.profile.repository.BlockRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class BlockService {
-    @Autowired
-    private BlockRepository blockRepository;
+    private final BlockRepository blockRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    // 유저 조회 메서드
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> ProfileException.userNotFound());
     }
 
-    public void blockUser(Long userId, BlockProfileDTO blockProfileDTO) {
-        Member user = findMemberById(userId);
-        Member blockedUser = findMemberById(blockProfileDTO.getBlockedUserId());
+    private Long getCurrentMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
 
-        Block block = new Block(user, blockedUser);
+        Optional<Member> memberOptional = memberRepository.findMemberByEmail(email);
+
+        if(memberOptional.isPresent()) {
+            return memberOptional.get().getId();
+        } else{
+            throw new UsernameNotFoundException("유저 이메일을 찾을 수 없습니다.");
+        }
+    }
+
+
+    public void blockMember(BlockProfileDTO blockProfileDTO) {
+        Long memberId = getCurrentMemberId();
+        Long blockedMemberId = blockProfileDTO.getBlockedMemberId();
+
+        Member member = findMemberById(memberId);
+        Member blockedMember = findMemberById(blockedMemberId);
+
+        Block block = Block.builder()
+                .member(member)
+                .blockedMember(blockedMember)
+                .build();
+
         blockRepository.save(block);
     }
 
     @Transactional
-    public void unblockUser(Long userId, Long blockedUserId) {
-        Member user = findMemberById(userId);
-        Member blockedUser = findMemberById(blockedUserId);
+    public void unblockMember(Long blockedMemberId) {
+        Long memberId = getCurrentMemberId();
+        Member member = findMemberById(memberId);
+        Member blockedMember = findMemberById(blockedMemberId);
 
-        blockRepository.deleteByUserAndBlockedUser(user, blockedUser);
-    }
-
-    public boolean isUserBlocked(Long userId, Long blockedUserId) {
-        Member user = findMemberById(userId);
-        Member blockedUser = findMemberById(blockedUserId);
-
-        return blockRepository.existsByUserAndBlockedUser(user, blockedUser);
+        blockRepository.deleteByMemberAndBlockedMember(member, blockedMember);
     }
 }
