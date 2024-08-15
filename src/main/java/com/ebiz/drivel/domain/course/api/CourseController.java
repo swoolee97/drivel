@@ -41,7 +41,7 @@ public class CourseController {
                 pageable);
         return ResponseEntity.ok(courses);
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> getCourseDetail(@PathVariable Long id) {
         CourseDetailResponse courseDetailResponse = courseService.getCourseDetail(id);

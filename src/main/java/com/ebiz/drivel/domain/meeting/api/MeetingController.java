@@ -9,9 +9,7 @@ import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
-import com.ebiz.drivel.domain.meeting.dto.ReportMeetingDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
-import com.ebiz.drivel.domain.meeting.service.ReportMeetingService;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -35,7 +33,6 @@ public class MeetingController {
     public static final String REPORT_MEETING_SUCCESS_MESSAGE = "모임이 신고되었습니다.";
 
     private final MeetingService meetingService;
-    private final ReportMeetingService reportMeetingService;
 
     @PostMapping
     public ResponseEntity<CreateMeetingResponse> createMeeting(
@@ -89,15 +86,6 @@ public class MeetingController {
     public ResponseEntity<List<MeetingJoinRequestDTO>> getJoinRequests() {
         List<MeetingJoinRequestDTO> joinRequests = meetingService.getJoinRequests();
         return ResponseEntity.ok(joinRequests);
-    }
-  
-    @PostMapping("/reportMeeting")
-    public ResponseEntity<BaseResponse> reportMeeting(@RequestBody ReportMeetingDTO reportMeetingDTO) {
-        reportMeetingService.reportMeeting(reportMeetingDTO);
-        BaseResponse response = BaseResponse.builder()
-                .message(REPORT_MEETING_SUCCESS_MESSAGE)
-                .build();
-        return ResponseEntity.ok(response);
     }
 
 }

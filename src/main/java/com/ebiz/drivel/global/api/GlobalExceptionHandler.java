@@ -1,5 +1,6 @@
 package com.ebiz.drivel.global.api;
 
+import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.global.dto.ErrorResponse;
 import com.ebiz.drivel.global.exception.CourseNotFoundException;
 import jakarta.validation.ConstraintViolation;
@@ -73,6 +74,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(ErrorResponse.builder()
                 .message(message)
                 .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MeetingNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMeetingNotFoundException(
+            MeetingNotFoundException meetingNotFoundException) {
+        return ResponseEntity.badRequest().body(ErrorResponse.builder()
+                .message(meetingNotFoundException.getMessage())
+                .build());
     }
 
 }

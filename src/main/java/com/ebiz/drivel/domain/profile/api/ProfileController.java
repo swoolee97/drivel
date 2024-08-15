@@ -1,18 +1,15 @@
 package com.ebiz.drivel.domain.profile.api;
 
+import com.ebiz.drivel.domain.block.BlockService;
 import com.ebiz.drivel.domain.member.application.MemberService;
-import com.ebiz.drivel.domain.profile.dto.BlockProfileDTO;
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
-import com.ebiz.drivel.domain.profile.dto.ReportProfileDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateGenderDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateProfileDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateRegionDTO;
-import com.ebiz.drivel.domain.profile.service.BlockService;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
-import com.ebiz.drivel.domain.profile.service.ReportService;
-import com.ebiz.drivel.global.dto.BaseResponse;
+import com.ebiz.drivel.domain.report.ReportService;
 import jakarta.annotation.Nullable;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -87,30 +84,4 @@ public class ProfileController {
         return memberService.getProfileById(id);
     }
 
-    @PostMapping("/block")
-    public ResponseEntity<BaseResponse> blockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
-        blockService.blockMember(blockProfileDTO);
-        BaseResponse response = BaseResponse.builder()
-                .message(BLOCK_MEMBER_SUCCESS)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/unblock")
-    public ResponseEntity<BaseResponse> unblockMember(@RequestBody BlockProfileDTO blockProfileDTO) {
-        blockService.unblockMember(blockProfileDTO.getBlockedMemberId());
-        BaseResponse response = BaseResponse.builder()
-                .message(UNBLOCK_MEMBER_SUCCESS)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/report")
-    public ResponseEntity<BaseResponse> reportProfile(@RequestBody ReportProfileDTO reportProfileDTO) {
-        reportService.reportMember(reportProfileDTO);
-        BaseResponse response = BaseResponse.builder()
-                .message(REPORT_PROFILE_SUCCESS)
-                .build();
-        return ResponseEntity.ok(response);
-    }
 }
