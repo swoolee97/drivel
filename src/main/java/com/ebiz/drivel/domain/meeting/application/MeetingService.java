@@ -92,12 +92,24 @@ public class MeetingService {
                         .id(meeting.getId())
                         .title(meeting.getTitle())
                         .description(meeting.getDescription())
+                        .status(getMemberParticipantStatus(meeting).toString())
                         .date(meeting.getMeetingDate())
                         .condition(meetingConditionDTO)
                         .masterInfo(meetingMasterInfoDTO)
                         .participantsInfo(meetingParticipantsInfo)
                         .build())
                 .build();
+    }
+
+    private MeetingMember.Status getMemberParticipantStatus(Meeting meeting) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        if (meeting.isAlreadyJoinedMember(member)) {
+            return MeetingMember.Status.JOINED;
+        }
+        if (meeting.isWaitingRequestMember(member)) {
+            return MeetingMember.Status.WAITING;
+        }
+        return MeetingMember.Status.NONE;
     }
 
     private MeetingParticipantsInfoDTO createParticipantsInfo(Meeting meeting,
@@ -161,7 +173,7 @@ public class MeetingService {
                 .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
 
         //이미 가입 요청했는지 확인
-        if (meeting.isAlreadyRequested(member)) {
+        if (meeting.isWaitingRequestMember(member)) {
             throw new MeetingJoinRequestNotFoundException("이미 가입 신청한 모임입니다");
         }
 
