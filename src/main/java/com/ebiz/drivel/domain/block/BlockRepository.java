@@ -1,10 +1,9 @@
-package com.ebiz.drivel.domain.profile.repository;
+package com.ebiz.drivel.domain.block;
 
 import com.ebiz.drivel.domain.member.entity.Member;
-import com.ebiz.drivel.domain.profile.entity.Block;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BlockRepository extends JpaRepository<Block, Long> {
+public interface BlockRepository extends JpaRepository<BlockMember, Long> {
 
     void deleteByMemberAndBlockedMember(Member Member, Member blockedMember);
 }

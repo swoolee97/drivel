@@ -1,5 +1,6 @@
-package com.ebiz.drivel.domain.meeting.entity;
+package com.ebiz.drivel.domain.block;
 
+import com.ebiz.drivel.domain.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,25 +11,28 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "report_meeting")
 @Getter
-@Builder
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class ReportMeeting {
+@Table(name = "block_member")
+@EqualsAndHashCode(of = {"member", "blockMember"})
+public class BlockMember {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meetingId", nullable = false)
-    private Meeting meeting;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    private String reason;
-    private String details;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blocked_member_id", nullable = false)
+    private Member blockedMember;
 }
