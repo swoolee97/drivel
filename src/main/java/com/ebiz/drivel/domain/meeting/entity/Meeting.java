@@ -112,7 +112,7 @@ public class Meeting {
                 .collect(Collectors.toList());
     }
 
-    public boolean isAlreadyRequested(Member member) {
+    public boolean isWaitingRequestMember(Member member) {
         return joinRequests.stream().anyMatch(
                 joinRequest -> joinRequest.getMember().equals(member) && !joinRequest.isAlreadyDecidedRequest());
     }
@@ -122,6 +122,7 @@ public class Meeting {
     }
 
     public boolean isAlreadyJoinedMember(Member member) {
+        System.out.println(member.getId());
         return meetingMembers.stream()
                 .anyMatch(meetingMember -> meetingMember.getIsActive() && meetingMember.getMember().equals(member));
     }
