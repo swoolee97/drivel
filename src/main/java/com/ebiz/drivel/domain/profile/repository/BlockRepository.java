@@ -5,6 +5,7 @@ import com.ebiz.drivel.domain.profile.entity.Block;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BlockRepository extends JpaRepository<Block, Long> {
-    boolean existsByUserAndBlockedUser(Member user, Member blockedUser);
-    void deleteByUserAndBlockedUser(Member user, Member blockedUser);
+    boolean existsByMemberAndBlockedMember(Member member, Member blockedMember);
+
+    void deleteByMemberAndBlockedMember(Member member, Member blockedMember);
 }

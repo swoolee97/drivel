@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class BlockProfileDTO {
-    private Long blockedUserId;
+    private Long memberId;
+    private Long blockedMemberId;
 }
