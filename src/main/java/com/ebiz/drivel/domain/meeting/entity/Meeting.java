@@ -122,7 +122,6 @@ public class Meeting {
     }
 
     public boolean isAlreadyJoinedMember(Member member) {
-        System.out.println(member.getId());
         return meetingMembers.stream()
                 .anyMatch(meetingMember -> meetingMember.getIsActive() && meetingMember.getMember().equals(member));
     }
