@@ -259,7 +259,7 @@ public class MeetingService {
                     .filter(request -> !request.isAlreadyDecidedRequest()).toList();
             if (!joinRequests.isEmpty()) {
                 List<Member> requestedMembers = joinRequests.stream().map(request -> request.getMember()).toList();
-                requests.add(MeetingJoinRequestDTO.from(meeting, requestedMembers));
+                requests.add(MeetingJoinRequestDTO.from(meeting, joinRequests));
             }
         });
         return requests;

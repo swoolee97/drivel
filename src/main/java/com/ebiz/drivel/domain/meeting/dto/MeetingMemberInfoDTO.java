@@ -1,20 +1,20 @@
 package com.ebiz.drivel.domain.meeting.dto;
 
 import com.ebiz.drivel.domain.member.entity.Member;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @Getter
 public class MeetingMemberInfoDTO {
-    private Long id;
+    private Long memberId;
     private String imagePath;
     private String nickname;
     private String description;
 
     public static MeetingMemberInfoDTO from(Member member) {
         return MeetingMemberInfoDTO.builder()
-                .id(member.getId())
+                .memberId(member.getId())
                 .imagePath(member.getImagePath())
                 .nickname(member.getNickname())
                 .description(member.getDescription())
