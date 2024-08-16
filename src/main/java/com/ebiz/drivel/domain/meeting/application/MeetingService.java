@@ -140,9 +140,10 @@ public class MeetingService {
                                                          String carModel, Integer genderId, OrderBy orderBy,
                                                          Pageable pageable) {
         QMeeting meeting = QMeeting.meeting;
+        Member member = userDetailsService.getMemberByContextHolder();
         BooleanBuilder filterBuilder = MeetingQueryHelper.createFilterBuilder(styleId, themeId, togetherId, age,
                 carCareer, carModel,
-                genderId, meeting);
+                genderId, member, meeting);
         OrderSpecifier<?> orderSpecifier = MeetingQueryHelper.getOrderSpecifier(orderBy, meeting);
 
         long totalCount = queryFactory.selectFrom(meeting)

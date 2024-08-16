@@ -1,9 +1,12 @@
 package com.ebiz.drivel.domain.meeting.application;
 
+import com.ebiz.drivel.domain.block.BlockMember;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
+import com.ebiz.drivel.domain.member.entity.Member;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -13,7 +16,7 @@ public class MeetingQueryHelper {
 
     public static BooleanBuilder createFilterBuilder(
             Long styleId, Long themeId, Long togetherId, Integer age, Integer carCareer, String carModel,
-            Integer genderId, QMeeting meeting) {
+            Integer genderId, Member member, QMeeting meeting) {
         BooleanBuilder filterBuilder = new BooleanBuilder();
 
         // 조건 필터링
@@ -25,7 +28,7 @@ public class MeetingQueryHelper {
         addCarModelFilter(carModel, meeting, filterBuilder);
         addGenderFilter(genderId, meeting, filterBuilder);
         addActiveFilter(meeting, filterBuilder);
-
+        addBlockFilter(meeting, member, filterBuilder);
         return filterBuilder;
     }
 
@@ -73,6 +76,11 @@ public class MeetingQueryHelper {
 
     private static void addActiveFilter(QMeeting meeting, BooleanBuilder filterBuilder) {
         filterBuilder.and(meeting.isActive);
+    }
+
+    public static void addBlockFilter(QMeeting meeting, Member member, BooleanBuilder filterBuilder) {
+        List<Member> blockedMembers = member.getBlockMembers().stream().map(BlockMember::getTargetMember).toList();
+        filterBuilder.and(meeting.masterMember.notIn(blockedMembers));
     }
 
     public static OrderSpecifier<?> getOrderSpecifier(OrderBy orderBy, QMeeting meeting) {
