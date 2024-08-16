@@ -15,6 +15,7 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
+import com.ebiz.drivel.domain.meeting.entity.Meeting.MeetingStatus;
 import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest;
 import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest.Status;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
@@ -76,6 +77,14 @@ public class MeetingService {
         Member member = userDetailsService.getMemberByContextHolder();
         meeting.setMasterMember(member);
         return meetingRepository.save(meeting);
+    }
+
+    @Transactional
+    public void deleteMeeting(Long id) {
+        Meeting meeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
+        meeting.delete();
+        meeting.getMeetingMembers().forEach(meetingMember -> meetingMember.inActive());
     }
 
     public MeetingDetailResponse getMeetingDetail(Long id) {
@@ -253,7 +262,7 @@ public class MeetingService {
 
     public List<MeetingJoinRequestDTO> getJoinRequests() {
         Member member = userDetailsService.getMemberByContextHolder();
-        List<Meeting> meetings = meetingRepository.findByMasterMemberAndIsActiveIsTrue(member);
+        List<Meeting> meetings = meetingRepository.findByMasterMemberAndStatus(member, MeetingStatus.ACTIVE);
         List<MeetingJoinRequestDTO> requests = new ArrayList<>();
         meetings.forEach(meeting -> {
             List<MeetingJoinRequest> joinRequests = meeting.getJoinRequests().stream()

@@ -81,8 +81,9 @@ public class Meeting {
     @Column(name = "car_model")
     private String carModel;
 
-    @Column(name = "is_active")
-    private Boolean isActive;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private MeetingStatus status;
 
     @Column(name = "min_car_career")
     @Min(value = 1, message = "경력은 1이상의 숫자만 가능합니다")
@@ -124,6 +125,14 @@ public class Meeting {
     public boolean isAlreadyJoinedMember(Member member) {
         return meetingMembers.stream()
                 .anyMatch(meetingMember -> meetingMember.getIsActive() && meetingMember.getMember().equals(member));
+    }
+
+    public void delete() {
+        this.status = MeetingStatus.DELETED;
+    }
+
+    public enum MeetingStatus {
+        ACTIVE, INACTIVE, DELETED
     }
 
 }

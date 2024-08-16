@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.meeting.application;
 
 import com.ebiz.drivel.domain.block.BlockMember;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
+import com.ebiz.drivel.domain.meeting.entity.Meeting.MeetingStatus;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.querydsl.core.BooleanBuilder;
@@ -75,7 +76,7 @@ public class MeetingQueryHelper {
     }
 
     private static void addActiveFilter(QMeeting meeting, BooleanBuilder filterBuilder) {
-        filterBuilder.and(meeting.isActive);
+        filterBuilder.and(meeting.status.eq(MeetingStatus.ACTIVE));
     }
 
     public static void addBlockFilter(QMeeting meeting, Member member, BooleanBuilder filterBuilder) {

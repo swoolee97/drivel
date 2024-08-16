@@ -40,6 +40,10 @@ public class MeetingMember {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    public void inActive() {
+        this.isActive = false;
+    }
+
     public enum Status {
         NONE, WAITING, JOINED
     }

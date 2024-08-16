@@ -11,9 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ebiz.drivel.domain.member.application.MemberService;
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
-import com.ebiz.drivel.domain.profile.dto.ReportProfileDTO;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
-import com.ebiz.drivel.domain.profile.service.ReportService;
+import com.ebiz.drivel.domain.report.ReportMemberDTO;
+import com.ebiz.drivel.domain.report.ReportService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.Date;
@@ -84,7 +84,7 @@ class ProfileControllerTest {
 
     @Test
     void reportProfileSuccess() throws Exception {
-        ReportProfileDTO dto = new ReportProfileDTO(1L, "부적절한 콘텐츠", "음란물 게시");
+        ReportMemberDTO dto = new ReportMemberDTO(1L, "부적절한 콘텐츠", "음란물 게시");
 
         doNothing().when(reportService).reportProfile(dto);
 
