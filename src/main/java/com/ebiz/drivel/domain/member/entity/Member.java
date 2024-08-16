@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.member.entity;
 
 import static com.ebiz.drivel.domain.profile.constant.ProfileConstant.DEFAULT_PROFILE_IMAGE_PREFIX;
 
+import com.ebiz.drivel.domain.block.BlockMember;
 import com.ebiz.drivel.domain.course.entity.CourseLike;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
@@ -94,6 +95,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberTogether> memberTogethers;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<BlockMember> blockMembers;
 
     public boolean hasDefaultProfileImage() {
         return imagePath.contains(DEFAULT_PROFILE_IMAGE_PREFIX);

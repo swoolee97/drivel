@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @Table(name = "block_member")
-@EqualsAndHashCode(of = {"member", "blockMember"})
+@EqualsAndHashCode(of = {"member", "targetMember"})
 public class BlockMember {
 
     @Id
@@ -33,6 +33,6 @@ public class BlockMember {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blocked_member_id", nullable = false)
-    private Member blockedMember;
+    @JoinColumn(name = "target_member_id", nullable = false)
+    private Member targetMember;
 }

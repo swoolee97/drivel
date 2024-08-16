@@ -17,12 +17,12 @@ public class BlockService {
     public void blockMember(BlockMemberDTO blockMemberDTO) {
 
         Member member = userDetailsService.getMemberByContextHolder();
-        Member blockedMember = memberRepository.findById(blockMemberDTO.getTargetMemberId())
+        Member targetMember = memberRepository.findById(blockMemberDTO.getTargetMemberId())
                 .orElseThrow(() -> new MemberNotFoundException("찾을 수 없는 유저입니다"));
 
         BlockMember blockMember = BlockMember.builder()
                 .member(member)
-                .blockedMember(blockedMember)
+                .targetMember(targetMember)
                 .build();
 
         blockRepository.save(blockMember);
