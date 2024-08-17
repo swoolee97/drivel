@@ -4,9 +4,9 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ebiz.drivel.domain.block.BlockMemberDTO;
-import com.ebiz.drivel.domain.block.BlockRepository;
-import com.ebiz.drivel.domain.block.BlockService;
+import com.ebiz.drivel.domain.block.dto.BlockMemberDTO;
+import com.ebiz.drivel.domain.block.repository.BlockRepository;
+import com.ebiz.drivel.domain.block.service.BlockService;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import java.util.Optional;

@@ -1,9 +1,12 @@
-package com.ebiz.drivel.domain.report;
+package com.ebiz.drivel.domain.report.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
+import com.ebiz.drivel.domain.report.dto.ReportMemberDTO;
+import com.ebiz.drivel.domain.report.entity.ReportMember;
+import com.ebiz.drivel.domain.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +33,9 @@ public class ReportService {
         reportRepository.save(reportMember);
     }
 
-
-    public void reportMeeting(ReportMeetingDTO reportMeetingDTO) {
-        // 모임 신고 구현
-        // 모임 신고 할 때는 신고자 id도 저장돼야 함.
-    }
+//    public void reportMeeting(ReportMeetingDTO reportMeetingDTO) {
+//        // 모임 신고 구현
+//        // 모임 신고 할 때는 신고자 id도 저장돼야 함.
+//    }
 
 }

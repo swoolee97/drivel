@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.block;
+package com.ebiz.drivel.domain.block.dto;
 
 import lombok.Data;
 

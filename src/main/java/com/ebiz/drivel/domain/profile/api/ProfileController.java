@@ -1,6 +1,6 @@
 package com.ebiz.drivel.domain.profile.api;
 
-import com.ebiz.drivel.domain.block.BlockService;
+import com.ebiz.drivel.domain.block.service.BlockService;
 import com.ebiz.drivel.domain.member.application.MemberService;
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateCarDTO;
@@ -9,7 +9,7 @@ import com.ebiz.drivel.domain.profile.dto.UpdateNicknameDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateProfileDTO;
 import com.ebiz.drivel.domain.profile.dto.UpdateRegionDTO;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
-import com.ebiz.drivel.domain.report.ReportService;
+import com.ebiz.drivel.domain.report.service.ReportService;
 import jakarta.annotation.Nullable;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
