@@ -6,9 +6,7 @@ import com.ebiz.drivel.domain.inquiry.repository.InquiryRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.profile.exception.ProfileException;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,10 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class InquiryService {
-    @Autowired
-    private InquiryRepository inquiryRepository;
-    @Autowired
-    private MemberRepository memberRepository;
+    private final InquiryRepository inquiryRepository;
+    private final MemberRepository memberRepository;
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -32,13 +28,9 @@ public class InquiryService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        Optional<Member> memberOptional = memberRepository.findMemberByEmail(email);
-
-        if (memberOptional.isPresent()) {
-            return memberOptional.get().getId();
-        } else {
-            throw new UsernameNotFoundException("유저 이메일을 찾을 수 없습니다.");
-        }
+        return memberRepository.findMemberByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("유저 이메일을 찾을 수 없습니다."))
+                .getId();
     }
 
     @Transactional
