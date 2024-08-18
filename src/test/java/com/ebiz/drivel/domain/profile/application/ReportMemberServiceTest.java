@@ -1,8 +1,8 @@
 package com.ebiz.drivel.domain.profile.application;
 
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
-import com.ebiz.drivel.domain.report.ReportRepository;
-import com.ebiz.drivel.domain.report.ReportService;
+import com.ebiz.drivel.domain.report.repository.ReportMemberRepository;
+import com.ebiz.drivel.domain.report.service.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,7 +14,7 @@ public class ReportMemberServiceTest {
     private ReportService reportService;
 
     @Mock
-    private ReportRepository reportRepository;
+    private ReportMemberRepository reportMemberRepository;
 
     @Mock
     private MemberRepository memberRepository;

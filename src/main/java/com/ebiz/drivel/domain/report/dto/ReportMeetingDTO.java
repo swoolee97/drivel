@@ -1,7 +1,5 @@
-package com.ebiz.drivel.domain.report;
+package com.ebiz.drivel.domain.report.dto;
 
-
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportMemberDTO {
-    private Long targetMemberId;
-    private List<String> descriptions;
+public class ReportMeetingDTO {
+    private Long targetId;
+    private String summary;
+    private String description;
 }

@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.ebiz.drivel.domain.member.application.MemberService;
 import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
 import com.ebiz.drivel.domain.profile.service.ProfileService;
-import com.ebiz.drivel.domain.report.ReportService;
+import com.ebiz.drivel.domain.report.service.ReportService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.Date;

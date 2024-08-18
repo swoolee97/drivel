@@ -1,8 +1,11 @@
-package com.ebiz.drivel.domain.report;
+package com.ebiz.drivel.domain.report.api;
 
 import static com.ebiz.drivel.domain.meeting.api.MeetingController.REPORT_MEETING_SUCCESS_MESSAGE;
 import static com.ebiz.drivel.domain.profile.api.ProfileController.REPORT_PROFILE_SUCCESS;
 
+import com.ebiz.drivel.domain.report.dto.ReportMeetingDTO;
+import com.ebiz.drivel.domain.report.dto.ReportMemberDTO;
+import com.ebiz.drivel.domain.report.service.ReportService;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
