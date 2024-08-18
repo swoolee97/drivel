@@ -5,7 +5,6 @@ import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
-import com.ebiz.drivel.domain.meeting.dto.LeaveMeetingDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingConditionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
@@ -250,8 +249,8 @@ public class MeetingService {
     }
 
     @Transactional
-    public void leaveMeeting(LeaveMeetingDTO leaveMeetingDTO) {
-        Meeting meeting = meetingRepository.findById(leaveMeetingDTO.getMeetingId())
+    public void leaveMeeting(Long id) {
+        Meeting meeting = meetingRepository.findById(id)
                 .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
         Member member = userDetailsService.getMemberByContextHolder();
         MeetingMember meetingMember = meetingMemberService.findMeetingMember(meeting, member)

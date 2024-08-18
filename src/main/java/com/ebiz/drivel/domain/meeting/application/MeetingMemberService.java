@@ -22,6 +22,7 @@ public class MeetingMemberService {
         MeetingMember meetingMember = MeetingMember.builder()
                 .meetingMemberId(meetingMemberId)
                 .meeting(meeting)
+                .isActive(true)
                 .member(member).build();
         return meetingMemberRepository.save(meetingMember);
     }

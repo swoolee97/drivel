@@ -6,7 +6,6 @@ import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
-import com.ebiz.drivel.domain.meeting.dto.LeaveMeetingDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
@@ -87,9 +86,9 @@ public class MeetingController {
                 .build());
     }
 
-    @DeleteMapping("/join")
-    public ResponseEntity<BaseResponse> cancelJoinMeeting(@RequestBody JoinRequestDTO joinRequestDTO) {
-        meetingService.cancelJoinMeeting(joinRequestDTO.getId());
+    @DeleteMapping("/join/{id}")
+    public ResponseEntity<BaseResponse> cancelJoinMeeting(@PathVariable Long id) {
+        meetingService.cancelJoinMeeting(id);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임 가입 신청이 취소되었습니다")
                 .build());
@@ -106,9 +105,9 @@ public class MeetingController {
         return ResponseEntity.ok(joinRequests);
     }
 
-    @PostMapping("/leave")
-    public ResponseEntity<BaseResponse> leaveMeeting(@RequestBody LeaveMeetingDTO leaveMeetingDTO) {
-        meetingService.leaveMeeting(leaveMeetingDTO);
+    @DeleteMapping("/leave/{id}")
+    public ResponseEntity<BaseResponse> leaveMeeting(@PathVariable Long id) {
+        meetingService.leaveMeeting(id);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임에서 나왔어요")
                 .build());
