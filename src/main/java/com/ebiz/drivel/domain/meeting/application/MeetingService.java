@@ -1,41 +1,32 @@
 package com.ebiz.drivel.domain.meeting.application;
 
+import static com.ebiz.drivel.domain.meeting.MeetingConstants.MEETING_NOT_FOUND_EXCEPTION_MESSAGE;
+
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
-import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingConditionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
-import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
-import com.ebiz.drivel.domain.meeting.entity.Meeting.MeetingStatus;
-import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest;
-import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest.Status;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
-import com.ebiz.drivel.domain.meeting.exception.AlreadyRequestedJoinMeetingException;
-import com.ebiz.drivel.domain.meeting.exception.MeetingJoinRequestNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingJoinRequestRepository;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
-import com.ebiz.drivel.domain.sse.Alert;
-import com.ebiz.drivel.domain.sse.Alert.AlertCategory;
-import com.ebiz.drivel.domain.sse.AlertDTO;
 import com.ebiz.drivel.domain.sse.AlertRepository;
 import com.ebiz.drivel.domain.sse.AlertService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MeetingService {
 
-    private static final String MEETING_NOT_FOUND_EXCEPTION_MESSAGE = "찾을 수 없는 모임입니다";
     private static final String MEETING_CREATE_SUCCESS_MESSAGE = "모임이 생성되었습니다";
 
     private final MeetingRepository meetingRepository;
@@ -172,82 +162,6 @@ public class MeetingService {
         return new PageImpl<>(meetings, pageable, totalCount);
     }
 
-    /*
-     * 모임 가입 신청을 할 땐 모임장에게 요청을 보낸다.
-     * 가입 신청을 할 땐 3개의 기능이 동작된다.
-     * 1. SSE 알림 2. 푸시알림 3. 가입 신청 저장
-     */
-    @Transactional
-    public void requestJoinMeeting(Long id) {
-        Member member = userDetailsService.getMemberByContextHolder();
-        Meeting meeting = meetingRepository.findById(id)
-                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
-
-        //이미 가입 요청했는지 확인
-        if (meeting.isWaitingRequestMember(member)) {
-            throw new MeetingJoinRequestNotFoundException("이미 가입 신청한 모임입니다");
-        }
-
-        // 이미 가입된 멤버인지 확인
-        if (meeting.isAlreadyJoinedMember(member)) {
-            throw new AlreadyRequestedJoinMeetingException("이미 가입된 모임입니다");
-        }
-
-        sendMeetingJoinRequestAlert(member, meeting);
-        saveMeetingJoinRequest(member, meeting);
-    }
-
-    @Transactional
-    public void cancelJoinMeeting(Long id) {
-        // 요청이 없으면 예외처리
-        MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findById(id)
-                .orElseThrow(() -> new MeetingJoinRequestNotFoundException("찾을 수 없는 요청입니다"));
-
-        // 이미 결정된 요청이면 예외처리
-        if (!meetingJoinRequest.isWaitingRequest()) {
-            throw new MeetingJoinRequestNotFoundException("이미 처리된 요청입니다");
-        }
-        meetingJoinRequest.cancel();
-    }
-
-    @Transactional
-    public void acceptJoinMeeting(JoinRequestDecisionDTO request) {
-        MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findById(request.getId())
-                .orElseThrow(() -> new MeetingJoinRequestNotFoundException("찾을 수 없는 요청입니다"));
-        if (meetingJoinRequest.isAlreadyDecidedRequest()) {
-            throw new MeetingJoinRequestNotFoundException("이미 처리가 된 요청입니다");
-        }
-
-        Meeting meeting = meetingJoinRequest.getMeeting();
-        Member member = meetingJoinRequest.getMember();
-        if (request.isAccepted()) {
-            meetingMemberService.insertMeetingMember(meeting, member);
-            meetingJoinRequest.accept();
-            Alert alert = Alert.builder()
-                    .meetingId(meeting.getId())
-                    .receiverId(member.getId())
-                    .alertCategory(AlertCategory.ACCEPTED)
-                    .title("수락")
-                    .content("가입되었습니다")
-                    .build();
-            alertRepository.save(alert);
-            AlertDTO alertDTO = AlertDTO.from(alert);
-            alertService.sendToClient(member.getId(), AlertCategory.ACCEPTED.toString(), alertDTO);
-        } else {
-            meetingJoinRequest.reject();
-            Alert alert = Alert.builder()
-                    .meetingId(meeting.getId())
-                    .receiverId(member.getId())
-                    .alertCategory(AlertCategory.ACCEPTED)
-                    .title("거절")
-                    .content("가입 신청이 거절되었습니다")
-                    .build();
-            alertRepository.save(alert);
-            AlertDTO alertDTO = AlertDTO.from(alert);
-            alertService.sendToClient(member.getId(), AlertCategory.REJECTED.toString(), alertDTO);
-        }
-    }
-
     @Transactional
     public void leaveMeeting(Long id) {
         Meeting meeting = meetingRepository.findById(id)
@@ -258,43 +172,4 @@ public class MeetingService {
         meetingMember.inActive();
     }
 
-    private void sendMeetingJoinRequestAlert(Member member, Meeting meeting) {
-        Long masterMemberId = meeting.getMasterMember().getId();
-
-        Alert alert = Alert.builder()
-                .meetingId(meeting.getId())
-                .receiverId(masterMemberId)
-                .alertCategory(AlertCategory.JOIN)
-                .title("모임 가입 신청")
-                .content(String.format("%s님이 모임 가입 신청을 했어요", member.getNickname()))
-                .build();
-        alert = alertRepository.save(alert);
-
-        AlertDTO alertDTO = AlertDTO.from(alert);
-
-        alertService.sendToClient(masterMemberId, AlertCategory.JOIN.toString(), alertDTO);
-    }
-
-    private void saveMeetingJoinRequest(Member member, Meeting meeting) {
-        MeetingJoinRequest meetingJoinRequest = MeetingJoinRequest.builder()
-                .meeting(meeting)
-                .member(member)
-                .status(Status.WAITING)
-                .build();
-        meetingJoinRequestRepository.save(meetingJoinRequest);
-    }
-
-    public List<MeetingJoinRequestDTO> getJoinRequests() {
-        Member member = userDetailsService.getMemberByContextHolder();
-        List<Meeting> meetings = meetingRepository.findByMasterMemberAndStatus(member, MeetingStatus.ACTIVE);
-        List<MeetingJoinRequestDTO> requests = new ArrayList<>();
-        meetings.forEach(meeting -> {
-            List<MeetingJoinRequest> joinRequests = meeting.getJoinRequests().stream()
-                    .filter(request -> !request.isAlreadyDecidedRequest()).toList();
-            if (!joinRequests.isEmpty()) {
-                requests.add(MeetingJoinRequestDTO.from(meeting, joinRequests));
-            }
-        });
-        return requests;
-    }
 }

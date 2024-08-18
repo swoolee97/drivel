@@ -4,11 +4,8 @@ import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.application.MeetingService;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
-import com.ebiz.drivel.domain.meeting.dto.JoinRequestDTO;
-import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
-import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.validation.Valid;
@@ -76,33 +73,6 @@ public class MeetingController {
     public ResponseEntity<List<UpcomingMeetingResponse>> getUpcomingMeetings() {
         List<UpcomingMeetingResponse> upcomingMeetings = meetingService.getUpcomingMeetings();
         return ResponseEntity.ok(upcomingMeetings);
-    }
-
-    @PostMapping("/join")
-    public ResponseEntity<BaseResponse> joinMeeting(@RequestBody JoinRequestDTO joinRequestDTO) {
-        meetingService.requestJoinMeeting(joinRequestDTO.getId());
-        return ResponseEntity.ok(BaseResponse.builder()
-                .message("모임 가입 신청이 완료되었습니다")
-                .build());
-    }
-
-    @DeleteMapping("/join/{id}")
-    public ResponseEntity<BaseResponse> cancelJoinMeeting(@PathVariable Long id) {
-        meetingService.cancelJoinMeeting(id);
-        return ResponseEntity.ok(BaseResponse.builder()
-                .message("모임 가입 신청이 취소되었습니다")
-                .build());
-    }
-
-    @PostMapping("/accept")
-    public void decideJoinMeeting(@RequestBody JoinRequestDecisionDTO joinRequestDecisionDTO) {
-        meetingService.acceptJoinMeeting(joinRequestDecisionDTO);
-    }
-
-    @GetMapping("/requests")
-    public ResponseEntity<List<MeetingJoinRequestDTO>> getJoinRequests() {
-        List<MeetingJoinRequestDTO> joinRequests = meetingService.getJoinRequests();
-        return ResponseEntity.ok(joinRequests);
     }
 
     @DeleteMapping("/leave/{id}")
