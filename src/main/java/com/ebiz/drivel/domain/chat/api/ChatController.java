@@ -1,5 +1,7 @@
-package com.ebiz.drivel.domain.chat;
+package com.ebiz.drivel.domain.chat.api;
 
+import com.ebiz.drivel.domain.chat.application.ChatService;
+import com.ebiz.drivel.domain.chat.dto.ChatMessageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

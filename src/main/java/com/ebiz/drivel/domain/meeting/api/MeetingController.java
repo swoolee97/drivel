@@ -6,6 +6,7 @@ import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
+import com.ebiz.drivel.domain.meeting.dto.MeetingNoticeDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import jakarta.validation.Valid;
@@ -80,6 +81,14 @@ public class MeetingController {
         meetingService.leaveMeeting(id);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임에서 나왔어요")
+                .build());
+    }
+
+    @PostMapping("/notice")
+    public ResponseEntity<BaseResponse> addMeetingNotice(@RequestBody MeetingNoticeDTO meetingNoticeDTO) {
+        meetingService.addMeetingNotice(meetingNoticeDTO);
+        return ResponseEntity.ok(BaseResponse.builder()
+                .message("공지가 등록되었습니다")
                 .build());
     }
 

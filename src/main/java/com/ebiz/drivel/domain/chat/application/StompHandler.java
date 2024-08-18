@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.chat;
+package com.ebiz.drivel.domain.chat.application;
 
 import com.ebiz.drivel.domain.auth.application.JwtProvider;
 import lombok.RequiredArgsConstructor;

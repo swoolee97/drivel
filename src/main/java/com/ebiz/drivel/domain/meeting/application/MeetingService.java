@@ -12,18 +12,18 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
+import com.ebiz.drivel.domain.meeting.dto.MeetingNoticeDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
+import com.ebiz.drivel.domain.meeting.entity.MeetingNotice;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
-import com.ebiz.drivel.domain.meeting.repository.MeetingJoinRequestRepository;
+import com.ebiz.drivel.domain.meeting.repository.MeetingNoticeRepository;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
-import com.ebiz.drivel.domain.sse.AlertRepository;
-import com.ebiz.drivel.domain.sse.AlertService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -47,9 +47,7 @@ public class MeetingService {
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
     private final JPAQueryFactory queryFactory;
-    private final AlertService alertService;
-    private final AlertRepository alertRepository;
-    private final MeetingJoinRequestRepository meetingJoinRequestRepository;
+    private final MeetingNoticeRepository meetingNoticeRepository;
 
     @Transactional
     public CreateMeetingResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
@@ -171,6 +169,18 @@ public class MeetingService {
         MeetingMember meetingMember = meetingMemberService.findMeetingMember(meeting, member)
                 .orElseThrow(() -> new MeetingMemberNotFoundException("잘못된 요청입니다"));
         meetingMember.inActive();
+    }
+
+    public void addMeetingNotice(MeetingNoticeDTO meetingNoticeDTO) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        Meeting meeting = meetingRepository.findById(meetingNoticeDTO.getMeetingId())
+                .orElseThrow(() -> new MeetingNotFoundException("찾을 수 없는 모임입니다"));
+        MeetingNotice meetingNotice = MeetingNotice.builder()
+                .writer(member)
+                .meeting(meeting)
+                .content(meetingNoticeDTO.getContent())
+                .build();
+        meetingNoticeRepository.save(meetingNotice);
     }
 
 }

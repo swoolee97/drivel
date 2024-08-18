@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.chat;
+package com.ebiz.drivel.domain.chat.dto;
 
 import com.ebiz.drivel.domain.member.entity.Member;
 import java.util.Date;

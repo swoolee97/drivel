@@ -1,5 +1,8 @@
-package com.ebiz.drivel.domain.chat;
+package com.ebiz.drivel.domain.chat.application;
 
+import com.ebiz.drivel.domain.chat.dto.ChatMessageDTO;
+import com.ebiz.drivel.domain.chat.entity.ChatMessage;
+import com.ebiz.drivel.domain.chat.repository.ChatMessageRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,10 @@ public class ChatService {
                 .senderId(message.getSenderId())
                 .build();
         chatMessageRepository.save(chatMessage);
+    }
+
+    public void getMessages(Long meetingId) {
+
     }
 
 }

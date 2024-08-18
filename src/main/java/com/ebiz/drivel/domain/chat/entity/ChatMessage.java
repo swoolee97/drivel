@@ -1,4 +1,4 @@
-package com.ebiz.drivel.domain.chat;
+package com.ebiz.drivel.domain.chat.entity;
 
 import jakarta.persistence.Id;
 import java.util.Date;
@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "chatMessage")
+@Document(collection = "chat_message")
 public class ChatMessage {
 
     @Id
@@ -22,13 +22,13 @@ public class ChatMessage {
     @Field
     private String message;
 
-    @Field
+    @Field(value = "meeting_id")
     private Long meetingId;
 
-    @Field
+    @Field(value = "sender_id")
     private Long senderId;
 
-    @Field
+    @Field(value = "send_at")
     @Builder.Default
     private Date sendAt = new Date();
 

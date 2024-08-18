@@ -1,6 +1,6 @@
 package com.ebiz.drivel.config;
 
-import com.ebiz.drivel.domain.chat.StompHandler;
+import com.ebiz.drivel.domain.chat.application.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
