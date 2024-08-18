@@ -1,11 +1,11 @@
 package com.ebiz.drivel.domain.meeting.application;
 
-import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMemberId;
 import com.ebiz.drivel.domain.meeting.repository.MeetingMemberRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MeetingMemberService {
 
-    private final UserDetailsServiceImpl userDetailsService;
     private final MeetingMemberRepository meetingMemberRepository;
 
     public MeetingMember insertMeetingMember(Meeting meeting, Member member) {
@@ -27,8 +26,8 @@ public class MeetingMemberService {
         return meetingMemberRepository.save(meetingMember);
     }
 
-//    public Optional<MeetingMember> findMeetingMember(Meeting meeting, Member member) {
-//        return meetingMemberRepository.findByMeetingIdAnAndMemberIdAndIsActive(meeting.getId(), member.getId(), true);
-//    }
+    public Optional<MeetingMember> findMeetingMember(Meeting meeting, Member member) {
+        return meetingMemberRepository.findByMeetingAndMemberAndIsActive(meeting, member, true);
+    }
 
 }

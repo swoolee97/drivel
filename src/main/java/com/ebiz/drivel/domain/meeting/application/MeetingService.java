@@ -5,6 +5,7 @@ import com.ebiz.drivel.domain.meeting.application.MeetingQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
+import com.ebiz.drivel.domain.meeting.dto.LeaveMeetingDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingConditionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
@@ -22,6 +23,7 @@ import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.AlreadyRequestedJoinMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingJoinRequestNotFoundException;
+import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingJoinRequestRepository;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
@@ -232,6 +234,16 @@ public class MeetingService {
             AlertDTO alertDTO = AlertDTO.from(alert);
             alertService.sendToClient(member.getId(), AlertCategory.REJECTED.toString(), alertDTO);
         }
+    }
+
+    @Transactional
+    public void leaveMeeting(LeaveMeetingDTO leaveMeetingDTO) {
+        Meeting meeting = meetingRepository.findById(leaveMeetingDTO.getMeetingId())
+                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
+        Member member = userDetailsService.getMemberByContextHolder();
+        MeetingMember meetingMember = meetingMemberService.findMeetingMember(meeting, member)
+                .orElseThrow(() -> new MeetingMemberNotFoundException("잘못된 요청입니다"));
+        meetingMember.inActive();
     }
 
     private void sendMeetingJoinRequestAlert(Member member, Meeting meeting) {

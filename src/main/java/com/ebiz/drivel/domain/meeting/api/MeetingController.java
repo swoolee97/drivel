@@ -6,6 +6,7 @@ import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
+import com.ebiz.drivel.domain.meeting.dto.LeaveMeetingDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
@@ -95,6 +96,14 @@ public class MeetingController {
     public ResponseEntity<List<MeetingJoinRequestDTO>> getJoinRequests() {
         List<MeetingJoinRequestDTO> joinRequests = meetingService.getJoinRequests();
         return ResponseEntity.ok(joinRequests);
+    }
+
+    @PostMapping("/leave")
+    public ResponseEntity<BaseResponse> leaveMeeting(@RequestBody LeaveMeetingDTO leaveMeetingDTO) {
+        meetingService.leaveMeeting(leaveMeetingDTO);
+        return ResponseEntity.ok(BaseResponse.builder()
+                .message("모임에서 나왔어요")
+                .build());
     }
 
 }
