@@ -123,6 +123,7 @@ public class MeetingService {
     public List<UpcomingMeetingResponse> getUpcomingMeetings() {
         Member member = userDetailsService.getMemberByContextHolder();
         return member.getMeetingMembers().stream()
+                .filter(MeetingMember::getIsActive)
                 .map(MeetingMember::getMeeting)
                 .filter(Meeting::isUpcomingMeeting)
                 .sorted(Comparator.comparing(meeting -> meeting.getMeetingDate()))
