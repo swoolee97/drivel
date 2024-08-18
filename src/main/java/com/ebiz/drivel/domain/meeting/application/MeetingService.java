@@ -12,12 +12,10 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
-import com.ebiz.drivel.domain.meeting.dto.MeetingNoticeDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
-import com.ebiz.drivel.domain.meeting.entity.MeetingNotice;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
@@ -170,17 +168,4 @@ public class MeetingService {
                 .orElseThrow(() -> new MeetingMemberNotFoundException("잘못된 요청입니다"));
         meetingMember.inActive();
     }
-
-    public void addMeetingNotice(MeetingNoticeDTO meetingNoticeDTO) {
-        Member member = userDetailsService.getMemberByContextHolder();
-        Meeting meeting = meetingRepository.findById(meetingNoticeDTO.getMeetingId())
-                .orElseThrow(() -> new MeetingNotFoundException("찾을 수 없는 모임입니다"));
-        MeetingNotice meetingNotice = MeetingNotice.builder()
-                .writer(member)
-                .meeting(meeting)
-                .content(meetingNoticeDTO.getContent())
-                .build();
-        meetingNoticeRepository.save(meetingNotice);
-    }
-
 }

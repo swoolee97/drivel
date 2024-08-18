@@ -101,6 +101,9 @@ public class Meeting {
     @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY)
     private List<MeetingJoinRequest> joinRequests;
 
+    @OneToMany(mappedBy = "meeting", fetch = FetchType.LAZY)
+    private List<MeetingNotice> meetingNotices;
+
     public Long countParticipants() {
         return meetingMembers.stream().filter(MeetingMember::getIsActive).count();
     }

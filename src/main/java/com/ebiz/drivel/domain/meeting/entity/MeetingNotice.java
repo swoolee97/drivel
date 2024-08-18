@@ -10,13 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
-import org.joda.time.DateTime;
 
 @Entity
+@Getter
 @Table(name = "meeting_notice")
 @DynamicInsert
 @Builder
@@ -34,10 +36,18 @@ public class MeetingNotice {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id", referencedColumnName = "id")
     private Meeting meeting;
-    
-    private String content;
 
+    @Column(name = "content")
+    private String content;
+    
     @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private DateTime createdAt;
+    private LocalDateTime createdAt;
+
+    @Column(name = "is_deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
+    public void delete() {
+        isDeleted = true;
+    }
 
 }
