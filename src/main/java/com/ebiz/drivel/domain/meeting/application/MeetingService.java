@@ -199,6 +199,19 @@ public class MeetingService {
     }
 
     @Transactional
+    public void cancelJoinMeeting(Long id) {
+        // 요청이 없으면 예외처리
+        MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findById(id)
+                .orElseThrow(() -> new MeetingJoinRequestNotFoundException("찾을 수 없는 요청입니다"));
+
+        // 이미 결정된 요청이면 예외처리
+        if (!meetingJoinRequest.isWaitingRequest()) {
+            throw new MeetingJoinRequestNotFoundException("이미 처리된 요청입니다");
+        }
+        meetingJoinRequest.cancel();
+    }
+
+    @Transactional
     public void acceptJoinMeeting(JoinRequestDecisionDTO request) {
         MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findById(request.getId())
                 .orElseThrow(() -> new MeetingJoinRequestNotFoundException("찾을 수 없는 요청입니다"));
@@ -280,7 +293,6 @@ public class MeetingService {
             List<MeetingJoinRequest> joinRequests = meeting.getJoinRequests().stream()
                     .filter(request -> !request.isAlreadyDecidedRequest()).toList();
             if (!joinRequests.isEmpty()) {
-                List<Member> requestedMembers = joinRequests.stream().map(request -> request.getMember()).toList();
                 requests.add(MeetingJoinRequestDTO.from(meeting, joinRequests));
             }
         });

@@ -39,11 +39,19 @@ public class MeetingJoinRequest {
     private Status status;
 
     public enum Status {
-        WAITING, REJECTED, ACCEPTED
+        WAITING, REJECTED, ACCEPTED, CANCELED
     }
 
     public boolean isAlreadyDecidedRequest() {
         return !status.equals(Status.WAITING);
+    }
+
+    public boolean isWaitingRequest() {
+        return this.status.equals(Status.WAITING);
+    }
+
+    public void cancel() {
+        this.status = Status.CANCELED;
     }
 
     public void accept() {

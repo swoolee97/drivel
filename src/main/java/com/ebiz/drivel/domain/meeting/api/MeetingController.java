@@ -87,6 +87,14 @@ public class MeetingController {
                 .build());
     }
 
+    @DeleteMapping("/join")
+    public ResponseEntity<BaseResponse> cancelJoinMeeting(@RequestBody JoinRequestDTO joinRequestDTO) {
+        meetingService.cancelJoinMeeting(joinRequestDTO.getId());
+        return ResponseEntity.ok(BaseResponse.builder()
+                .message("모임 가입 신청이 취소되었습니다")
+                .build());
+    }
+
     @PostMapping("/accept")
     public void decideJoinMeeting(@RequestBody JoinRequestDecisionDTO joinRequestDecisionDTO) {
         meetingService.acceptJoinMeeting(joinRequestDecisionDTO);
