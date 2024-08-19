@@ -31,9 +31,9 @@ public class MeetingJoinController {
                 .build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse> cancelJoinMeeting(@PathVariable Long id) {
-        meetingJoinService.cancelJoinMeeting(id);
+    @DeleteMapping("/{meetingId}")
+    public ResponseEntity<BaseResponse> cancelJoinMeeting(@PathVariable Long meetingId) {
+        meetingJoinService.cancelJoinMeeting(meetingId);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임 가입 신청이 취소되었습니다")
                 .build());

@@ -54,14 +54,18 @@ public class MeetingJoinService {
         if (meeting.isAlreadyJoinedMember(member)) {
             throw new AlreadyRequestedJoinMeetingException("이미 가입된 모임입니다");
         }
-        
+
         saveMeetingJoinRequest(member, meeting);
     }
 
     @Transactional
     public void cancelJoinMeeting(Long id) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        Meeting meeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new MeetingNotFoundException("찾을 수 없는 모임의 요청입니다"));
         // 요청이 없으면 예외처리
-        MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findById(id)
+        MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findByMemberAndMeetingAndStatus(
+                        member, meeting, Status.WAITING)
                 .orElseThrow(() -> new MeetingJoinRequestNotFoundException("찾을 수 없는 요청입니다"));
 
         // 이미 결정된 요청이면 예외처리
