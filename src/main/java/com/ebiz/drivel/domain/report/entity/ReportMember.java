@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 package com.ebiz.drivel.domain.report.entity;
+=======
+<<<<<<<< HEAD:src/main/java/com/ebiz/drivel/domain/report/entity/ReportMember.java
+package com.ebiz.drivel.domain.report.entity;
+========
+package com.ebiz.drivel.domain.report;
+>>>>>>>> 5e5fb8b (refactor: 신고/차단 기능 수정):src/main/java/com/ebiz/drivel/domain/report/ReportMember.java
+>>>>>>> base/drivel_second
 
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.profile.service.JSONConverter;

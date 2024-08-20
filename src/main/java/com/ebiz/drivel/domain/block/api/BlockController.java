@@ -1,7 +1,9 @@
-package com.ebiz.drivel.domain.block;
+package com.ebiz.drivel.domain.block.api;
 
 import static com.ebiz.drivel.domain.profile.api.ProfileController.BLOCK_MEMBER_SUCCESS;
 
+import com.ebiz.drivel.domain.block.dto.BlockMemberDTO;
+import com.ebiz.drivel.domain.block.service.BlockService;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -2,10 +2,14 @@ package com.ebiz.drivel.domain.inquiry.dto;
 
 import com.ebiz.drivel.domain.inquiry.entity.Inquiry;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 @Builder
-@Data
+@Getter
+@EqualsAndHashCode
+@ToString
 public class InquiryDTO {
 
     private Long id;

@@ -1,6 +1,9 @@
-package com.ebiz.drivel.domain.block;
+package com.ebiz.drivel.domain.block.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
+import com.ebiz.drivel.domain.block.dto.BlockMemberDTO;
+import com.ebiz.drivel.domain.block.entity.BlockMember;
+import com.ebiz.drivel.domain.block.repository.BlockRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;

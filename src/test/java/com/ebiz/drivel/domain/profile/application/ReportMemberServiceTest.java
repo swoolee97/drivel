@@ -1,8 +1,11 @@
 package com.ebiz.drivel.domain.profile.application;
 
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
+<<<<<<< HEAD
 import com.ebiz.drivel.domain.report.repository.ReportMemberRepository;
 import com.ebiz.drivel.domain.report.service.ReportService;
+=======
+>>>>>>> base/drivel_second
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
