@@ -37,7 +37,7 @@ public class ReportMember {
     @JoinColumn(name = "target_member_id", nullable = false)
     private Member targetMember;
 
-    @Column(name = "reason", columnDefinition = "JSON")
+    @Column(name = "descriptions", columnDefinition = "JSON")
     @Convert(converter = JSONConverter.class)
     private List<String> descriptions;
 }
