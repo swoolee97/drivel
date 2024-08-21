@@ -10,7 +10,6 @@ import com.ebiz.drivel.domain.meeting.exception.MeetingNoticeNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingNoticeRepository;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class MeetingNoticeService {
     private final UserDetailsServiceImpl userDetailsService;
     private final MeetingRepository meetingRepository;
     private final MeetingNoticeRepository meetingNoticeRepository;
-    private final JPAQueryFactory queryFactory;
 
     public void addMeetingNotice(MeetingNoticeDTO meetingNoticeDTO) {
         Member member = userDetailsService.getMemberByContextHolder();

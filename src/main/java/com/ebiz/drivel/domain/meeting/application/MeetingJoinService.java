@@ -20,10 +20,10 @@ import com.ebiz.drivel.domain.sse.Alert.AlertCategory;
 import com.ebiz.drivel.domain.sse.AlertDTO;
 import com.ebiz.drivel.domain.sse.AlertRepository;
 import com.ebiz.drivel.domain.sse.AlertService;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +34,7 @@ public class MeetingJoinService {
     private final MeetingRepository meetingRepository;
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
-    private final JPAQueryFactory queryFactory;
+    private final SimpMessagingTemplate template;
     private final AlertService alertService;
     private final AlertRepository alertRepository;
     private final MeetingJoinRequestRepository meetingJoinRequestRepository;
@@ -54,7 +54,16 @@ public class MeetingJoinService {
         if (meeting.isAlreadyJoinedMember(member)) {
             throw new AlreadyRequestedJoinMeetingException("이미 가입된 모임입니다");
         }
+        Alert alert = Alert.builder()
+                .alertCategory(AlertCategory.JOIN)
+                .meetingId(meeting.getId())
+                .receiverId(meeting.getMasterMember().getId())
+                .content(member.getNickname() + "님이 가입을 요청했어요")
+                .title("가입 요청")
+                .build();
+        alertRepository.save(alert);
 
+        template.convertAndSend("/sub/alert/" + meeting.getMasterMember().getId(), AlertDTO.from(alert));
         saveMeetingJoinRequest(member, meeting);
     }
 
@@ -85,32 +94,31 @@ public class MeetingJoinService {
 
         Meeting meeting = meetingJoinRequest.getMeeting();
         Member member = meetingJoinRequest.getMember();
+        Alert alert;
+        AlertDTO alertDTO;
         if (request.isAccepted()) {
             meetingMemberService.insertMeetingMember(meeting, member);
             meetingJoinRequest.accept();
-            Alert alert = Alert.builder()
+            alert = Alert.builder()
                     .meetingId(meeting.getId())
                     .receiverId(member.getId())
                     .alertCategory(AlertCategory.ACCEPTED)
-                    .title("수락")
+                    .title("가입 수락")
                     .content("가입되었습니다")
                     .build();
-            alertRepository.save(alert);
-            AlertDTO alertDTO = AlertDTO.from(alert);
-            alertService.sendToClient(member.getId(), AlertCategory.ACCEPTED.toString(), alertDTO);
         } else {
             meetingJoinRequest.reject();
-            Alert alert = Alert.builder()
+            alert = Alert.builder()
                     .meetingId(meeting.getId())
                     .receiverId(member.getId())
-                    .alertCategory(AlertCategory.ACCEPTED)
-                    .title("거절")
+                    .alertCategory(AlertCategory.REJECTED)
+                    .title("가입 거절")
                     .content("가입 신청이 거절되었습니다")
                     .build();
-            alertRepository.save(alert);
-            AlertDTO alertDTO = AlertDTO.from(alert);
-            alertService.sendToClient(member.getId(), AlertCategory.REJECTED.toString(), alertDTO);
         }
+        alertRepository.save(alert);
+        alertDTO = AlertDTO.from(alert);
+        template.convertAndSend("/sub/alert/" + member.getId(), alertDTO);
     }
 
     public List<MeetingJoinRequestDTO> getJoinRequests() {
