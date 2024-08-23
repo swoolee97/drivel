@@ -1,22 +1,19 @@
 package com.ebiz.drivel.domain.review.api;
 
-import com.ebiz.drivel.domain.review.dto.AddReviewRequest;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.review.dto.ReviewResponse;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
-import com.ebiz.drivel.domain.review.entity.CourseReviewImage;
 import com.ebiz.drivel.domain.review.exception.MaxImageLengthExceededException;
 import com.ebiz.drivel.domain.review.service.ReviewImageService;
 import com.ebiz.drivel.domain.review.service.ReviewService;
 import com.ebiz.drivel.global.dto.BaseResponse;
-import jakarta.annotation.Nullable;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,14 +32,19 @@ public class ReviewController {
 
     @PostMapping("/add")
     public ResponseEntity<BaseResponse> addReview(
-            @Valid @RequestPart("review") AddReviewRequest addReviewRequest,
-            @Nullable @RequestPart("images") List<MultipartFile> images) {
+            @RequestParam("comment") String comment,
+            @RequestParam("rating") Integer rating,
+            @RequestParam("courseId") Long courseId,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+//            MultipartHttpServletRequest request) {
+//        List<MultipartFile> images = request.getFiles("images");
+
         if (images != null && images.size() > IMAGES_MAX_LENGTH) {
             throw new MaxImageLengthExceededException(EXCEEDED_IMAGE_MAX_LENGTH_EXCEPTION_MESSAGE);
         }
-        addReviewRequest.setImages(images);
-        CourseReview courseReview = reviewService.addReview(addReviewRequest);
-        List<CourseReviewImage> courseReviewImages = reviewImageService.addReviewImages(courseReview, images);
+//        addReviewRequest.setImages(images);
+        CourseReview courseReview = reviewService.addReview(courseId, rating, comment);
+//        List<CourseReviewImage> courseReviewImages = reviewImageService.addReviewImages(courseReview, images);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message(ADD_REVIEW_SUCCESS_MESSAGE)
                 .build());

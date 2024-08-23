@@ -4,7 +4,6 @@ import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.repository.CourseRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
-import com.ebiz.drivel.domain.review.dto.AddReviewRequest;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
 import com.ebiz.drivel.domain.review.entity.QCourseReview;
@@ -31,12 +30,12 @@ public class ReviewService {
     private final CourseRepository courseRepository;
     private final JPAQueryFactory queryFactory;
 
-    public CourseReview addReview(AddReviewRequest addReviewRequest) {
-        Course course = courseRepository.findById(addReviewRequest.getCourseId())
+    public CourseReview addReview(Long courseId, Integer rating, String comment) {
+        Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new CourseNotFoundException());
         CourseReview courseReview = CourseReview.builder()
-                .comment(addReviewRequest.getComment())
-                .rating(addReviewRequest.getRating())
+                .comment(comment)
+                .rating(rating)
                 .course(course)
                 .member(userDetailsService.getMemberByContextHolder())
                 .build();
