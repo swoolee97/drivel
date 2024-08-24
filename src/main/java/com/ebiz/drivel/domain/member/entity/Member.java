@@ -108,7 +108,8 @@ public class Member {
     }
 
     public boolean isOnboarded() {
-        return memberRegions != null && memberStyles != null && memberThemes != null && memberTogethers != null;
+        return !memberRegions.isEmpty() && !memberStyles.isEmpty() && !memberThemes.isEmpty()
+                && !memberTogethers.isEmpty();
     }
 
     public void updateNickname(String nickname) {
