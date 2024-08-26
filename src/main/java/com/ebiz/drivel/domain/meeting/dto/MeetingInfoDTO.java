@@ -15,4 +15,5 @@ public class MeetingInfoDTO {
     private MeetingConditionDTO condition;
     private MeetingMasterInfoDTO masterInfo;
     private MeetingParticipantsInfoDTO participantsInfo;
+    private ParticipantSummaryDTO summary;
 }
