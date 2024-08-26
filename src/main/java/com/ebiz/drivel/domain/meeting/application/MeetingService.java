@@ -13,6 +13,7 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
+import com.ebiz.drivel.domain.meeting.dto.ParticipantSummaryDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
@@ -82,6 +83,7 @@ public class MeetingService {
         MeetingMasterInfoDTO meetingMasterInfoDTO = MeetingMasterInfoDTO.from(meeting.getMasterMember());
         List<MeetingMemberInfoDTO> participantsInfo = meeting.getParticipantsInfo();
         MeetingParticipantsInfoDTO meetingParticipantsInfo = createParticipantsInfo(meeting, participantsInfo);
+        ParticipantSummaryDTO participantSummaryDTO = meetingMemberService.summaryParticipants(meeting);
 
         return MeetingDetailResponse.builder()
                 .meetingInfo(MeetingInfoDTO.builder()
@@ -93,6 +95,7 @@ public class MeetingService {
                         .condition(meetingConditionDTO)
                         .masterInfo(meetingMasterInfoDTO)
                         .participantsInfo(meetingParticipantsInfo)
+                        .summary(participantSummaryDTO)
                         .build())
                 .build();
     }
