@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.review.api;
 
 import com.ebiz.drivel.domain.review.constants.ReviewExceptionMessage;
+import com.ebiz.drivel.domain.review.exception.CourseReviewNotFoundException;
 import com.ebiz.drivel.domain.review.exception.MaxImageLengthExceededException;
 import com.ebiz.drivel.global.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -24,5 +25,12 @@ public class ReviewExceptionHandler {
         return new ResponseEntity<>(ErrorResponse.builder()
                 .message(e.getMessage())
                 .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CourseReviewNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCourseReviewNotFoundException(CourseReviewNotFoundException e) {
+        return new ResponseEntity<>(ErrorResponse.builder()
+                .message(e.getMessage())
+                .build(), HttpStatus.NOT_FOUND);
     }
 }

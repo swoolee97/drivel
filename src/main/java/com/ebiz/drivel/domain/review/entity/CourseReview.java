@@ -50,7 +50,14 @@ public class CourseReview {
     @Column(name = "comment")
     private String comment;
 
+    @Column(name = "is_deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     @OneToMany(mappedBy = "courseReview", fetch = FetchType.LAZY)
     private List<CourseReviewImage> courseReviewImages;
+
+    public void delete() {
+        isDeleted = true;
+    }
 
 }

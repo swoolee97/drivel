@@ -7,6 +7,7 @@ import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
 import com.ebiz.drivel.domain.review.entity.QCourseReview;
+import com.ebiz.drivel.domain.review.exception.CourseReviewNotFoundException;
 import com.ebiz.drivel.domain.review.repository.ReviewRepository;
 import com.ebiz.drivel.global.exception.CourseNotFoundException;
 import com.querydsl.core.BooleanBuilder;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +72,13 @@ public class ReviewService {
                 .toList();
 
         return new PageImpl<>(reviews, pageable, totalCount);
+    }
+
+    @Transactional
+    public void deleteReview(Long reviewId) {
+        CourseReview courseReview = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CourseReviewNotFoundException("존재하지 않는 리뷰입니다"));
+        courseReview.delete();
     }
 
 }

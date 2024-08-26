@@ -11,6 +11,7 @@ public class ReviewQueryHelper {
         QCourseReview review = QCourseReview.courseReview;
 
         addCourseIdFilter(review, filterBuilder, id);
+        addDeletedReviewFilter(review, filterBuilder);
 
         return filterBuilder;
     }
@@ -19,6 +20,12 @@ public class ReviewQueryHelper {
         BooleanBuilder courseIdBuilder = new BooleanBuilder();
         courseIdBuilder.and(review.course.id.eq(id));
         filterBuilder.and(courseIdBuilder);
+    }
+
+    public static void addDeletedReviewFilter(QCourseReview review, BooleanBuilder filterBuilder) {
+        BooleanBuilder deletedReviewBuilder = new BooleanBuilder();
+        deletedReviewBuilder.and(review.isDeleted.isFalse());
+        filterBuilder.and(deletedReviewBuilder);
     }
 
     public static OrderSpecifier<?> getOrderSpecifier(QCourseReview review) {

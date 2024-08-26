@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.review.dto;
 
+import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.review.entity.CourseReview;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,7 @@ import lombok.Getter;
 @Builder
 public class ReviewDTO {
     private Long id;
+    private Long reviewerId;
     private String reviewerNickname;
     private String reviewerImagePath;
     private LocalDateTime reviewDate;
@@ -20,10 +22,12 @@ public class ReviewDTO {
     private List<ReviewImageDTO> images;
 
     public static ReviewDTO from(CourseReview courseReview) {
+        Member reviewer = courseReview.getMember();
         return ReviewDTO.builder()
                 .id(courseReview.getId())
-                .reviewerNickname(courseReview.getMember().getNickname())
-                .reviewerImagePath(courseReview.getMember().getImagePath())
+                .reviewerId(reviewer.getId())
+                .reviewerNickname(reviewer.getNickname())
+                .reviewerImagePath(reviewer.getImagePath())
                 .reviewDate(courseReview.getReviewDate())
                 .courseId(courseReview.getCourse().getId())
                 .rating(courseReview.getRating())
