@@ -1,5 +1,6 @@
 package com.ebiz.drivel.domain.chat.entity;
 
+import com.ebiz.drivel.domain.chat.dto.ChatMessageDTO;
 import jakarta.persistence.Id;
 import java.util.Date;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,13 @@ public class ChatMessage {
     @Field(value = "send_at")
     @Builder.Default
     private Date sendAt = new Date();
+
+    public static ChatMessage from(ChatMessageDTO chatMessageDTO, Long meetingId) {
+        return ChatMessage.builder()
+                .message(chatMessageDTO.getMessage())
+                .meetingId(meetingId)
+                .senderId(chatMessageDTO.getSenderId())
+                .build();
+    }
 
 }

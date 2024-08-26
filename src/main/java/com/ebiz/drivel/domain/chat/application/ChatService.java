@@ -21,14 +21,9 @@ public class ChatService {
         Member member = memberRepository.findById(message.getSenderId()).orElseThrow(null);
         message.initialize(member);
 
-        template.convertAndSend("/sub/meeting/" + meetingId, message);
+        ChatMessage savedMessage = chatMessageRepository.save(ChatMessage.from(message, meetingId));
 
-        ChatMessage chatMessage = ChatMessage.builder()
-                .message(message.getMessage())
-                .meetingId(meetingId)
-                .senderId(message.getSenderId())
-                .build();
-        chatMessageRepository.save(chatMessage);
+        template.convertAndSend("/sub/meeting/" + meetingId, ChatMessageDTO.from(savedMessage, member));
     }
 
     public void getMessages(Long meetingId) {
