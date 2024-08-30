@@ -193,4 +193,9 @@ public class Member {
                         .together(together)
                         .build()));
     }
+
+    public void lockProfile() {
+        isProfileLocked = !isProfileLocked;
+    }
+
 }

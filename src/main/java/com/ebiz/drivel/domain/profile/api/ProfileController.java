@@ -75,4 +75,10 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/lock")
+    public ResponseEntity<Void> lockProfile() {
+        profileService.lockProfile();
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -127,4 +127,10 @@ public class ProfileService {
         s3Service.deleteImage(imagePath, PROFILE_IMAGE_BUCKET_NAME);
     }
 
+    @Transactional
+    public void lockProfile() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.lockProfile();
+    }
+
 }
