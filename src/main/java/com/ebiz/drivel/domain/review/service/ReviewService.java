@@ -55,7 +55,8 @@ public class ReviewService {
 
     public Page<ReviewDTO> findReviewsByCourse(Long id, Pageable pageable) {
         QCourseReview qReview = QCourseReview.courseReview;
-        BooleanBuilder filterBuilder = ReviewQueryHelper.createQueryFilter(id);
+        Member member = userDetailsService.getMemberByContextHolder();
+        BooleanBuilder filterBuilder = ReviewQueryHelper.createQueryFilter(id, member);
         OrderSpecifier<?> orderSpecifier = ReviewQueryHelper.getOrderSpecifier(qReview);
 
         long totalCount = queryFactory.selectFrom(qReview)

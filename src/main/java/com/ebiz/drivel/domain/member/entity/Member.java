@@ -81,6 +81,9 @@ public class Member {
     @Size(min = 10, max = 50, message = "10자 이상 50자 이내로 적어주세요")
     private String description;
 
+    @Column(name = "is_profile_locked", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isProfileLocked;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MeetingMember> meetingMembers;
 

@@ -1,8 +1,9 @@
 package com.ebiz.drivel.domain.profile.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
-import com.ebiz.drivel.domain.member.application.MemberService;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
+import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
 import com.ebiz.drivel.domain.onboarding.RegionRepository;
 import com.ebiz.drivel.domain.onboarding.StyleRepository;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +36,6 @@ public class ProfileService {
     private final ThemeRepository themeRepository;
     private final StyleRepository styleRepository;
     private final TogetherRepository togetherRepository;
-    private final MemberService memberService;
     @Value("${cloud.aws.s3.profileImageBucketName}")
     private String PROFILE_IMAGE_BUCKET_NAME;
     private final S3Service s3Service;
@@ -44,11 +43,16 @@ public class ProfileService {
     private final UserDetailsServiceImpl userDetailsService;
     private final EntityManager entityManager;
     private final RegionRepository regionRepository;
+    private final MemberRepository memberRepository;
 
     public ProfileDTO getMyProfileDetails() {
         Member member = userDetailsService.getMemberByContextHolder();
-        ProfileDTO profileDTO = ProfileDTO.from(member);
-        return profileDTO;
+        return ProfileDTO.from(member);
+    }
+
+    public ProfileDTO getProfileDetails(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException("찾을 수 없는 유저입니다"));
+        return ProfileDTO.from(member);
     }
 
     @Transactional
@@ -113,11 +117,6 @@ public class ProfileService {
             deleteProfileImage(member.getImagePath());
         }
         member.updateProfileImagePath(newImagePath);
-    }
-
-    // MemberService의 getProfileById를 호출
-    public ResponseEntity<ProfileDTO> getProfileById(Long id) {
-        return memberService.getProfileById(id);
     }
 
     private String uploadProfileImage(MultipartFile image) throws IOException {

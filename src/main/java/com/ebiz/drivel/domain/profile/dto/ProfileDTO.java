@@ -13,6 +13,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ProfileDTO {
+    private Long memberId;
     private String nickname;
     private String imagePath;
     private String carModel;
@@ -27,6 +28,7 @@ public class ProfileDTO {
 
     public static ProfileDTO from(Member member) {
         return ProfileDTO.builder()
+                .memberId(member.getId())
                 .nickname(member.getNickname())
                 .imagePath(member.getImagePath())
                 .carModel(member.getCarModel())

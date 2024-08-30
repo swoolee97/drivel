@@ -1,7 +1,5 @@
 package com.ebiz.drivel.domain.block;
 
-import static com.ebiz.drivel.domain.profile.api.ProfileController.BLOCK_MEMBER_SUCCESS;
-
 import com.ebiz.drivel.global.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BlockController {
 
+    public static final String BLOCK_MEMBER_SUCCESS = "유저가 차단되었습니다";
+    
     private final BlockService blockService;
 
     @PostMapping("/member")

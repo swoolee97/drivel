@@ -1,17 +1,10 @@
 package com.ebiz.drivel.domain.member.application;
 
-import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
-import com.ebiz.drivel.domain.profile.dto.ProfileDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,16 +32,5 @@ public class MemberService {
         return ResponseEntity.ok("사용 가능한 닉네임입니다.");
     }
 
-
-    public ResponseEntity<ProfileDTO> getProfileById(Long id){
-        Optional<Member> optionalMember = memberRepository.findById(id);
-        if(optionalMember.isPresent()){
-            Member member = optionalMember.get();
-            ProfileDTO profileDTO = ProfileDTO.from(member);
-            return ResponseEntity.ok(profileDTO);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
 }
 
