@@ -115,6 +115,10 @@ public class Member {
                 && !memberTogethers.isEmpty();
     }
 
+    public boolean isUnableToJoinMeeting() {
+        return description == null || carModel == null || carCareer == null || gender == Gender.NONE;
+    }
+
     public void updateNickname(String nickname) {
         if (nickname == null) {
             return;

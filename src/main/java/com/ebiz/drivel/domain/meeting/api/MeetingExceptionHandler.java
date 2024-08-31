@@ -3,7 +3,9 @@ package com.ebiz.drivel.domain.meeting.api;
 import com.ebiz.drivel.domain.meeting.exception.AlreadyRequestedJoinMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingJoinRequestNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
+import com.ebiz.drivel.domain.meeting.exception.MemberUnableToJoinMeetingException;
 import com.ebiz.drivel.global.dto.ErrorResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,6 +35,15 @@ public class MeetingExceptionHandler {
         return ResponseEntity.badRequest().body(ErrorResponse.builder()
                 .message(meetingMemberNotFoundException.getMessage())
                 .build());
+    }
+
+    @ExceptionHandler(MemberUnableToJoinMeetingException.class)
+    public ResponseEntity<ErrorResponse> handleMemberUnableToJoinMeetingException(
+            MemberUnableToJoinMeetingException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build());
     }
 
 }

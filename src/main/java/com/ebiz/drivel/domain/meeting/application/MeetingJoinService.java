@@ -19,7 +19,6 @@ import com.ebiz.drivel.domain.sse.Alert;
 import com.ebiz.drivel.domain.sse.Alert.AlertCategory;
 import com.ebiz.drivel.domain.sse.AlertDTO;
 import com.ebiz.drivel.domain.sse.AlertRepository;
-import com.ebiz.drivel.domain.sse.AlertService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,6 @@ public class MeetingJoinService {
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
     private final SimpMessagingTemplate template;
-    private final AlertService alertService;
     private final AlertRepository alertRepository;
     private final MeetingJoinRequestRepository meetingJoinRequestRepository;
 
@@ -44,6 +42,10 @@ public class MeetingJoinService {
         Member member = userDetailsService.getMemberByContextHolder();
         Meeting meeting = meetingRepository.findById(id)
                 .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
+
+        if (member.isUnableToJoinMeeting()) {
+            throw new MeetingJoinRequestNotFoundException("기본정보 등록 후 참여해주세요");
+        }
 
         //이미 가입 요청했는지 확인
         if (meeting.isWaitingRequestMember(member)) {
