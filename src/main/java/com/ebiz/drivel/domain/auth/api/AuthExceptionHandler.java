@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.auth.api;
 
 import com.ebiz.drivel.domain.auth.exception.DuplicatedSignUpException;
+import com.ebiz.drivel.domain.auth.exception.SignInDeletedMemberException;
 import com.ebiz.drivel.global.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,14 @@ public class AuthExceptionHandler {
                 .message(e.getMessage())
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SignInDeletedMemberException.class)
+    public ResponseEntity<?> handleSignInDeletedMember(SignInDeletedMemberException e) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message(e.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
 }

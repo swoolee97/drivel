@@ -7,6 +7,7 @@ import com.ebiz.drivel.domain.auth.dto.SignInDTO;
 import com.ebiz.drivel.domain.auth.dto.SignInRequest;
 import com.ebiz.drivel.domain.auth.dto.SignUpRequest;
 import com.ebiz.drivel.domain.auth.exception.DuplicatedSignUpException;
+import com.ebiz.drivel.domain.auth.exception.SignInDeletedMemberException;
 import com.ebiz.drivel.domain.mail.dto.CheckCodeDTO;
 import com.ebiz.drivel.domain.mail.exception.WrongAuthenticationCodeException;
 import com.ebiz.drivel.domain.mail.repository.AuthCodeRepository;
@@ -73,6 +74,9 @@ public class AuthService {
         String refreshToken = jwtProvider.generateRefreshToken(authentication);
         Member member = memberRepository.findMemberByEmail(request.getEmail())
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND_EXCEPTION_MESSAGE));
+        if (member.isDeleted()) {
+            throw new SignInDeletedMemberException("탈퇴한 회원입니다");
+        }
         tokenRepository.save(member.getId(), refreshToken);
         return SignInDTO.builder()
                 .id(member.getId())

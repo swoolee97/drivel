@@ -1,15 +1,19 @@
 package com.ebiz.drivel.domain.member.application;
 
+import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
+import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
+    private final UserDetailsServiceImpl userDetailsService;
     private final MemberRepository memberRepository;
 
     public boolean isExistsByNickname(String nickname) {
@@ -30,6 +34,12 @@ public class MemberService {
         }
 
         return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+    }
+
+    @Transactional
+    public void deleteMember() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        member.delete();
     }
 
 }

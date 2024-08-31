@@ -84,6 +84,9 @@ public class Member {
     @Column(name = "is_profile_locked", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isProfileLocked;
 
+    @Column(name = "is_deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isDeleted;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MeetingMember> meetingMembers;
 
@@ -200,6 +203,10 @@ public class Member {
 
     public void lockProfile() {
         isProfileLocked = !isProfileLocked;
+    }
+
+    public void delete() {
+        isDeleted = true;
     }
 
 }
