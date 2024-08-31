@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.token.api;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
+import com.ebiz.drivel.domain.auth.exception.SignInDeletedMemberException;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.token.application.TokenService;
 import com.ebiz.drivel.global.dto.BaseResponse;
@@ -24,6 +25,9 @@ public class TokenController {
     @PostMapping("/signIn")
     public ResponseEntity<BaseResponse> checkToken() {
         Member member = userDetailsService.getMemberByContextHolder();
+        if (member.isDeleted()) {
+            throw new SignInDeletedMemberException("탈퇴한 회원입니다");
+        }
         return ResponseEntity.ok(SignInDTO.builder()
                 .id(member.getId())
                 .message(AUTO_SIGN_IN_SUCCESS_MESSAGE)

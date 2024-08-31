@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.kakao.service;
 
 import com.ebiz.drivel.domain.auth.application.JwtProvider;
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
+import com.ebiz.drivel.domain.auth.exception.SignInDeletedMemberException;
 import com.ebiz.drivel.domain.kakao.dto.KakaoTokenResponse;
 import com.ebiz.drivel.domain.kakao.dto.KakaoUserInfoResponse;
 import com.ebiz.drivel.domain.kakao.exception.DuplicatedSignUpMemberException;
@@ -54,6 +55,11 @@ public class KakaoService {
         if (member == null) {
             member = signUpWithKakao(email);
         }
+
+        if (member.isDeleted()) {
+            throw new SignInDeletedMemberException("탈퇴한 회원입니다");
+        }
+
         Authentication authentication = authenticate(email);
 
         String accessToken = jwtProvider.generateAccessToken(authentication);

@@ -1,5 +1,6 @@
 package com.ebiz.drivel.global.api;
 
+import com.ebiz.drivel.domain.auth.exception.SignInDeletedMemberException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.global.dto.ErrorResponse;
@@ -91,5 +92,14 @@ public class GlobalExceptionHandler {
                 .message(e.getMessage())
                 .build());
     }
+
+    @ExceptionHandler(SignInDeletedMemberException.class)
+    public ResponseEntity<?> handleSignInDeletedMember(SignInDeletedMemberException e) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message(e.getMessage())
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
 
 }
