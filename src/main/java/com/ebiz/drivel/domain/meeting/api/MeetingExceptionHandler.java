@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = {MeetingController.class})
+@RestControllerAdvice(basePackageClasses = {MeetingController.class, MeetingJoinController.class})
 public class MeetingExceptionHandler {
 
     @ExceptionHandler(MeetingJoinRequestNotFoundException.class)
