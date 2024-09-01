@@ -1,11 +1,11 @@
 package com.ebiz.drivel.domain.member.application;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
+import com.ebiz.drivel.domain.auth.exception.DuplicatedResourceException;
+import com.ebiz.drivel.domain.auth.exception.InvalidFormException;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,20 +20,24 @@ public class MemberService {
         return memberRepository.existsByNickname(nickname);
     }
 
-    public ResponseEntity<String> checkNickname(String nickname) {
-        // 유효성 검사 : 닉네임이 null이거나 빈 문자열일 때
+    public void checkNickname(String nickname) {
         if (nickname == null || nickname.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("닉네임이 빈 문자열이거나 유효하지 않습니다.");
+            throw new InvalidFormException("유효하지 않은 형식입니다");
         }
 
-        // 닉네임 중복 확인
-        boolean isNicknameUsed = memberRepository.existsByNickname(nickname);
+        if (memberRepository.existsByNickname(nickname)) {
+            throw new DuplicatedResourceException("이미 사용중인 닉네임입니다");
+        }
+    }
 
-        if (isNicknameUsed) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("닉네임이 이미 사용 중입니다.");
+    public void checkEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new InvalidFormException("유효하지 않은 형식입니다");
         }
 
-        return ResponseEntity.ok("사용 가능한 닉네임입니다.");
+        if (memberRepository.existsByEmail(email)) {
+            throw new DuplicatedResourceException("이미 가입된 이메일입니다");
+        }
     }
 
     @Transactional
