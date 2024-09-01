@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface SpotRepository extends JpaRepository<Spot, Integer> {
 
     @Query(value =
-            "SELECT s.id AS id, s.title AS title, s.first_image AS imagePath, " +
+            "SELECT s.id AS id, s.title AS title, s.first_image AS imagePath, s.longitude AS longitude, s.latitude AS latitude, "
+                    +
                     "(6371 * ACOS(COS(RADIANS(:firstWaypointLat)) * COS(RADIANS(s.latitude)) * COS(RADIANS(s.longitude) - RADIANS(:firstWaypointLon)) + SIN(RADIANS(:firstWaypointLat)) * SIN(RADIANS(s.latitude)))) AS distanceFromFirstWaypoint, "
                     +
                     "(6371 * ACOS(COS(RADIANS(:lastWaypointLat)) * COS(RADIANS(s.latitude)) * COS(RADIANS(s.longitude) - RADIANS(:lastWaypointLon)) + SIN(RADIANS(:lastWaypointLat)) * SIN(RADIANS(s.latitude)))) AS distanceFromLastWaypoint "
