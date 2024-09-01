@@ -39,7 +39,7 @@ public class PushService {
 
     public void sendPushMessage(String title, String body, String token)
             throws IOException {
-        String message = makeMessage(token, title, body);
+        String message = makeMessage(title, body, token);
 
         RequestBody requestBody = RequestBody.create(message, JSON_MEDIA_TYPE);
         Request request = new Request.Builder()
