@@ -17,6 +17,7 @@ import lombok.experimental.SuperBuilder;
 public class CourseDetailDTO extends CourseDTO {
     private int reviewCount; // 이거랑
     private double averageRating; // 이거는 필요없는데 상속하는게 좋을까
+    private String region;
     private List<String> tags;
 
     public static CourseDetailDTO from(Course course, boolean isLiked) {
@@ -30,6 +31,7 @@ public class CourseDetailDTO extends CourseDTO {
                 .id(course.getId())
                 .liked(isLiked)
                 .tags(tags)
+                .region(course.getRegionName())
                 .title(course.getTitle())
                 .description(course.getDescription())
                 .reviewCount(course.countReviews())
