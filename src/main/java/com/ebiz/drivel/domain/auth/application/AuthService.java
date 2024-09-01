@@ -16,6 +16,8 @@ import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.member.util.NicknameGenerator;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
+import com.ebiz.drivel.domain.push.entity.FcmToken;
+import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
 import com.ebiz.drivel.domain.token.application.TokenService;
 import com.ebiz.drivel.domain.token.entity.BlackList;
 import com.ebiz.drivel.domain.token.repository.BlackListRepository;
@@ -48,6 +50,7 @@ public class AuthService {
     private final BlackListRepository blackListRepository;
     private final NicknameGenerator nicknameGenerator;
     private final ProfileImageGenerator profileImageGenerator;
+    private final FcmTokenRepository fcmTokenRepository;
 
     @Transactional
     public Member signUp(SignUpRequest request) {
@@ -78,6 +81,15 @@ public class AuthService {
             throw new SignInDeletedMemberException("탈퇴한 회원입니다");
         }
         tokenRepository.save(member.getId(), refreshToken);
+
+        fcmTokenRepository.deleteAllByMemberId(member.getId());
+        if (request.getFcmToken() != null) {
+            fcmTokenRepository.save(FcmToken.builder()
+                    .memberId(member.getId())
+                    .token(request.getFcmToken())
+                    .build());
+        }
+
         return SignInDTO.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
@@ -94,6 +106,7 @@ public class AuthService {
         String storedToken = tokenRepository.findById(member.getId());
         tokenRepository.delete(member.getId());
         saveBlackList(refreshToken);
+        fcmTokenRepository.deleteAllByMemberId(member.getId());
         if (storedToken != null && !refreshToken.equals(storedToken)) {
             saveBlackList(storedToken);
         }

@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FcmTokenRepository extends MongoRepository<FcmToken, String> {
     FcmToken findByMemberId(Long memberId);
+
+    void deleteAllByMemberId(Long memberId);
 }
