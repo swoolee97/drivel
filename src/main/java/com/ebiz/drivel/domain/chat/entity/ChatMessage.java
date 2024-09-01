@@ -33,6 +33,16 @@ public class ChatMessage {
     @Builder.Default
     private Date sendAt = new Date();
 
+    @Field(value = "is_deleted")
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    public void delete() {
+        System.out.println("@@");
+        System.out.println(_id);
+        this.isDeleted = true;
+    }
+
     public static ChatMessage from(ChatMessageDTO chatMessageDTO, Long meetingId) {
         return ChatMessage.builder()
                 .message(chatMessageDTO.getMessage())
