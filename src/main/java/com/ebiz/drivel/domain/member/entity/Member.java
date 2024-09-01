@@ -209,4 +209,8 @@ public class Member {
         isDeleted = true;
     }
 
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
 }
