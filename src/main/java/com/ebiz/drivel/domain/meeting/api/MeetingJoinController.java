@@ -5,6 +5,7 @@ import com.ebiz.drivel.domain.meeting.dto.JoinRequestDTO;
 import com.ebiz.drivel.domain.meeting.dto.JoinRequestDecisionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingJoinRequestDTO;
 import com.ebiz.drivel.global.dto.BaseResponse;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class MeetingJoinController {
     private final MeetingJoinService meetingJoinService;
 
     @PostMapping
-    public ResponseEntity<BaseResponse> joinMeeting(@RequestBody JoinRequestDTO joinRequestDTO) {
+    public ResponseEntity<BaseResponse> joinMeeting(@RequestBody JoinRequestDTO joinRequestDTO) throws IOException {
         meetingJoinService.requestJoinMeeting(joinRequestDTO.getId());
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임 가입 신청이 완료되었습니다")
@@ -40,7 +41,7 @@ public class MeetingJoinController {
     }
 
     @PostMapping("/accept")
-    public void decideJoinMeeting(@RequestBody JoinRequestDecisionDTO joinRequestDecisionDTO) {
+    public void decideJoinMeeting(@RequestBody JoinRequestDecisionDTO joinRequestDecisionDTO) throws IOException {
         meetingJoinService.acceptJoinMeeting(joinRequestDecisionDTO);
     }
 

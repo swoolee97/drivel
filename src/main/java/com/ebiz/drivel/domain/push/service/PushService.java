@@ -5,7 +5,6 @@ import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.push.dto.FcmMessage;
 import com.ebiz.drivel.domain.push.dto.FcmMessage.Message;
 import com.ebiz.drivel.domain.push.dto.FcmMessage.Notification;
-import com.ebiz.drivel.domain.push.dto.PushRequest;
 import com.ebiz.drivel.domain.push.entity.FcmToken;
 import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
 import java.util.List;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -39,9 +37,9 @@ public class PushService {
     private static final String FCM_SEND_URL = "https://fcm.googleapis.com/v1/projects/%s/messages:send";
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
 
-    public void sendPushMessage(@NonNull PushRequest pushRequest, String token)
+    public void sendPushMessage(String title, String body, String token)
             throws IOException {
-        String message = makeMessage(token, pushRequest);
+        String message = makeMessage(token, title, body);
 
         RequestBody requestBody = RequestBody.create(message, JSON_MEDIA_TYPE);
         Request request = new Request.Builder()
@@ -55,14 +53,14 @@ public class PushService {
         response.close();
     }
 
-    private String makeMessage(String token, PushRequest pushMessageRequest) throws JsonProcessingException {
+    private String makeMessage(String title, String body, String token) throws JsonProcessingException {
 
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(Message.builder()
                         .token(token)
                         .notification(Notification.builder()
-                                .title(pushMessageRequest.getTitle())
-                                .body(pushMessageRequest.getBody())
+                                .title(title)
+                                .body(body)
                                 .build())
                         .build())
                 .build();

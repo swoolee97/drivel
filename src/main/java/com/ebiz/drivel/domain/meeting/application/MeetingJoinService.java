@@ -15,10 +15,14 @@ import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingJoinRequestRepository;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.push.entity.FcmToken;
+import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
+import com.ebiz.drivel.domain.push.service.PushService;
 import com.ebiz.drivel.domain.sse.Alert;
 import com.ebiz.drivel.domain.sse.Alert.AlertCategory;
 import com.ebiz.drivel.domain.sse.AlertDTO;
 import com.ebiz.drivel.domain.sse.AlertRepository;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +40,11 @@ public class MeetingJoinService {
     private final SimpMessagingTemplate template;
     private final AlertRepository alertRepository;
     private final MeetingJoinRequestRepository meetingJoinRequestRepository;
+    private final PushService pushService;
+    private final FcmTokenRepository fcmTokenRepository;
 
     @Transactional
-    public void requestJoinMeeting(Long id) {
+    public void requestJoinMeeting(Long id) throws IOException {
         Member member = userDetailsService.getMemberByContextHolder();
         Meeting meeting = meetingRepository.findById(id)
                 .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
@@ -67,6 +73,13 @@ public class MeetingJoinService {
 
         template.convertAndSend("/sub/alert/" + meeting.getMasterMember().getId(), AlertDTO.from(alert));
         saveMeetingJoinRequest(member, meeting);
+
+        FcmToken fcmToken = fcmTokenRepository.findByMemberId(meeting.getMasterMember().getId()).orElse(null);
+        if (fcmToken != null) {
+            pushService.sendPushMessage("가입요청", member.getNickname() + "님이 " + meeting.getTitle() + "모임에 가입을 요청했어요",
+                    fcmToken.getToken());
+        }
+
     }
 
     @Transactional
@@ -87,7 +100,7 @@ public class MeetingJoinService {
     }
 
     @Transactional
-    public void acceptJoinMeeting(JoinRequestDecisionDTO request) {
+    public void acceptJoinMeeting(JoinRequestDecisionDTO request) throws IOException {
         MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findById(request.getId())
                 .orElseThrow(() -> new MeetingJoinRequestNotFoundException("찾을 수 없는 요청입니다"));
         if (meetingJoinRequest.isAlreadyDecidedRequest()) {
@@ -108,6 +121,10 @@ public class MeetingJoinService {
                     .title("가입 수락")
                     .content("가입되었습니다")
                     .build();
+            FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
+            if (fcmToken != null) {
+                pushService.sendPushMessage("가입 수락", meeting.getTitle() + "모임에 가입되었어요", fcmToken.getToken());
+            }
         } else {
             meetingJoinRequest.reject();
             alert = Alert.builder()
@@ -117,6 +134,10 @@ public class MeetingJoinService {
                     .title("가입 거절")
                     .content("가입 신청이 거절되었습니다")
                     .build();
+            FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
+            if (fcmToken != null) {
+                pushService.sendPushMessage("가입 거절", meeting.getTitle() + "모임에 가입이 거절되었어요", fcmToken.getToken());
+            }
         }
         alertRepository.save(alert);
         alertDTO = AlertDTO.from(alert);

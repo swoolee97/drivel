@@ -6,7 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PushRequest {
-    private Long targetMemberToken;
     private String title;
     private String body;
 }
