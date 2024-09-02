@@ -210,6 +210,9 @@ public class Member {
     }
 
     public void updatePassword(String newPassword) {
+        if (this.password == null) {
+            return;
+        }
         this.password = newPassword;
     }
 
