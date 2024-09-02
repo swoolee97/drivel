@@ -27,10 +27,11 @@ public class KakaoController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<BaseResponse> loginWithKakao(@RequestParam("code") String code) {
+    public ResponseEntity<BaseResponse> loginWithKakao(@RequestParam("code") String code,
+                                                       @RequestParam("fcmToken") String fcmToken) {
         KakaoTokenResponse kakaoTokenResponse = kakaoService.getToken(code);
         KakaoUserInfoResponse userInfoResponse = kakaoService.getUserInfo(kakaoTokenResponse.getAccess_token());
-        SignInDTO signInDTO = kakaoService.loginWithKakao(userInfoResponse.getKakao_account().getEmail());
+        SignInDTO signInDTO = kakaoService.loginWithKakao(userInfoResponse.getKakao_account().getEmail(), fcmToken);
         return ResponseEntity.ok().body(signInDTO);
     }
 }

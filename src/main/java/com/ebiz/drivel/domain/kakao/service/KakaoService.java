@@ -10,6 +10,8 @@ import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
 import com.ebiz.drivel.domain.member.util.NicknameGenerator;
 import com.ebiz.drivel.domain.member.util.ProfileImageGenerator;
+import com.ebiz.drivel.domain.push.entity.FcmToken;
+import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
 import com.ebiz.drivel.domain.token.repository.TokenRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -41,13 +43,14 @@ public class KakaoService {
     private String REDIRECT_URI;
     private final WebClient webClient;
     private final MemberRepository memberRepository;
+    private final FcmTokenRepository fcmTokenRepository;
     private final NicknameGenerator nicknameGenerator;
     private final JwtProvider jwtProvider;
     private final TokenRepository tokenRepository;
     private final ProfileImageGenerator profileImageGenerator;
 
     @Transactional
-    public SignInDTO loginWithKakao(String email) {
+    public SignInDTO loginWithKakao(String email, String token) {
         Member member = memberRepository.findMemberByEmail(email).orElse(null);
         if (member != null && member.getPassword() != null) {
             throw new DuplicatedSignUpMemberException(DUPLICATED_SIGN_UP_EXCEPTION_MESSAGE);
@@ -65,6 +68,11 @@ public class KakaoService {
         String accessToken = jwtProvider.generateAccessToken(authentication);
         String refreshToken = jwtProvider.generateRefreshToken(authentication);
         tokenRepository.save(member.getId(), refreshToken);
+        FcmToken fcmToken = FcmToken.builder()
+                .memberId(member.getId())
+                .token(token)
+                .build();
+        fcmTokenRepository.save(fcmToken);
 
         return SignInDTO.builder()
                 .id(member.getId())
