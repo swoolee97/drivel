@@ -14,6 +14,7 @@ public class FcmMessage {
     @Getter
     public static class Message {
         private Data data;
+        private AndroidNotificationDTO android;
         private Notification notification;
         private String token;
     }

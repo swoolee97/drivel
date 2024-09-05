@@ -2,9 +2,11 @@ package com.ebiz.drivel.domain.push.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.push.dto.AndroidNotificationDTO;
 import com.ebiz.drivel.domain.push.dto.FcmMessage;
 import com.ebiz.drivel.domain.push.dto.FcmMessage.Message;
 import com.ebiz.drivel.domain.push.dto.FcmMessage.Notification;
+import com.ebiz.drivel.domain.push.dto.NotificationDTO;
 import com.ebiz.drivel.domain.push.entity.FcmToken;
 import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,15 +51,20 @@ public class PushService {
                 .url(String.format(FCM_SEND_URL, PROJECT_ID))
                 .build();
         Response response = client.newCall(request).execute();
-
         response.close();
     }
 
     private String makeMessage(String title, String body, String token) throws JsonProcessingException {
+        AndroidNotificationDTO android = new AndroidNotificationDTO();
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setTitle(title);
+        notificationDTO.setBody(body);
+        android.setNotification(notificationDTO);
 
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(Message.builder()
                         .token(token)
+                        .android(android)
                         .notification(Notification.builder()
                                 .title(title)
                                 .body(body)
