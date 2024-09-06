@@ -178,4 +178,15 @@ public class MeetingService {
                 (member, MeetingStatus.ACTIVE);
         return createdMeetings.stream().map(MeetingHistoryDTO::from).toList();
     }
+
+    public List<MeetingHistoryDTO> getParticipatingMeetings() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        return member.getMeetingMembers().stream()
+                .filter(MeetingMember::getIsActive)
+                .map(MeetingMember::getMeeting)
+                .filter(meeting -> meeting.isActive())
+                .map(MeetingHistoryDTO::from)
+                .toList();
+    }
+
 }

@@ -90,4 +90,10 @@ public class MeetingController {
         return ResponseEntity.ok(myMeetings);
     }
 
+    @GetMapping("/participating")
+    public ResponseEntity<List<MeetingHistoryDTO>> getParticipatingMeetings() {
+        List<MeetingHistoryDTO> participatingMeetings = meetingService.getParticipatingMeetings();
+        return ResponseEntity.ok(participatingMeetings);
+    }
+
 }

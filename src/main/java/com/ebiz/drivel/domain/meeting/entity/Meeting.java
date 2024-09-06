@@ -134,6 +134,10 @@ public class Meeting {
         this.status = MeetingStatus.DELETED;
     }
 
+    public boolean isActive() {
+        return this.status.equals(MeetingStatus.ACTIVE);
+    }
+
     public enum MeetingStatus {
         ACTIVE, INACTIVE, DELETED
     }
