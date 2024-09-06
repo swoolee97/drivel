@@ -5,6 +5,7 @@ import com.ebiz.drivel.domain.meeting.application.MeetingService;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
+import com.ebiz.drivel.domain.meeting.dto.MeetingHistoryDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.global.dto.BaseResponse;
@@ -81,6 +82,12 @@ public class MeetingController {
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임에서 나왔어요")
                 .build());
+    }
+
+    @GetMapping("/created")
+    public ResponseEntity<List<MeetingHistoryDTO>> getCreatedMeetings() {
+        List<MeetingHistoryDTO> myMeetings = meetingService.getCreatedMeetings();
+        return ResponseEntity.ok(myMeetings);
     }
 
 }
