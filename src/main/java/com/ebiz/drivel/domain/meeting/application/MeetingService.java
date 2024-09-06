@@ -8,7 +8,6 @@ import com.ebiz.drivel.domain.meeting.dto.CreateMeetingRequest;
 import com.ebiz.drivel.domain.meeting.dto.CreateMeetingResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingConditionDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingDetailResponse;
-import com.ebiz.drivel.domain.meeting.dto.MeetingHistoryDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.MeetingInfoResponse;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMasterInfoDTO;
@@ -17,7 +16,6 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.ParticipantSummaryDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
-import com.ebiz.drivel.domain.meeting.entity.Meeting.MeetingStatus;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
@@ -170,23 +168,6 @@ public class MeetingService {
         MeetingMember meetingMember = meetingMemberService.findMeetingMember(meeting, member)
                 .orElseThrow(() -> new MeetingMemberNotFoundException("잘못된 요청입니다"));
         meetingMember.inActive();
-    }
-
-    public List<MeetingHistoryDTO> getCreatedMeetings() {
-        Member member = userDetailsService.getMemberByContextHolder();
-        List<Meeting> createdMeetings = meetingRepository.findMeetingsByMasterMemberAndStatus
-                (member, MeetingStatus.ACTIVE);
-        return createdMeetings.stream().map(MeetingHistoryDTO::from).toList();
-    }
-
-    public List<MeetingHistoryDTO> getParticipatingMeetings() {
-        Member member = userDetailsService.getMemberByContextHolder();
-        return member.getMeetingMembers().stream()
-                .filter(MeetingMember::getIsActive)
-                .map(MeetingMember::getMeeting)
-                .filter(meeting -> meeting.isActive())
-                .map(MeetingHistoryDTO::from)
-                .toList();
     }
 
 }
