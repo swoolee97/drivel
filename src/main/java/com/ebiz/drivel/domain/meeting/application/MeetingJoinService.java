@@ -134,6 +134,8 @@ public class MeetingJoinService {
                 data.put("body", meeting.getTitle() + "모임에 가입되었어요");
                 data.put("type", PushType.JOIN_ACCEPTED.name());
                 data.put("meetingId", meeting.getId().toString());
+                data.put("courseId", meeting.getCourse().getId().toString());
+                data.put("meetingTitle", meeting.getTitle());
                 pushService.sendPushMessage(data, fcmToken.getToken());
             }
         } else {
