@@ -51,7 +51,7 @@ public class Alert {
     private boolean isRead;
 
     public enum AlertCategory {
-        JOIN, ACCEPTED, REJECTED, END, REVIEW
+        JOIN, ACCEPTED, REJECTED, END, REVIEW, CANCEL
     }
 
     public void read() {

@@ -103,6 +103,16 @@ public class MeetingJoinService {
             throw new MeetingJoinRequestNotFoundException("이미 처리된 요청입니다");
         }
         meetingJoinRequest.cancel();
+
+        Alert alert = Alert.builder()
+                .meetingId(meeting.getId())
+                .receiverId(member.getId())
+                .alertCategory(AlertCategory.CANCEL)
+                .title("가입 취소")
+                .content("가입 취소")
+                .build();
+        AlertDTO alertDTO = AlertDTO.from(alert);
+        template.convertAndSend("/sub/alert/" + meeting.getMasterMember().getId(), alertDTO);
     }
 
     @Transactional
