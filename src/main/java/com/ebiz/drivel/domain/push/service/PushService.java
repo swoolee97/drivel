@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -39,9 +40,9 @@ public class PushService {
     private static final String FCM_SEND_URL = "https://fcm.googleapis.com/v1/projects/%s/messages:send";
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
 
-    public void sendPushMessage(String title, String body, String token)
+    public void sendPushMessage(Map<String, Object> data, String token)
             throws IOException {
-        String message = makeMessage(title, body, token);
+        String message = makeMessage(data, token);
 
         RequestBody requestBody = RequestBody.create(message, JSON_MEDIA_TYPE);
         Request request = new Request.Builder()
@@ -54,20 +55,22 @@ public class PushService {
         response.close();
     }
 
-    private String makeMessage(String title, String body, String token) throws JsonProcessingException {
+    private String makeMessage(Map<String, Object> data, String token)
+            throws JsonProcessingException {
         AndroidNotificationDTO android = new AndroidNotificationDTO();
         NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setTitle(title);
-        notificationDTO.setBody(body);
+        notificationDTO.setTitle(data.get("title"));
+        notificationDTO.setBody(data.get("body"));
         android.setNotification(notificationDTO);
 
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(Message.builder()
                         .token(token)
+                        .data(data)
                         .android(android)
                         .notification(Notification.builder()
-                                .title(title)
-                                .body(body)
+                                .title(data.get("title"))
+                                .body(data.get("body"))
                                 .build())
                         .build())
                 .build();

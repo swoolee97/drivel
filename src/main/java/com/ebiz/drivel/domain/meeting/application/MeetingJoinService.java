@@ -15,6 +15,7 @@ import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingJoinRequestRepository;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.push.dto.PushType;
 import com.ebiz.drivel.domain.push.entity.FcmToken;
 import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
 import com.ebiz.drivel.domain.push.service.PushService;
@@ -24,7 +25,9 @@ import com.ebiz.drivel.domain.sse.AlertDTO;
 import com.ebiz.drivel.domain.sse.AlertRepository;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -76,8 +79,11 @@ public class MeetingJoinService {
 
         FcmToken fcmToken = fcmTokenRepository.findByMemberId(meeting.getMasterMember().getId()).orElse(null);
         if (fcmToken != null) {
-            pushService.sendPushMessage("가입요청", member.getNickname() + "님이 " + meeting.getTitle() + "모임에 가입을 요청했어요",
-                    fcmToken.getToken());
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", "가입요청");
+            data.put("body", member.getNickname() + "님이 " + meeting.getTitle() + "모임에 가입을 요청했어요");
+            data.put("type", PushType.JOIN_REQUEST.name());
+            pushService.sendPushMessage(data, fcmToken.getToken());
         }
 
     }
@@ -123,7 +129,12 @@ public class MeetingJoinService {
                     .build();
             FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
             if (fcmToken != null) {
-                pushService.sendPushMessage("가입 수락", meeting.getTitle() + "모임에 가입되었어요", fcmToken.getToken());
+                Map<String, Object> data = new HashMap<>();
+                data.put("title", "가입 수락");
+                data.put("body", meeting.getTitle() + "모임에 가입되었어요");
+                data.put("type", PushType.JOIN_ACCEPTED.name());
+                data.put("meetingId", meeting.getId());
+                pushService.sendPushMessage(data, fcmToken.getToken());
             }
         } else {
             meetingJoinRequest.reject();
@@ -136,7 +147,11 @@ public class MeetingJoinService {
                     .build();
             FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
             if (fcmToken != null) {
-                pushService.sendPushMessage("가입 거절", meeting.getTitle() + "모임에 가입이 거절되었어요", fcmToken.getToken());
+                Map<String, Object> data = new HashMap<>();
+                data.put("title", "가입 거절");
+                data.put("body", meeting.getTitle() + "모임에 가입이 거절되었어요");
+                data.put("type", PushType.JOIN_REJECTED.name());
+                pushService.sendPushMessage(data, fcmToken.getToken());
             }
         }
         alertRepository.save(alert);

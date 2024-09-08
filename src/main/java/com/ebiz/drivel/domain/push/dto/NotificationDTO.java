@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class NotificationDTO {
-    private String title;
-    private String body;
+    private Object title;
+    private Object body;
     private String sound = "default";
     private String channelId = "500";
 }
