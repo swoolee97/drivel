@@ -133,7 +133,7 @@ public class MeetingJoinService {
                 data.put("title", "가입 수락");
                 data.put("body", meeting.getTitle() + "모임에 가입되었어요");
                 data.put("type", PushType.JOIN_ACCEPTED.name());
-                data.put("meetingId", meeting.getId());
+                data.put("meetingId", meeting.getId().toString());
                 pushService.sendPushMessage(data, fcmToken.getToken());
             }
         } else {
