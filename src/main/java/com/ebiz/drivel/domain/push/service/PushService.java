@@ -40,10 +40,10 @@ public class PushService {
     private static final String FCM_SEND_URL = "https://fcm.googleapis.com/v1/projects/%s/messages:send";
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
 
-    public void sendPushMessage(Map<String, Object> data, String token)
+    public void sendPushMessage(String title, String body, Map<String, String> data, String token)
             throws IOException {
-        String message = makeMessage(data, token);
-
+        String message = makeMessage(title, body, data, token);
+        System.out.println("푸시알림 보냄 ");
         RequestBody requestBody = RequestBody.create(message, JSON_MEDIA_TYPE);
         Request request = new Request.Builder()
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
@@ -55,12 +55,12 @@ public class PushService {
         response.close();
     }
 
-    private String makeMessage(Map<String, Object> data, String token)
+    private String makeMessage(String title, String body, Map<String, String> data, String token)
             throws JsonProcessingException {
         AndroidNotificationDTO android = new AndroidNotificationDTO();
         NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setTitle(data.get("title"));
-        notificationDTO.setBody(data.get("body"));
+        notificationDTO.setTitle(title);
+        notificationDTO.setBody(body);
         android.setNotification(notificationDTO);
 
         FcmMessage fcmMessage = FcmMessage.builder()
@@ -69,8 +69,8 @@ public class PushService {
                         .data(data)
                         .android(android)
                         .notification(Notification.builder()
-                                .title(data.get("title"))
-                                .body(data.get("body"))
+                                .title(title)
+                                .body(body)
                                 .build())
                         .build())
                 .build();

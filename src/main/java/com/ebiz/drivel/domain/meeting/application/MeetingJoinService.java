@@ -79,11 +79,11 @@ public class MeetingJoinService {
 
         FcmToken fcmToken = fcmTokenRepository.findByMemberId(meeting.getMasterMember().getId()).orElse(null);
         if (fcmToken != null) {
-            Map<String, Object> data = new HashMap<>();
-            data.put("title", "가입요청");
-            data.put("body", member.getNickname() + "님이 " + meeting.getTitle() + "모임에 가입을 요청했어요");
+            String title = "가입요청";
+            String body = member.getNickname() + "님이 " + meeting.getTitle() + "모임에 가입을 요청했어요";
+            Map<String, String> data = new HashMap<>();
             data.put("type", PushType.JOIN_REQUEST.name());
-            pushService.sendPushMessage(data, fcmToken.getToken());
+            pushService.sendPushMessage(title, body, data, fcmToken.getToken());
         }
 
     }
@@ -139,14 +139,14 @@ public class MeetingJoinService {
                     .build();
             FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
             if (fcmToken != null) {
-                Map<String, Object> data = new HashMap<>();
-                data.put("title", "가입 수락");
-                data.put("body", meeting.getTitle() + "모임에 가입되었어요");
+                String title = "가입 수락";
+                String body = meeting.getTitle() + "모임에 가입되었어요";
+                Map<String, String> data = new HashMap<>();
                 data.put("type", PushType.JOIN_ACCEPTED.name());
                 data.put("meetingId", meeting.getId().toString());
                 data.put("courseId", meeting.getCourse().getId().toString());
                 data.put("meetingTitle", meeting.getTitle());
-                pushService.sendPushMessage(data, fcmToken.getToken());
+                pushService.sendPushMessage(title, body, data, fcmToken.getToken());
             }
         } else {
             meetingJoinRequest.reject();
@@ -159,11 +159,11 @@ public class MeetingJoinService {
                     .build();
             FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
             if (fcmToken != null) {
-                Map<String, Object> data = new HashMap<>();
-                data.put("title", "가입 거절");
-                data.put("body", meeting.getTitle() + "모임에 가입이 거절되었어요");
+                String title = "가입 거절";
+                String body = meeting.getTitle() + "모임에 가입이 거절되었어요";
+                Map<String, String> data = new HashMap<>();
                 data.put("type", PushType.JOIN_REJECTED.name());
-                pushService.sendPushMessage(data, fcmToken.getToken());
+                pushService.sendPushMessage(title, body, data, fcmToken.getToken());
             }
         }
         alertRepository.save(alert);
