@@ -42,7 +42,7 @@ public class MeetingJoinController {
 
     @PostMapping("/accept")
     public void decideJoinMeeting(@RequestBody JoinRequestDecisionDTO joinRequestDecisionDTO) throws IOException {
-        meetingJoinService.acceptJoinMeeting(joinRequestDecisionDTO);
+        meetingJoinService.decideJoinMeeting(joinRequestDecisionDTO);
     }
 
     @GetMapping

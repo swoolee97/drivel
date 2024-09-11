@@ -10,6 +10,7 @@ import com.ebiz.drivel.domain.meeting.entity.Meeting.MeetingStatus;
 import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest;
 import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest.Status;
 import com.ebiz.drivel.domain.meeting.exception.AlreadyRequestedJoinMeetingException;
+import com.ebiz.drivel.domain.meeting.exception.FullMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingJoinRequestNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingJoinRequestRepository;
@@ -65,6 +66,11 @@ public class MeetingJoinService {
         if (meeting.isAlreadyJoinedMember(member)) {
             throw new AlreadyRequestedJoinMeetingException("이미 가입된 모임입니다");
         }
+
+        if (meeting.isFull()) {
+            throw new FullMeetingException();
+        }
+
         Alert alert = Alert.builder()
                 .alertCategory(AlertCategory.JOIN)
                 .meetingId(meeting.getId())
@@ -116,7 +122,7 @@ public class MeetingJoinService {
     }
 
     @Transactional
-    public void acceptJoinMeeting(JoinRequestDecisionDTO request) throws IOException {
+    public void decideJoinMeeting(JoinRequestDecisionDTO request) throws IOException {
         MeetingJoinRequest meetingJoinRequest = meetingJoinRequestRepository.findById(request.getId())
                 .orElseThrow(() -> new MeetingJoinRequestNotFoundException("찾을 수 없는 요청입니다"));
         if (meetingJoinRequest.isAlreadyDecidedRequest()) {
@@ -128,47 +134,63 @@ public class MeetingJoinService {
         Alert alert;
         AlertDTO alertDTO;
         if (request.isAccepted()) {
-            meetingMemberService.insertMeetingMember(meeting, member);
-            meetingJoinRequest.accept();
-            alert = Alert.builder()
-                    .meetingId(meeting.getId())
-                    .receiverId(member.getId())
-                    .alertCategory(AlertCategory.ACCEPTED)
-                    .title("가입 수락")
-                    .content("가입되었습니다")
-                    .build();
-            FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
-            if (fcmToken != null) {
-                String title = "가입 수락";
-                String body = meeting.getTitle() + "모임에 가입되었어요";
-                Map<String, String> data = new HashMap<>();
-                data.put("type", PushType.JOIN_ACCEPTED.name());
-                data.put("meetingId", meeting.getId().toString());
-                data.put("courseId", meeting.getCourse().getId().toString());
-                data.put("meetingTitle", meeting.getTitle());
-                pushService.sendPushMessage(title, body, data, fcmToken.getToken());
-            }
+            alert = acceptJoinMeeting(meetingJoinRequest, meeting, member);
         } else {
-            meetingJoinRequest.reject();
-            alert = Alert.builder()
-                    .meetingId(meeting.getId())
-                    .receiverId(member.getId())
-                    .alertCategory(AlertCategory.REJECTED)
-                    .title("가입 거절")
-                    .content("가입 신청이 거절되었습니다")
-                    .build();
-            FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
-            if (fcmToken != null) {
-                String title = "가입 거절";
-                String body = meeting.getTitle() + "모임에 가입이 거절되었어요";
-                Map<String, String> data = new HashMap<>();
-                data.put("type", PushType.JOIN_REJECTED.name());
-                pushService.sendPushMessage(title, body, data, fcmToken.getToken());
-            }
+            alert = rejectJoinMeeting(meetingJoinRequest, meeting, member);
         }
         alertRepository.save(alert);
         alertDTO = AlertDTO.from(alert);
         template.convertAndSend("/sub/alert/" + member.getId(), alertDTO);
+    }
+
+    public Alert acceptJoinMeeting(MeetingJoinRequest meetingJoinRequest, Meeting meeting, Member member)
+            throws IOException {
+        if (meeting.isFull()) {
+            rejectJoinMeeting(meetingJoinRequest, meeting, member);
+            throw new FullMeetingException();
+        }
+        meetingMemberService.insertMeetingMember(meeting, member);
+        meetingJoinRequest.accept();
+        Alert alert = Alert.builder()
+                .meetingId(meeting.getId())
+                .receiverId(member.getId())
+                .alertCategory(AlertCategory.ACCEPTED)
+                .title("가입 수락")
+                .content("가입되었습니다")
+                .build();
+        FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
+        if (fcmToken != null) {
+            String title = "가입 수락";
+            String body = meeting.getTitle() + "모임에 가입되었어요";
+            Map<String, String> data = new HashMap<>();
+            data.put("type", PushType.JOIN_ACCEPTED.name());
+            data.put("meetingId", meeting.getId().toString());
+            data.put("courseId", meeting.getCourse().getId().toString());
+            data.put("meetingTitle", meeting.getTitle());
+            pushService.sendPushMessage(title, body, data, fcmToken.getToken());
+        }
+        return alert;
+    }
+
+    public Alert rejectJoinMeeting(MeetingJoinRequest meetingJoinRequest, Meeting meeting, Member member)
+            throws IOException {
+        meetingJoinRequest.reject();
+        Alert alert = Alert.builder()
+                .meetingId(meeting.getId())
+                .receiverId(member.getId())
+                .alertCategory(AlertCategory.REJECTED)
+                .title("가입 거절")
+                .content("가입 신청이 거절되었습니다")
+                .build();
+        FcmToken fcmToken = fcmTokenRepository.findByMemberId(member.getId()).orElse(null);
+        if (fcmToken != null) {
+            String title = "가입 거절";
+            String body = meeting.getTitle() + "모임에 가입이 거절되었어요";
+            Map<String, String> data = new HashMap<>();
+            data.put("type", PushType.JOIN_REJECTED.name());
+            pushService.sendPushMessage(title, body, data, fcmToken.getToken());
+        }
+        return alert;
     }
 
     public List<MeetingJoinRequestDTO> getJoinRequests() {

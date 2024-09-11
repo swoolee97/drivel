@@ -138,6 +138,10 @@ public class Meeting {
         return this.status.equals(MeetingStatus.ACTIVE);
     }
 
+    public boolean isFull() {
+        return capacity <= meetingMembers.stream().filter(MeetingMember::getIsActive).count();
+    }
+
     public enum MeetingStatus {
         ACTIVE, INACTIVE, DELETED
     }

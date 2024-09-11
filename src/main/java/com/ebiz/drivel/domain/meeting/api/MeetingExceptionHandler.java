@@ -2,6 +2,7 @@ package com.ebiz.drivel.domain.meeting.api;
 
 import com.ebiz.drivel.domain.meeting.exception.AlreadyRequestedJoinMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.ForbiddenMeetingForbiddenException;
+import com.ebiz.drivel.domain.meeting.exception.FullMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingJoinRequestNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MemberUnableToJoinMeetingException;
@@ -50,6 +51,14 @@ public class MeetingExceptionHandler {
     @ExceptionHandler(ForbiddenMeetingForbiddenException.class)
     public ResponseEntity<ErrorResponse> handleForbiddenMeetingHistoryException(ForbiddenMeetingForbiddenException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(FullMeetingException.class)
+    public ResponseEntity<ErrorResponse> handleFullMeetingException(FullMeetingException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
                         .build());
