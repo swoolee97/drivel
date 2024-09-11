@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/ebiz/drivel/domain/block/entity/BlockMember.java
+package com.ebiz.drivel.domain.block.entity;
+========
 package com.ebiz.drivel.domain.block;
+>>>>>>>> 5e5fb8b (refactor: 신고/차단 기능 수정):src/main/java/com/ebiz/drivel/domain/block/BlockMember.java
 
 import com.ebiz.drivel.domain.member.entity.Member;
 import jakarta.persistence.Entity;

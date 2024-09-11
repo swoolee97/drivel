@@ -16,6 +16,12 @@ import com.ebiz.drivel.domain.meeting.dto.MeetingParticipantsInfoDTO;
 import com.ebiz.drivel.domain.meeting.dto.ParticipantSummaryDTO;
 import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
+<<<<<<< HEAD
+=======
+import com.ebiz.drivel.domain.meeting.entity.Meeting.MeetingStatus;
+import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest;
+import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest.Status;
+>>>>>>> base/drivel_second
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
@@ -165,9 +171,23 @@ public class MeetingService {
         Meeting meeting = meetingRepository.findById(id)
                 .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
         Member member = userDetailsService.getMemberByContextHolder();
+<<<<<<< HEAD
         MeetingMember meetingMember = meetingMemberService.findMeetingMember(meeting, member)
                 .orElseThrow(() -> new MeetingMemberNotFoundException("잘못된 요청입니다"));
         meetingMember.inActive();
+=======
+        List<Meeting> meetings = meetingRepository.findByMasterMemberAndStatus(member, MeetingStatus.ACTIVE);
+        List<MeetingJoinRequestDTO> requests = new ArrayList<>();
+        meetings.forEach(meeting -> {
+            List<MeetingJoinRequest> joinRequests = meeting.getJoinRequests().stream()
+                    .filter(request -> !request.isAlreadyDecidedRequest()).toList();
+            if (!joinRequests.isEmpty()) {
+                List<Member> requestedMembers = joinRequests.stream().map(request -> request.getMember()).toList();
+                requests.add(MeetingJoinRequestDTO.from(meeting, joinRequests));
+            }
+        });
+        return requests;
+>>>>>>> base/drivel_second
     }
 
 }
