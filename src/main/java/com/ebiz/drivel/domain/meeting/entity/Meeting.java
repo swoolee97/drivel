@@ -44,7 +44,7 @@ public class Meeting {
     private Long id;
 
     @Column(name = "title")
-    @Size(min = 10, max = 30, message = "제목은 10자 이상 30자 이하로 적어주세요")
+    @Size(min = 1, max = 30, message = "제목은 1자 이상 30자 이하로 적어주세요")
     private String title;
 
     @Column(name = "meeting_date")
@@ -52,11 +52,11 @@ public class Meeting {
     private Date meetingDate;
 
     @Column(name = "description")
-    @Size(min = 10, max = 30, message = "설명은 10자 이상 30자 이하로 적어주세요")
+    @Size(min = 1, max = 30, message = "설명은 1자 이상 30자 이하로 적어주세요")
     private String description;
 
     @Column(name = "meeting_point")
-    @Size(min = 3, max = 30, message = "집결지는 3자 이상 30자 이하로 적어주세요")
+    @Size(min = 1, max = 30, message = "집결지는 1자 이상 30자 이하로 적어주세요")
     private String meetingPoint;
 
     @ManyToOne(fetch = FetchType.LAZY)
