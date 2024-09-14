@@ -69,7 +69,8 @@ public class ReviewService {
                 .orderBy(orderSpecifier)
                 .limit(pageable.getPageSize())
                 .fetch()
-                .stream().map(courseReview -> ReviewDTO.from(courseReview))
+                .stream().filter(courseReview -> !courseReview.isDeleted())
+                .map(courseReview -> ReviewDTO.from(courseReview))
                 .toList();
 
         return new PageImpl<>(reviews, pageable, totalCount);
