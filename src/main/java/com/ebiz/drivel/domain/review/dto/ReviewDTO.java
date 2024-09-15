@@ -17,6 +17,7 @@ public class ReviewDTO {
     private String reviewerImagePath;
     private LocalDateTime reviewDate;
     private Long courseId;
+    private String courseTitle;
     private int rating;
     private String comment;
     private List<ReviewImageDTO> images;
@@ -30,6 +31,7 @@ public class ReviewDTO {
                 .reviewerImagePath(reviewer.getImagePath())
                 .reviewDate(courseReview.getReviewDate())
                 .courseId(courseReview.getCourse().getId())
+                .courseTitle(courseReview.getCourse().getTitle())
                 .rating(courseReview.getRating())
                 .comment(courseReview.getComment())
                 .images(courseReview.getCourseReviewImages().stream().map(ReviewImageDTO::from)
