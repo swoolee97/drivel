@@ -42,6 +42,14 @@ public class OnboardingService {
     private final MemberTogetherRepository memberTogetherRepository;
     private final MemberStyleRepository memberStyleRepository;
 
+    public MeetingCreateCheckDTO isOnboarded() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        boolean onboarded = member.isUnableToJoinMeeting();
+        return MeetingCreateCheckDTO.builder()
+                .enableToCreateMeeting(!onboarded)
+                .build();
+    }
+
     @Transactional
     public void saveOnboardingInfo(OnboardingRequest request) {
         Member member = userDetailsService.getMemberByContextHolder();
