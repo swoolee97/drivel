@@ -58,7 +58,7 @@ public class MeetingExceptionHandler {
 
     @ExceptionHandler(FullMeetingException.class)
     public ResponseEntity<ErrorResponse> handleFullMeetingException(FullMeetingException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
                         .build());
