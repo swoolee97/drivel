@@ -61,11 +61,15 @@ public class CourseService {
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
-        int reviewCount = course.countReviews();
+
         double averageRating = course.calculateAverageRating();
-        List<ReviewDTO> reviews = course.getCourseReviews().stream().map(ReviewDTO::from)
+        List<ReviewDTO> reviews = course.getCourseReviews()
+                .stream()
+                .filter(courseReview -> !courseReview.isDeleted())
+                .map(ReviewDTO::from)
                 .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
                 .collect(Collectors.toList());
+        int reviewCount = reviews.size();
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         List<String> tags = getTagsByCourse(course);
         List<PlaceInterface> places = placeService.getPlacesNearByCourse(waypoints.get(0),

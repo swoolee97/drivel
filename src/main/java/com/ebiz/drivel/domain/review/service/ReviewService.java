@@ -48,6 +48,7 @@ public class ReviewService {
         Member member = userDetailsService.getMemberByContextHolder();
         List<CourseReview> myCourseReviews = member.getCourseReviews();
         return myCourseReviews.stream()
+                .filter(courseReview -> !courseReview.isDeleted())
                 .map(ReviewDTO::from)
                 .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
                 .collect(Collectors.toList());
@@ -69,7 +70,7 @@ public class ReviewService {
                 .orderBy(orderSpecifier)
                 .limit(pageable.getPageSize())
                 .fetch()
-                .stream().filter(courseReview -> !courseReview.isDeleted())
+                .stream()
                 .map(courseReview -> ReviewDTO.from(courseReview))
                 .toList();
 
