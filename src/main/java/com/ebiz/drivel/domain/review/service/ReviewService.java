@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.review.service;
 
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
+import com.ebiz.drivel.domain.course.dto.CourseReviewDTO;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.repository.CourseRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
@@ -17,7 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -54,9 +54,11 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
-    public Page<ReviewDTO> findReviewsByCourse(Long id, Pageable pageable) {
+    public CourseReviewDTO findReviewsByCourse(Long id, Pageable pageable) {
         QCourseReview qReview = QCourseReview.courseReview;
         Member member = userDetailsService.getMemberByContextHolder();
+        Course course = courseRepository.findById(id).orElseThrow(() -> new CourseNotFoundException());
+
         BooleanBuilder filterBuilder = ReviewQueryHelper.createQueryFilter(id, member);
         OrderSpecifier<?> orderSpecifier = ReviewQueryHelper.getOrderSpecifier(qReview);
 
@@ -74,7 +76,10 @@ public class ReviewService {
                 .map(courseReview -> ReviewDTO.from(courseReview))
                 .toList();
 
-        return new PageImpl<>(reviews, pageable, totalCount);
+        return CourseReviewDTO.builder()
+                .averageRating(course.calculateAverageRating())
+                .reviews(new PageImpl<>(reviews, pageable, totalCount))
+                .build();
     }
 
     @Transactional

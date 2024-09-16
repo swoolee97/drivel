@@ -5,7 +5,6 @@ import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
 import com.ebiz.drivel.domain.course.dto.CourseTagDTO;
 import com.ebiz.drivel.domain.course.entity.Course;
-import com.ebiz.drivel.domain.course.entity.CourseTheme;
 import com.ebiz.drivel.domain.course.entity.QCourse;
 import com.ebiz.drivel.domain.course.repository.CourseRepository;
 import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
@@ -20,7 +19,6 @@ import com.ebiz.drivel.domain.onboarding.entity.Style;
 import com.ebiz.drivel.domain.onboarding.entity.Together;
 import com.ebiz.drivel.domain.place.dto.PlaceInterface;
 import com.ebiz.drivel.domain.place.service.PlaceService;
-import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.spot.application.SpotService;
 import com.ebiz.drivel.domain.spot.dto.SpotInterface;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
@@ -33,7 +31,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -62,14 +59,6 @@ public class CourseService {
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
 
-        double averageRating = course.calculateAverageRating();
-        List<ReviewDTO> reviews = course.getCourseReviews()
-                .stream()
-                .filter(courseReview -> !courseReview.isDeleted())
-                .map(ReviewDTO::from)
-                .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
-                .collect(Collectors.toList());
-        int reviewCount = reviews.size();
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         List<String> tags = getTagsByCourse(course);
         List<PlaceInterface> places = placeService.getPlacesNearByCourse(waypoints.get(0),
@@ -80,9 +69,6 @@ public class CourseService {
                 .themes(themes)
                 .courseInfo(courseDTO)
                 .waypoints(waypoints)
-                .reviewCount(reviewCount)
-                .averageRating(averageRating)
-                .reviews(reviews)
                 .festivals(festivals)
                 .regionName(course.getRegionName())
                 .regionDescription(course.getRegionDescription())
@@ -183,16 +169,6 @@ public class CourseService {
             tagCourses.add(CourseTagDTO.from(courseDTOs, memberRegion.getRegion()));
         });
         return tagCourses;
-    }
-
-    private List<CourseDTO> getRandomCoursesByTheme(Theme theme) {
-        List<CourseTheme> courseThemes = theme.getCourseThemes();
-        Collections.shuffle(courseThemes, new Random());
-
-        return courseThemes.stream().limit(3)
-                .map(CourseTheme::getCourse)
-                .map(course -> CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course)))
-                .collect(Collectors.toList());
     }
 
 }
