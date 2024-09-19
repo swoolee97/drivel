@@ -7,6 +7,8 @@ import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +32,8 @@ public class MeetingQueryHelper {
         addGenderFilter(genderId, meeting, filterBuilder);
         addActiveFilter(meeting, filterBuilder);
         addBlockFilter(meeting, member, filterBuilder);
+        addDateFilter(meeting, filterBuilder);
+
         return filterBuilder;
     }
 
@@ -82,6 +86,10 @@ public class MeetingQueryHelper {
     public static void addBlockFilter(QMeeting meeting, Member member, BooleanBuilder filterBuilder) {
         List<Member> blockedMembers = member.getBlockMembers().stream().map(BlockMember::getTargetMember).toList();
         filterBuilder.and(meeting.masterMember.notIn(blockedMembers));
+    }
+
+    public static void addDateFilter(QMeeting meeting, BooleanBuilder filterBuilder) {
+        filterBuilder.and(meeting.meetingDate.after(Date.from(Instant.now())));
     }
 
     public static OrderSpecifier<?> getOrderSpecifier(OrderBy orderBy, QMeeting meeting) {
