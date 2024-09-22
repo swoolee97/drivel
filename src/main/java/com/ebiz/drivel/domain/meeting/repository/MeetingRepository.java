@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     List<Meeting> findByMasterMemberAndStatus(Member member, MeetingStatus status);
 
-    List<Meeting> findMeetingsByMasterMemberAndStatus(Member member, MeetingStatus status);
+    List<Meeting> findMeetingsByMasterMemberAndStatusNot(Member member, MeetingStatus status);
 }

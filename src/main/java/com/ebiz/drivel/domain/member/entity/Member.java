@@ -22,7 +22,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -78,7 +77,6 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<CourseReview> courseReviews;
 
-    @Size(min = 10, max = 50, message = "10자 이상 50자 이내로 적어주세요")
     private String description;
 
     @Column(name = "is_profile_locked", columnDefinition = "BOOLEAN DEFAULT FALSE")
@@ -86,6 +84,9 @@ public class Member {
 
     @Column(name = "is_deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isDeleted;
+
+    @Column(name = "score", columnDefinition = "30")
+    private double score;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MeetingMember> meetingMembers;
@@ -200,6 +201,10 @@ public class Member {
                         .member(this)
                         .together(together)
                         .build()));
+    }
+
+    public void updateScore(double difference) {
+        score += difference;
     }
 
     public void lockProfile() {

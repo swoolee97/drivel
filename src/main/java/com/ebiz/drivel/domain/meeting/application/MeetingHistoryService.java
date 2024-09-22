@@ -23,8 +23,8 @@ public class MeetingHistoryService {
 
     public List<MeetingHistoryDTO> getCreatedMeetings() {
         Member member = userDetailsService.getMemberByContextHolder();
-        List<Meeting> createdMeetings = meetingRepository.findMeetingsByMasterMemberAndStatus
-                (member, MeetingStatus.ACTIVE);
+        List<Meeting> createdMeetings = meetingRepository.findMeetingsByMasterMemberAndStatusNot
+                (member, MeetingStatus.DELETED);
         return createdMeetings.stream().map(MeetingHistoryDTO::from).toList();
     }
 
@@ -34,8 +34,8 @@ public class MeetingHistoryService {
         if (member.isProfileLocked()) {
             throw new ForbiddenMeetingForbiddenException("금지된 모임 히스토리");
         }
-        List<Meeting> createdMeetings = meetingRepository.findMeetingsByMasterMemberAndStatus
-                (member, MeetingStatus.ACTIVE);
+        List<Meeting> createdMeetings = meetingRepository.findMeetingsByMasterMemberAndStatusNot
+                (member, MeetingStatus.DELETED);
         return createdMeetings.stream().map(MeetingHistoryDTO::from).toList();
     }
 

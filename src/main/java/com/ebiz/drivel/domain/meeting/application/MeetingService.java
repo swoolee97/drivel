@@ -100,6 +100,7 @@ public class MeetingService {
                         .title(meeting.getTitle())
                         .description(meeting.getDescription())
                         .status(getMemberParticipantStatus(meeting).toString())
+                        .meetingStatus(meeting.getStatus().name())
                         .date(meeting.getMeetingDate())
                         .condition(meetingConditionDTO)
                         .masterInfo(meetingMasterInfoDTO)
