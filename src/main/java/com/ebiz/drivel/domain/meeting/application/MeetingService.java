@@ -200,11 +200,13 @@ public class MeetingService {
                 .filter(MeetingMember::getIsActive)
                 .map(MeetingMember::getMember)
                 .toList();
-        String title = "모임 완료";
-        String body = String.format("%s모임의 유저를 평가해주세요", meeting.getTitle());
+        String title = "모임 종료";
+        String body = String.format("%s모임이 완료되었어요! 모임 상세 정보 페이지에서 드라이브 모임에 참여한 사용자를 평가해주세요! :)", meeting.getTitle());
         Map<String, String> data = new HashMap<>();
         data.put("type", PushType.FEEDBACK.name());
         data.put("meetingId", meeting.getId().toString());
+        data.put("courseId", meeting.getCourse().getId().toString());
+        data.put("meetingTitle", meeting.getTitle());
 
         members.forEach((activeMember) -> {
             FcmToken token = fcmTokenRepository.findByMemberId(activeMember.getId()).orElse(null);
