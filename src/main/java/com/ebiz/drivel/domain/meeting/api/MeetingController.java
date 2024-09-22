@@ -83,4 +83,12 @@ public class MeetingController {
                 .build());
     }
 
+    @PostMapping("/{id}/end")
+    public ResponseEntity<BaseResponse> endMeeting(@PathVariable Long id) {
+        meetingService.endMeeting(id);
+        return ResponseEntity.ok(BaseResponse.builder()
+                .message("모임이 종료되었어요")
+                .build());
+    }
+
 }

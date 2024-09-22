@@ -18,15 +18,24 @@ import com.ebiz.drivel.domain.meeting.dto.UpcomingMeetingResponse;
 import com.ebiz.drivel.domain.meeting.entity.Meeting;
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
+import com.ebiz.drivel.domain.meeting.exception.AlreadyInactiveMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
+import com.ebiz.drivel.domain.meeting.exception.NotMasterMemberException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.push.dto.PushType;
+import com.ebiz.drivel.domain.push.entity.FcmToken;
+import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
+import com.ebiz.drivel.domain.push.service.PushService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,6 +54,8 @@ public class MeetingService {
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
     private final JPAQueryFactory queryFactory;
+    private final PushService pushService;
+    private final FcmTokenRepository fcmTokenRepository;
 
     @Transactional
     public CreateMeetingResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
@@ -170,4 +181,39 @@ public class MeetingService {
         meetingMember.inActive();
     }
 
+    @Transactional
+    public void endMeeting(Long id) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        Meeting meeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
+        if (!meeting.getMasterMember().equals(member)) {
+            throw new NotMasterMemberException();
+        }
+
+        if (!meeting.isActive()) {
+            throw new AlreadyInactiveMeetingException();
+        }
+
+        meeting.end();
+        List<Member> members = meeting.getMeetingMembers().stream()
+                .filter(MeetingMember::getIsActive)
+                .map(MeetingMember::getMember)
+                .toList();
+        String title = "모임 완료";
+        String body = String.format("%s모임의 유저를 평가해주세요", meeting.getTitle());
+        Map<String, String> data = new HashMap<>();
+        data.put("type", PushType.FEEDBACK.name());
+        data.put("meetingId", meeting.getId().toString());
+
+        members.forEach((activeMember) -> {
+            FcmToken token = fcmTokenRepository.findByMemberId(activeMember.getId()).orElse(null);
+            if (token != null) {
+                try {
+                    pushService.sendPushMessage(title, body, data, token.getToken());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
 }

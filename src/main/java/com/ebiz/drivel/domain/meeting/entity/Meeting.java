@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.meeting.entity;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.google.api.services.storage.Storage.Projects.HmacKeys.Create;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Table(name = "meeting")
@@ -37,6 +39,7 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class Meeting {
 
     @Id
@@ -48,7 +51,7 @@ public class Meeting {
     private String title;
 
     @Column(name = "meeting_date")
-    @FutureOrPresent(message = "미팅 날짜는 과거일 수 없습니다")
+    @FutureOrPresent(groups = {Create.class}, message = "미팅 날짜는 과거일 수 없습니다")
     private Date meetingDate;
 
     @Column(name = "description")
@@ -132,6 +135,10 @@ public class Meeting {
 
     public void delete() {
         this.status = MeetingStatus.DELETED;
+    }
+
+    public void end() {
+        this.status = MeetingStatus.INACTIVE;
     }
 
     public boolean isActive() {
