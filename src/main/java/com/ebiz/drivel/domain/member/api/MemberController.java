@@ -1,6 +1,7 @@
 package com.ebiz.drivel.domain.member.api;
 
 import com.ebiz.drivel.domain.member.application.MemberService;
+import com.ebiz.drivel.domain.member.dto.MemberScoreDTO;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -54,4 +55,9 @@ public class MemberController {
                 .build());
     }
 
+    @GetMapping("/score")
+    public ResponseEntity<MemberScoreDTO> getMemberScore() {
+        MemberScoreDTO memberScoreDTO = memberService.getScore();
+        return ResponseEntity.ok(memberScoreDTO);
+    }
 }

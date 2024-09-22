@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.member.application;
 import com.ebiz.drivel.domain.auth.application.UserDetailsServiceImpl;
 import com.ebiz.drivel.domain.auth.exception.DuplicatedResourceException;
 import com.ebiz.drivel.domain.auth.exception.InvalidFormException;
+import com.ebiz.drivel.domain.member.dto.MemberScoreDTO;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.member.exception.MemberNotFoundException;
 import com.ebiz.drivel.domain.member.repository.MemberRepository;
@@ -55,6 +56,13 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFoundException("찾을 수 없는 유저입니다"));
         String encryptedPassword = encoder.encode(password);
         member.updatePassword(encryptedPassword);
+    }
+
+    public MemberScoreDTO getScore() {
+        Member member = userDetailsService.getMemberByContextHolder();
+        return MemberScoreDTO.builder()
+                .score(member.getScore())
+                .build();
     }
 
 }
