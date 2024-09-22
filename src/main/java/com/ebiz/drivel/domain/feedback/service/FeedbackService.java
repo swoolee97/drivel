@@ -95,4 +95,15 @@ public class FeedbackService {
         return negativeFeedbackEnums;
     }
 
+    public List<Long> findMyFeedbackMembers(Long meetingId) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        Meeting meeting = meetingRepository.findById(meetingId).orElse(null);
+        List<Feedback> feedbacks = feedbackRepository.findByMemberAndMeeting(member, meeting);
+        return feedbacks.stream()
+                .map(Feedback::getTargetMember)
+                .distinct()
+                .map(Member::getId)
+                .toList();
+    }
+
 }
