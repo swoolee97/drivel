@@ -44,7 +44,7 @@ public class MeetingHistoryService {
         return member.getMeetingMembers().stream()
                 .filter(MeetingMember::getIsActive)
                 .map(MeetingMember::getMeeting)
-                .filter(meeting -> meeting.isActive())
+                .filter(meeting -> !meeting.isDeleted())
                 .map(MeetingHistoryDTO::from)
                 .toList();
     }
@@ -58,7 +58,7 @@ public class MeetingHistoryService {
         return member.getMeetingMembers().stream()
                 .filter(MeetingMember::getIsActive)
                 .map(MeetingMember::getMeeting)
-                .filter(meeting -> meeting.isActive())
+                .filter(meeting -> !meeting.isDeleted())
                 .map(MeetingHistoryDTO::from)
                 .toList();
     }

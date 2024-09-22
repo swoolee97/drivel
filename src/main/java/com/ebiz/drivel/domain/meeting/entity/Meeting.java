@@ -149,6 +149,10 @@ public class Meeting {
         return capacity <= meetingMembers.stream().filter(MeetingMember::getIsActive).count();
     }
 
+    public boolean isDeleted() {
+        return this.status.equals(MeetingStatus.DELETED);
+    }
+
     public enum MeetingStatus {
         ACTIVE, INACTIVE, DELETED
     }
