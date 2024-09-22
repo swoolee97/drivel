@@ -186,7 +186,7 @@ public class MeetingService {
         Member member = userDetailsService.getMemberByContextHolder();
         Meeting meeting = meetingRepository.findById(id)
                 .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
-        if (!meeting.getMasterMember().equals(member)) {
+        if (meeting.getMasterMember().getId() != member.getId()) {
             throw new NotMasterMemberException();
         }
 
