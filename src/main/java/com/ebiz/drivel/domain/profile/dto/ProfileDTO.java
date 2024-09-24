@@ -21,6 +21,7 @@ public class ProfileDTO {
     private String gender;
     private String description;
     private Date birth;
+    private double score;
     private boolean locked;
     private List<RegionDTO> regions;
     private List<StyleDTO> styles;
@@ -37,6 +38,7 @@ public class ProfileDTO {
                 .gender(member.getGender().getDisplayName())
                 .description(member.getDescription())
                 .locked(member.isProfileLocked())
+                .score(member.getScore())
                 .birth(member.getBirth())
                 .regions(member.getMemberRegions().stream().map(RegionDTO::from).toList())
                 .styles(member.getMemberStyles().stream().map(StyleDTO::from).toList())
