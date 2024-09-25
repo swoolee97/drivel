@@ -22,6 +22,7 @@ import com.ebiz.drivel.domain.meeting.exception.AlreadyInactiveMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.NotMasterMemberException;
+import com.ebiz.drivel.domain.meeting.exception.WrongAgeRangeException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.ebiz.drivel.domain.push.dto.PushType;
@@ -70,6 +71,9 @@ public class MeetingService {
     }
 
     public Meeting insertMeeting(CreateMeetingRequest createMeetingRequest) {
+        if (createMeetingRequest.getStartAge() > createMeetingRequest.getEndAge()) {
+            throw new WrongAgeRangeException();
+        }
         Meeting meeting = createMeetingRequest.toEntity();
         Member member = userDetailsService.getMemberByContextHolder();
         meeting.setMasterMember(member);

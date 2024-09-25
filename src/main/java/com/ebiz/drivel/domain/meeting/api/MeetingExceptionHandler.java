@@ -8,6 +8,7 @@ import com.ebiz.drivel.domain.meeting.exception.MeetingJoinRequestNotFoundExcept
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MemberUnableToJoinMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.NotMasterMemberException;
+import com.ebiz.drivel.domain.meeting.exception.WrongAgeRangeException;
 import com.ebiz.drivel.global.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,14 @@ public class MeetingExceptionHandler {
 
     @ExceptionHandler(AlreadyInactiveMeetingException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyInactiveMeetingException(AlreadyInactiveMeetingException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(WrongAgeRangeException.class)
+    public ResponseEntity<ErrorResponse> handleWrongAgeRangeException(WrongAgeRangeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
