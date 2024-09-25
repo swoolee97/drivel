@@ -9,6 +9,7 @@ public class CourseJoinedDataDTO {
     private Long id;
     private String title;
     private String imagePath;
+    private String region;
     private double rating;
     private int reviewCount;
     private String waypoints;
