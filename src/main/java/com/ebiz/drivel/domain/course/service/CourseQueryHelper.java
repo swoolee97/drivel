@@ -18,6 +18,16 @@ public class CourseQueryHelper {
         return filterBuilder;
     }
 
+    public static void addRegionFilter(List<Long> regionIds, QCourse course, BooleanBuilder filterBuilder) {
+        if (regionIds != null && !regionIds.isEmpty()) {
+            BooleanBuilder regionBuilder = new BooleanBuilder();
+            for (Long regionId : regionIds) {
+                regionBuilder.or(course.regionId.eq(regionId));
+            }
+            filterBuilder.and(regionBuilder);
+        }
+    }
+
     public static void addThemeFilter(List<Long> themeIds, QCourse course, BooleanBuilder filterBuilder) {
         if (themeIds != null && !themeIds.isEmpty()) {
             BooleanBuilder themeBuilder = new BooleanBuilder();

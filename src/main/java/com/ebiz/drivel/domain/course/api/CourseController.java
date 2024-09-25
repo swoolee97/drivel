@@ -32,16 +32,18 @@ public class CourseController {
     private final ReviewService reviewService;
 
     @GetMapping
-    public ResponseEntity<Page<CourseDetailDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
+    public ResponseEntity<Page<CourseDetailDTO>> getCoursesInfo(@RequestParam(required = false) Long regionId,
+                                                                @RequestParam(required = false) Long themeId,
                                                                 @RequestParam(required = false) Long styleId,
                                                                 @RequestParam(required = false) Long togetherId,
                                                                 @RequestParam(required = false) OrderBy orderBy,
                                                                 Pageable pageable) {
-        Page<CourseDetailDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy,
+        Page<CourseDetailDTO> courses = courseService.getFilteredCourses(regionId, themeId, styleId, togetherId,
+                orderBy,
                 pageable);
         return ResponseEntity.ok(courses);
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> getCourseDetail(@PathVariable Long id) {
         CourseDetailResponse courseDetailResponse = courseService.getCourseDetail(id);

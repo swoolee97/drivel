@@ -94,10 +94,14 @@ public class CourseService {
         return tags;
     }
 
-    public Page<CourseDetailDTO> getFilteredCourses(Long themeId, Long styleId, Long togetherId, OrderBy orderBy,
-                                                    Pageable pageable) {
+    public Page<CourseDetailDTO> getFilteredCourses(Long regionId, Long themeId, Long styleId, Long togetherId,
+                                                    OrderBy orderBy, Pageable pageable) {
         QCourse qCourse = QCourse.course;
         BooleanBuilder filterBuilder = new BooleanBuilder();
+
+        if (regionId != null) {
+            CourseQueryHelper.addRegionFilter(List.of(regionId), qCourse, filterBuilder);
+        }
 
         if (themeId != null) {
             CourseQueryHelper.addThemeFilter(List.of(themeId), qCourse, filterBuilder);
