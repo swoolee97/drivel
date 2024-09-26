@@ -48,6 +48,7 @@ public class CourseUpdateService {
                 CourseJoinedDataDTO.builder()
                         .id(course.getId())
                         .title(course.getTitle())
+                        .address(course.getRegionName())
                         .region(regionMap.get(course.getRegionId()))
                         .imagePath(course.getImagePath())
                         .rating(course.calculateAverageRating())
