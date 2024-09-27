@@ -71,7 +71,8 @@ public class MeetingService {
     }
 
     public Meeting insertMeeting(CreateMeetingRequest createMeetingRequest) {
-        if (createMeetingRequest.getStartAge() > createMeetingRequest.getEndAge()) {
+        if ((createMeetingRequest.getStartAge() != null && createMeetingRequest.getEndAge() != null) &&
+                createMeetingRequest.getStartAge() > createMeetingRequest.getEndAge()) {
             throw new WrongAgeRangeException();
         }
         Meeting meeting = createMeetingRequest.toEntity();
