@@ -18,11 +18,12 @@ public class MeetingQueryHelper {
     private static final String WILDCARD_FORMAT = "%%%s%%";
 
     public static BooleanBuilder createFilterBuilder(
-            Long styleId, Long themeId, Long togetherId, Integer age, Integer carCareer, String carModel,
+            Long regionId, Long styleId, Long themeId, Long togetherId, Integer age, Integer carCareer, String carModel,
             Integer genderId, Member member, QMeeting meeting) {
         BooleanBuilder filterBuilder = new BooleanBuilder();
 
         // 조건 필터링
+        addRegionFilter(regionId, meeting, filterBuilder);
         addStyleFilter(styleId, meeting, filterBuilder);
         addThemeFilter(themeId, meeting, filterBuilder);
         addTogetherFilter(togetherId, meeting, filterBuilder);
@@ -35,6 +36,12 @@ public class MeetingQueryHelper {
         addDateFilter(meeting, filterBuilder);
 
         return filterBuilder;
+    }
+
+    private static void addRegionFilter(Long regionId, QMeeting meeting, BooleanBuilder filterBuilder) {
+        if (regionId != null) {
+            filterBuilder.and(meeting.course.regionId.eq(regionId));
+        }
     }
 
     private static void addStyleFilter(Long styleId, QMeeting meeting, BooleanBuilder filterBuilder) {
