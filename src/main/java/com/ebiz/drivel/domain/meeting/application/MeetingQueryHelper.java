@@ -1,12 +1,23 @@
 package com.ebiz.drivel.domain.meeting.application;
 
+import static com.ebiz.drivel.domain.course.entity.QCourse.course;
+import static com.ebiz.drivel.domain.course.entity.QCourseStyle.courseStyle;
+import static com.ebiz.drivel.domain.course.entity.QCourseTheme.courseTheme;
+import static com.ebiz.drivel.domain.course.entity.QCourseTogether.courseTogether;
+import static com.ebiz.drivel.domain.member.entity.QMemberStyle.memberStyle;
+import static com.ebiz.drivel.domain.member.entity.QMemberTheme.memberTheme;
+import static com.ebiz.drivel.domain.member.entity.QMemberTogether.memberTogether;
+
 import com.ebiz.drivel.domain.block.BlockMember;
 import com.ebiz.drivel.domain.meeting.entity.Gender;
 import com.ebiz.drivel.domain.meeting.entity.Meeting.MeetingStatus;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
 import com.ebiz.drivel.domain.member.entity.Member;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -99,13 +110,44 @@ public class MeetingQueryHelper {
         filterBuilder.and(meeting.meetingDate.after(Date.from(Instant.now())));
     }
 
-    public static OrderSpecifier<?> getOrderSpecifier(OrderBy orderBy, QMeeting meeting) {
+    public static OrderSpecifier<?> getOrderSpecifier(OrderBy orderBy, QMeeting meeting, Member member) {
         if (orderBy == null) {
             return meeting.id.desc();
         }
         switch (orderBy) {
             case LATEST:
                 return meeting.id.desc();
+            case RECOMMEND:
+                JPQLQuery<Integer> totalMatchCountQuery = JPAExpressions
+                        .select(
+                                courseTogether.count().intValue()
+                                        .add(courseTheme.count().intValue())
+                                        .add(courseStyle.count().intValue())
+                        )
+                        .from(course)
+                        .leftJoin(courseTogether).on(courseTogether.course.eq(course))
+                        .leftJoin(courseTheme).on(courseTheme.course.eq(course))
+                        .leftJoin(courseStyle).on(courseStyle.course.eq(course))
+                        .join(meeting.course)
+                        .where(
+                                courseTogether.together.id.in(
+                                                JPAExpressions.select(memberTogether.together.id)
+                                                        .from(memberTogether)
+                                                        .where(memberTogether.member.eq(member))
+                                        )
+                                        .or(courseTheme.theme.id.in(
+                                                JPAExpressions.select(memberTheme.theme.id)
+                                                        .from(memberTheme)
+                                                        .where(memberTheme.member.eq(member))
+                                        ))
+                                        .or(courseStyle.style.id.in(
+                                                JPAExpressions.select(memberStyle.style.id)
+                                                        .from(memberStyle)
+                                                        .where(memberStyle.member.eq(member))
+                                        ))
+                        );
+                
+                return new OrderSpecifier<>(Order.DESC, totalMatchCountQuery);
             default:
                 return meeting.id.desc();
         }
