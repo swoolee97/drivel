@@ -1,8 +1,10 @@
 package com.ebiz.drivel.domain.festival.service;
 
+import com.ebiz.drivel.domain.festival.dto.FestivalCommonApiResponse;
 import com.ebiz.drivel.domain.festival.dto.FestivalDetailApiResponse;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoApiResponse;
 import com.ebiz.drivel.domain.festival.dto.FestivalInfoApiResponse.Item;
+import com.ebiz.drivel.domain.festival.dto.FestivalIntroApiResponse;
 import com.ebiz.drivel.domain.festival.entity.Festival;
 import com.ebiz.drivel.domain.festival.exception.FestivalApiException;
 import com.ebiz.drivel.domain.festival.repository.FestivalRepository;
@@ -34,7 +36,9 @@ public class FestivalApiService {
     private String key;
     private static final String FESTIVAL_INFO_API_URL =
             "http://apis.data.go.kr/B551011/KorService1/searchFestival1?eventStartDate=%s&eventEndDate=%s&areaCode=&sigunguCode=&ServiceKey=%s&listYN=Y&MobileOS=ETC&MobileApp=drivel&arrange=A&numOfRows=3000&pageNo=1&_type=json";
-    private static final String FESTIVAL_DETAIL_API_URL = "http://apis.data.go.kr/B551011/KorService1/detailCommon1?ServiceKey=%s&contentTypeId=15&contentId=%s&MobileOS=ETC&MobileApp=drivel&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&_type=json";
+    private static final String FESTIVAL_COMMON_API_URL = "http://apis.data.go.kr/B551011/KorService1/detailCommon1?ServiceKey=%s&contentTypeId=15&contentId=%s&MobileOS=ETC&MobileApp=drivel&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=Y&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y&_type=json";
+    private static final String FESTIVAL_INTRO_API_URL = "http://apis.data.go.kr/B551011/KorService1/detailIntro1?ServiceKey=%s&contentTypeId=15&contentId=%s&MobileOS=ETC&MobileApp=AppTest&_type=json";
+    private static final String FESTIVAL_DETAIL_API_URL = "http://apis.data.go.kr/B551011/KorService1/detailInfo1?ServiceKey=%s&contentTypeId=15&contentId=%s&MobileOS=ETC&MobileApp=AppTest&_type=json";
     private static final String UPDATE_FESTIVAL_DATA_SUCCESS_MESSAGE = "페스티벌 데이터 %d개 업데이트 완료";
     private static final String UPDATE_FESTIVAL_DATA_FAIL_MESSAGE = "페스티벌 데이터 업데이트 실패";
 
@@ -57,10 +61,17 @@ public class FestivalApiService {
         List<Festival> festivals = new ArrayList<>();
         items.forEach(item -> {
             try {
-                FestivalDetailApiResponse response = fetchFestivalData(
-                        getFestivalDetailFetchUrl(item), FestivalDetailApiResponse.class);
-                festivals.add(Festival.from(item,
-                        response.getResponse().getBody().getItems().getItem().get(0).getOverview()));
+                FestivalCommonApiResponse response = fetchFestivalData(
+                        getFestivalDetailFetchUrl(FESTIVAL_COMMON_API_URL, item), FestivalCommonApiResponse.class);
+
+                FestivalIntroApiResponse introApiResponse = fetchFestivalData(
+                        getFestivalDetailFetchUrl(FESTIVAL_INTRO_API_URL, item), FestivalIntroApiResponse.class);
+
+                FestivalDetailApiResponse detailApiResponse = fetchFestivalData(
+                        getFestivalDetailFetchUrl(FESTIVAL_DETAIL_API_URL, item), FestivalDetailApiResponse.class);
+
+                festivals.add(Festival.from(response, introApiResponse, detailApiResponse));
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -86,6 +97,7 @@ public class FestivalApiService {
                 reader.close();
 
                 String jsonResponse = response.toString();
+                System.out.println(jsonResponse);
                 ObjectMapper objectMapper = new ObjectMapper();
                 T responseObject = objectMapper.readValue(jsonResponse, responseType);
                 return responseObject;
@@ -108,8 +120,8 @@ public class FestivalApiService {
         return String.format(FESTIVAL_INFO_API_URL, stringDate, stringDate, key);
     }
 
-    private String getFestivalDetailFetchUrl(Item item) {
-        return String.format(FESTIVAL_DETAIL_API_URL, key, item.getContentid());
+    private String getFestivalDetailFetchUrl(String url, Item item) {
+        return String.format(url, key, item.getContentid());
     }
 
     private String getStringDate() {

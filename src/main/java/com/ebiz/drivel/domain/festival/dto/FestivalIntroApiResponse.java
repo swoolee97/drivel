@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FestivalDetailApiResponse {
+public class FestivalIntroApiResponse {
     private Response response;
-
 
     @Getter
     @Builder
@@ -22,7 +21,6 @@ public class FestivalDetailApiResponse {
         private Header header;
         private Body body;
     }
-
 
     @Getter
     @Builder
@@ -59,9 +57,24 @@ public class FestivalDetailApiResponse {
     public static class Item {
         private String contentid;
         private String contenttypeid;
-        private String serialnum;
-        private String infoname;
-        private String infotext;
-        private String fldgubun;
+        private String sponsor1;
+        private String sponsor1tel;
+        private String sponsor2;
+        private String sponsor2tel;
+        private String eventenddate;
+        private String playtime;
+        private String eventplace;
+        private String eventhomepage;
+        private String agelimit;
+        private String bookingplace;
+        private String placeinfo;
+        private String subevent;
+        private String program;
+        private String eventstartdate;
+        private String usetimefestival;
+        private String discountinfofestival;
+        private String spendtimefestival;
+        private String festivalgrade;
     }
+
 }
