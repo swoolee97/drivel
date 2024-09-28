@@ -67,6 +67,7 @@ public class CourseService {
 
         return CourseDetailResponse.builder()
                 .themes(themes)
+                .youtubeUrl(course.getYoutubeUrl())
                 .courseInfo(courseDTO)
                 .waypoints(waypoints)
                 .festivals(festivals)

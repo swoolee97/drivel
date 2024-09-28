@@ -56,6 +56,9 @@ public class Course {
     @Column(name = "region_description")
     private String regionDescription;
 
+    @Column(name = "youtube_url")
+    private String youtubeUrl;
+
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseReview> courseReviews;
 
