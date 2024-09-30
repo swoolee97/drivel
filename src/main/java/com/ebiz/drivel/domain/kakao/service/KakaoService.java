@@ -110,11 +110,12 @@ public class KakaoService {
         return response.blockFirst();
     }
 
-    public KakaoUserInfoResponse getUserInfo(String token) {
+    public KakaoUserInfoResponse getUserInfo(String kakaoAccessToken) {
 
         Flux<KakaoUserInfoResponse> response = webClient.get()
                 .uri(USER_INFO_URI)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + kakaoAccessToken)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                 .retrieve()
                 .bodyToFlux(KakaoUserInfoResponse.class);
 
