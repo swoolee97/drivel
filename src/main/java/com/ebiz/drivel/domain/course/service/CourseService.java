@@ -100,11 +100,6 @@ public class CourseService {
         QCourse qCourse = QCourse.course;
         BooleanBuilder filterBuilder = new BooleanBuilder();
         Member member = userDetailsService.getMemberByContextHolder();
-        System.out.println(member.getId());
-        member.getMemberTogethers()
-                .forEach(memberTogether -> System.out.println(memberTogether.getTogether().getDisplayName()));
-        member.getMemberStyles().forEach(memberStyle -> System.out.println(memberStyle.getStyle().getDisplayName()));
-        member.getMemberThemes().forEach(memberTheme -> System.out.println(memberTheme.getTheme().getDisplayName()));
 
         if (regionId != null) {
             CourseQueryHelper.addRegionFilter(List.of(regionId), qCourse, filterBuilder);

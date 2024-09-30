@@ -97,7 +97,6 @@ public class FestivalApiService {
                 reader.close();
 
                 String jsonResponse = response.toString();
-                System.out.println(jsonResponse);
                 ObjectMapper objectMapper = new ObjectMapper();
                 T responseObject = objectMapper.readValue(jsonResponse, responseType);
                 return responseObject;
