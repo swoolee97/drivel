@@ -85,7 +85,7 @@ public class Member {
     @Column(name = "is_deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isDeleted;
 
-    @Column(name = "score", columnDefinition = "30")
+    @Column(name = "score", columnDefinition = "DOUBLE DEFAULT 30.0")
     private double score;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)

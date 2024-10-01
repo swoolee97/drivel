@@ -64,6 +64,7 @@ public class AuthService {
                     .password(encodedPassword)
                     .nickname(nickname)
                     .imagePath(defaultImagePath)
+                    .score(30)
                     .build();
             return memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
