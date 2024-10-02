@@ -40,7 +40,8 @@ public class MeetingController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<MeetingInfoResponse>> getMeetingsInfo(@RequestParam(required = false) Long styleId,
+    public ResponseEntity<Page<MeetingInfoResponse>> getMeetingsInfo(@RequestParam(required = false) Long regionId,
+                                                                     @RequestParam(required = false) Long styleId,
                                                                      @RequestParam(required = false) Long themeId,
                                                                      @RequestParam(required = false) Long togetherId,
                                                                      @RequestParam(required = false) Integer age,
@@ -49,8 +50,8 @@ public class MeetingController {
                                                                      @RequestParam(required = false) Integer genderId,
                                                                      @RequestParam(required = false) OrderBy orderBy,
                                                                      Pageable pageable) {
-        Page<MeetingInfoResponse> meetings = meetingService.getFilteredMeetings(styleId, themeId, togetherId, age,
-                carCareer, carModel,
+        Page<MeetingInfoResponse> meetings = meetingService.getFilteredMeetings(regionId, styleId, themeId, togetherId,
+                age, carCareer, carModel,
                 genderId, orderBy, pageable);
         return ResponseEntity.ok(meetings);
     }
@@ -80,6 +81,14 @@ public class MeetingController {
         meetingService.leaveMeeting(id);
         return ResponseEntity.ok(BaseResponse.builder()
                 .message("모임에서 나왔어요")
+                .build());
+    }
+
+    @PostMapping("/{id}/end")
+    public ResponseEntity<BaseResponse> endMeeting(@PathVariable Long id) {
+        meetingService.endMeeting(id);
+        return ResponseEntity.ok(BaseResponse.builder()
+                .message("모임이 종료되었어요")
                 .build());
     }
 

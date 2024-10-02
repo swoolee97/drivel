@@ -43,7 +43,6 @@ public class PushService {
     public void sendPushMessage(String title, String body, Map<String, String> data, String token)
             throws IOException {
         String message = makeMessage(title, body, data, token);
-        System.out.println("푸시알림 보냄 ");
         RequestBody requestBody = RequestBody.create(message, JSON_MEDIA_TYPE);
         Request request = new Request.Builder()
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())

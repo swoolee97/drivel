@@ -24,15 +24,25 @@ import com.ebiz.drivel.domain.meeting.entity.MeetingJoinRequest.Status;
 >>>>>>> base/drivel_second
 import com.ebiz.drivel.domain.meeting.entity.MeetingMember;
 import com.ebiz.drivel.domain.meeting.entity.QMeeting;
+import com.ebiz.drivel.domain.meeting.exception.AlreadyInactiveMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingNotFoundException;
+import com.ebiz.drivel.domain.meeting.exception.NotMasterMemberException;
+import com.ebiz.drivel.domain.meeting.exception.WrongAgeRangeException;
 import com.ebiz.drivel.domain.meeting.repository.MeetingRepository;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.ebiz.drivel.domain.push.dto.PushType;
+import com.ebiz.drivel.domain.push.entity.FcmToken;
+import com.ebiz.drivel.domain.push.repository.FcmTokenRepository;
+import com.ebiz.drivel.domain.push.service.PushService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,6 +61,8 @@ public class MeetingService {
     private final MeetingMemberService meetingMemberService;
     private final UserDetailsServiceImpl userDetailsService;
     private final JPAQueryFactory queryFactory;
+    private final PushService pushService;
+    private final FcmTokenRepository fcmTokenRepository;
 
     @Transactional
     public CreateMeetingResponse createMeeting(CreateMeetingRequest createMeetingRequest) {
@@ -65,6 +77,10 @@ public class MeetingService {
     }
 
     public Meeting insertMeeting(CreateMeetingRequest createMeetingRequest) {
+        if ((createMeetingRequest.getStartAge() != null && createMeetingRequest.getEndAge() != null) &&
+                createMeetingRequest.getStartAge() > createMeetingRequest.getEndAge()) {
+            throw new WrongAgeRangeException();
+        }
         Meeting meeting = createMeetingRequest.toEntity();
         Member member = userDetailsService.getMemberByContextHolder();
         meeting.setMasterMember(member);
@@ -95,6 +111,7 @@ public class MeetingService {
                         .title(meeting.getTitle())
                         .description(meeting.getDescription())
                         .status(getMemberParticipantStatus(meeting).toString())
+                        .meetingStatus(meeting.getStatus().name())
                         .date(meeting.getMeetingDate())
                         .condition(meetingConditionDTO)
                         .masterInfo(meetingMasterInfoDTO)
@@ -139,16 +156,15 @@ public class MeetingService {
                 .toList();
     }
 
-    public Page<MeetingInfoResponse> getFilteredMeetings(Long styleId, Long themeId, Long togetherId, Integer age,
-                                                         Integer carCareer,
-                                                         String carModel, Integer genderId, OrderBy orderBy,
-                                                         Pageable pageable) {
+    public Page<MeetingInfoResponse> getFilteredMeetings(Long regionId, Long styleId, Long themeId, Long togetherId,
+                                                         Integer age, Integer carCareer, String carModel,
+                                                         Integer genderId, OrderBy orderBy, Pageable pageable) {
         QMeeting meeting = QMeeting.meeting;
         Member member = userDetailsService.getMemberByContextHolder();
-        BooleanBuilder filterBuilder = MeetingQueryHelper.createFilterBuilder(styleId, themeId, togetherId, age,
-                carCareer, carModel,
+        BooleanBuilder filterBuilder = MeetingQueryHelper.createFilterBuilder(regionId, styleId, themeId, togetherId,
+                age, carCareer, carModel,
                 genderId, member, meeting);
-        OrderSpecifier<?> orderSpecifier = MeetingQueryHelper.getOrderSpecifier(orderBy, meeting);
+        OrderSpecifier<?> orderSpecifier = MeetingQueryHelper.getOrderSpecifier(orderBy, meeting, member);
 
         long totalCount = queryFactory.selectFrom(meeting)
                 .where(filterBuilder)
@@ -190,4 +206,41 @@ public class MeetingService {
 >>>>>>> base/drivel_second
     }
 
+    @Transactional
+    public void endMeeting(Long id) {
+        Member member = userDetailsService.getMemberByContextHolder();
+        Meeting meeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new MeetingNotFoundException(MEETING_NOT_FOUND_EXCEPTION_MESSAGE));
+        if (meeting.getMasterMember().getId() != member.getId()) {
+            throw new NotMasterMemberException();
+        }
+
+        if (!meeting.isActive()) {
+            throw new AlreadyInactiveMeetingException();
+        }
+
+        meeting.end();
+        List<Member> members = meeting.getMeetingMembers().stream()
+                .filter(MeetingMember::getIsActive)
+                .map(MeetingMember::getMember)
+                .toList();
+        String title = "모임 종료";
+        String body = String.format("%s모임이 완료되었어요! 모임 상세 정보 페이지에서 드라이브 모임에 참여한 사용자를 평가해주세요! :)", meeting.getTitle());
+        Map<String, String> data = new HashMap<>();
+        data.put("type", PushType.FEEDBACK.name());
+        data.put("meetingId", meeting.getId().toString());
+        data.put("courseId", meeting.getCourse().getId().toString());
+        data.put("meetingTitle", meeting.getTitle());
+
+        members.forEach((activeMember) -> {
+            FcmToken token = fcmTokenRepository.findByMemberId(activeMember.getId()).orElse(null);
+            if (token != null) {
+                try {
+                    pushService.sendPushMessage(title, body, data, token.getToken());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
 }

@@ -14,6 +14,7 @@ import lombok.Getter;
 @Builder
 public class CourseDetailResponse {
     private boolean liked;
+    private String youtubeUrl;
     private CourseDetailDTO courseInfo;
     private List<ThemeDTO> themes;
     private List<WaypointDTO> waypoints;

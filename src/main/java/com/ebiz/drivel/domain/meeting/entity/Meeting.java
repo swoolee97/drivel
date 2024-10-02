@@ -3,6 +3,7 @@ package com.ebiz.drivel.domain.meeting.entity;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.meeting.dto.MeetingMemberInfoDTO;
 import com.ebiz.drivel.domain.member.entity.Member;
+import com.google.api.services.storage.Storage.Projects.HmacKeys.Create;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Table(name = "meeting")
@@ -37,6 +39,7 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class Meeting {
 
     @Id
@@ -44,19 +47,19 @@ public class Meeting {
     private Long id;
 
     @Column(name = "title")
-    @Size(min = 10, max = 30, message = "제목은 10자 이상 30자 이하로 적어주세요")
+    @Size(min = 1, max = 30, message = "제목은 1자 이상 30자 이하로 적어주세요")
     private String title;
 
     @Column(name = "meeting_date")
-    @FutureOrPresent(message = "미팅 날짜는 과거일 수 없습니다")
+    @FutureOrPresent(groups = {Create.class}, message = "미팅 날짜는 과거일 수 없습니다")
     private Date meetingDate;
 
     @Column(name = "description")
-    @Size(min = 10, max = 30, message = "설명은 10자 이상 30자 이하로 적어주세요")
+    @Size(min = 1, max = 30, message = "설명은 1자 이상 30자 이하로 적어주세요")
     private String description;
 
     @Column(name = "meeting_point")
-    @Size(min = 3, max = 30, message = "집결지는 3자 이상 30자 이하로 적어주세요")
+    @Size(min = 1, max = 30, message = "집결지는 1자 이상 30자 이하로 적어주세요")
     private String meetingPoint;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -134,12 +137,20 @@ public class Meeting {
         this.status = MeetingStatus.DELETED;
     }
 
+    public void end() {
+        this.status = MeetingStatus.INACTIVE;
+    }
+
     public boolean isActive() {
         return this.status.equals(MeetingStatus.ACTIVE);
     }
 
     public boolean isFull() {
         return capacity <= meetingMembers.stream().filter(MeetingMember::getIsActive).count();
+    }
+
+    public boolean isDeleted() {
+        return this.status.equals(MeetingStatus.DELETED);
     }
 
     public enum MeetingStatus {

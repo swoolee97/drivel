@@ -1,11 +1,14 @@
 package com.ebiz.drivel.domain.meeting.api;
 
+import com.ebiz.drivel.domain.meeting.exception.AlreadyInactiveMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.AlreadyRequestedJoinMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.ForbiddenMeetingForbiddenException;
 import com.ebiz.drivel.domain.meeting.exception.FullMeetingException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingJoinRequestNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MeetingMemberNotFoundException;
 import com.ebiz.drivel.domain.meeting.exception.MemberUnableToJoinMeetingException;
+import com.ebiz.drivel.domain.meeting.exception.NotMasterMemberException;
+import com.ebiz.drivel.domain.meeting.exception.WrongAgeRangeException;
 import com.ebiz.drivel.global.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +61,30 @@ public class MeetingExceptionHandler {
 
     @ExceptionHandler(FullMeetingException.class)
     public ResponseEntity<ErrorResponse> handleFullMeetingException(FullMeetingException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(NotMasterMemberException.class)
+    public ResponseEntity<ErrorResponse> handleNotMasterMemberException(NotMasterMemberException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(AlreadyInactiveMeetingException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyInactiveMeetingException(AlreadyInactiveMeetingException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(WrongAgeRangeException.class)
+    public ResponseEntity<ErrorResponse> handleWrongAgeRangeException(WrongAgeRangeException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())

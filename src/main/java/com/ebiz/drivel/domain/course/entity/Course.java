@@ -56,6 +56,9 @@ public class Course {
     @Column(name = "region_description")
     private String regionDescription;
 
+    @Column(name = "youtube_url")
+    private String youtubeUrl;
+
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseReview> courseReviews;
 
@@ -78,13 +81,15 @@ public class Course {
     private List<CourseTogether> courseTogethers;
 
     public double calculateAverageRating() {
-        double average = courseReviews.stream().mapToLong(CourseReview::getRating).average().orElse(0);
+        double average = courseReviews.stream()
+                .filter(courseReview -> !courseReview.isDeleted())
+                .mapToLong(CourseReview::getRating).average().orElse(0);
         DecimalFormat df = new DecimalFormat("#.#");
         return Double.parseDouble(df.format(average));
     }
 
     public int countReviews() {
-        return courseReviews.size();
+        return (int) courseReviews.stream().filter(courseReview -> !courseReview.isDeleted()).count();
     }
 
     public String generateWaypointString() {

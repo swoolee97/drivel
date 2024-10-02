@@ -35,6 +35,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()).authorizeHttpRequests((auth) -> {
                             auth.requestMatchers("/healthy").permitAll();
                             auth.requestMatchers("/kakao/*").permitAll();
+                            auth.requestMatchers("/apple/*").permitAll();
                             auth.requestMatchers("/auth/*").permitAll();
                             auth.requestMatchers(("/mail/auth")).permitAll();
                             auth.requestMatchers(("/mail/check")).permitAll();

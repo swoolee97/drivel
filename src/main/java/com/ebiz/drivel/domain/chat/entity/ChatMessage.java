@@ -38,8 +38,6 @@ public class ChatMessage {
     private Boolean isDeleted = false;
 
     public void delete() {
-        System.out.println("@@");
-        System.out.println(_id);
         this.isDeleted = true;
     }
 

@@ -12,6 +12,7 @@ public class MeetingInfoDTO {
     private String description;
     private Date date;
     private String status;
+    private String meetingStatus;
     private MeetingConditionDTO condition;
     private MeetingMasterInfoDTO masterInfo;
     private MeetingParticipantsInfoDTO participantsInfo;

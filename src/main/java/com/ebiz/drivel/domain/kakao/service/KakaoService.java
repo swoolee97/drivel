@@ -68,6 +68,8 @@ public class KakaoService {
         String accessToken = jwtProvider.generateAccessToken(authentication);
         String refreshToken = jwtProvider.generateRefreshToken(authentication);
         tokenRepository.save(member.getId(), refreshToken);
+
+        fcmTokenRepository.deleteAllByMemberId(member.getId());
         FcmToken fcmToken = FcmToken.builder()
                 .memberId(member.getId())
                 .token(token)
@@ -108,11 +110,12 @@ public class KakaoService {
         return response.blockFirst();
     }
 
-    public KakaoUserInfoResponse getUserInfo(String token) {
+    public KakaoUserInfoResponse getUserInfo(String kakaoAccessToken) {
 
         Flux<KakaoUserInfoResponse> response = webClient.get()
                 .uri(USER_INFO_URI)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + kakaoAccessToken)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                 .retrieve()
                 .bodyToFlux(KakaoUserInfoResponse.class);
 

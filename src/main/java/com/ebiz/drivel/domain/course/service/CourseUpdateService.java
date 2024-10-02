@@ -4,10 +4,14 @@ import com.ebiz.drivel.domain.course.dto.CourseJoinedDataDTO;
 import com.ebiz.drivel.domain.course.dto.TestDTO;
 import com.ebiz.drivel.domain.course.entity.Course;
 import com.ebiz.drivel.domain.course.repository.CourseRepository;
+import com.ebiz.drivel.domain.onboarding.RegionRepository;
+import com.ebiz.drivel.domain.onboarding.entity.Region;
 import com.ebiz.drivel.global.service.S3Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,16 +31,25 @@ public class CourseUpdateService {
 
     private final CourseRepository courseRepository;
     private final S3Service s3Service;
+    private final RegionRepository regionRepository;
 
     @Transactional
     @Scheduled(cron = "0 0 4 * * ?")
     public void updateCourseData() throws JsonProcessingException {
         List<Course> courses = courseRepository.findAll();
 
+        List<Region> regions = regionRepository.findAll();
+        Map<Long, String> regionMap = new HashMap<>();
+        for (Region region : regions) {
+            regionMap.put(region.getId(), region.getDisplayName());
+        }
+
         List<CourseJoinedDataDTO> joinedCourses = courses.stream().map(course ->
                 CourseJoinedDataDTO.builder()
                         .id(course.getId())
                         .title(course.getTitle())
+                        .address(course.getRegionName())
+                        .region(regionMap.get(course.getRegionId()))
                         .imagePath(course.getImagePath())
                         .rating(course.calculateAverageRating())
                         .reviewCount(course.countReviews())

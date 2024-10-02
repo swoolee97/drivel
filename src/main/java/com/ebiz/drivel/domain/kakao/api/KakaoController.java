@@ -1,13 +1,15 @@
 package com.ebiz.drivel.domain.kakao.api;
 
 import com.ebiz.drivel.domain.auth.dto.SignInDTO;
-import com.ebiz.drivel.domain.kakao.dto.KakaoTokenResponse;
+import com.ebiz.drivel.domain.kakao.dto.KakaoLoginDTO;
 import com.ebiz.drivel.domain.kakao.dto.KakaoUserInfoResponse;
 import com.ebiz.drivel.domain.kakao.service.KakaoService;
 import com.ebiz.drivel.global.dto.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,12 +28,12 @@ public class KakaoController {
                 .build());
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<BaseResponse> loginWithKakao(@RequestParam("code") String code,
-                                                       @RequestParam("fcmToken") String fcmToken) {
-        KakaoTokenResponse kakaoTokenResponse = kakaoService.getToken(code);
-        KakaoUserInfoResponse userInfoResponse = kakaoService.getUserInfo(kakaoTokenResponse.getAccess_token());
-        SignInDTO signInDTO = kakaoService.loginWithKakao(userInfoResponse.getKakao_account().getEmail(), fcmToken);
+    @PostMapping("/login")
+    public ResponseEntity<BaseResponse> loginWithKakao(@RequestBody KakaoLoginDTO kakaoLoginDTO) {
+//        KakaoTokenResponse kakaoTokenResponse = kakaoService.getToken(code);
+        KakaoUserInfoResponse userInfoResponse = kakaoService.getUserInfo(kakaoLoginDTO.getKakaoAccessToken());
+        SignInDTO signInDTO = kakaoService.loginWithKakao(
+                userInfoResponse.getKakao_account().getEmail(), kakaoLoginDTO.getFcmToken());
         return ResponseEntity.ok().body(signInDTO);
     }
 }

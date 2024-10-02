@@ -5,7 +5,6 @@ import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
 import com.ebiz.drivel.domain.course.dto.CourseTagDTO;
 import com.ebiz.drivel.domain.course.entity.Course;
-import com.ebiz.drivel.domain.course.entity.CourseTheme;
 import com.ebiz.drivel.domain.course.entity.QCourse;
 import com.ebiz.drivel.domain.course.repository.CourseRepository;
 import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
@@ -20,7 +19,6 @@ import com.ebiz.drivel.domain.onboarding.entity.Style;
 import com.ebiz.drivel.domain.onboarding.entity.Together;
 import com.ebiz.drivel.domain.place.dto.PlaceInterface;
 import com.ebiz.drivel.domain.place.service.PlaceService;
-import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.spot.application.SpotService;
 import com.ebiz.drivel.domain.spot.dto.SpotInterface;
 import com.ebiz.drivel.domain.theme.dto.ThemeDTO;
@@ -33,7 +31,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -61,11 +58,7 @@ public class CourseService {
         List<ThemeDTO> themes = course.getCourseThemes().stream().map(ThemeDTO::from).collect(Collectors.toList());
         List<WaypointDTO> waypoints = course.getWaypoints().stream().map(WaypointDTO::from)
                 .collect(Collectors.toList());
-        int reviewCount = course.countReviews();
-        double averageRating = course.calculateAverageRating();
-        List<ReviewDTO> reviews = course.getCourseReviews().stream().map(ReviewDTO::from)
-                .sorted(Comparator.comparingLong(ReviewDTO::getId).reversed())
-                .collect(Collectors.toList());
+
         List<FestivalInfoInterface> festivals = festivalService.getNearbyFestivalInfo(course);
         List<String> tags = getTagsByCourse(course);
         List<PlaceInterface> places = placeService.getPlacesNearByCourse(waypoints.get(0),
@@ -74,11 +67,9 @@ public class CourseService {
 
         return CourseDetailResponse.builder()
                 .themes(themes)
+                .youtubeUrl(course.getYoutubeUrl())
                 .courseInfo(courseDTO)
                 .waypoints(waypoints)
-                .reviewCount(reviewCount)
-                .averageRating(averageRating)
-                .reviews(reviews)
                 .festivals(festivals)
                 .regionName(course.getRegionName())
                 .regionDescription(course.getRegionDescription())
@@ -104,10 +95,15 @@ public class CourseService {
         return tags;
     }
 
-    public Page<CourseDetailDTO> getFilteredCourses(Long themeId, Long styleId, Long togetherId, OrderBy orderBy,
-                                                    Pageable pageable) {
+    public Page<CourseDetailDTO> getFilteredCourses(Long regionId, Long themeId, Long styleId, Long togetherId,
+                                                    OrderBy orderBy, Pageable pageable) {
         QCourse qCourse = QCourse.course;
         BooleanBuilder filterBuilder = new BooleanBuilder();
+        Member member = userDetailsService.getMemberByContextHolder();
+
+        if (regionId != null) {
+            CourseQueryHelper.addRegionFilter(List.of(regionId), qCourse, filterBuilder);
+        }
 
         if (themeId != null) {
             CourseQueryHelper.addThemeFilter(List.of(themeId), qCourse, filterBuilder);
@@ -121,7 +117,7 @@ public class CourseService {
             CourseQueryHelper.addTogetherFilter(List.of(togetherId), qCourse, filterBuilder);
         }
 
-        OrderSpecifier<?> orderSpecifier = CourseQueryHelper.getOrderSpecifier(orderBy, qCourse);
+        OrderSpecifier<?> orderSpecifier = CourseQueryHelper.getOrderSpecifier(orderBy, qCourse, member);
 
         long totalCount = queryFactory.selectFrom(qCourse)
                 .where(filterBuilder)
@@ -179,16 +175,6 @@ public class CourseService {
             tagCourses.add(CourseTagDTO.from(courseDTOs, memberRegion.getRegion()));
         });
         return tagCourses;
-    }
-
-    private List<CourseDTO> getRandomCoursesByTheme(Theme theme) {
-        List<CourseTheme> courseThemes = theme.getCourseThemes();
-        Collections.shuffle(courseThemes, new Random());
-
-        return courseThemes.stream().limit(3)
-                .map(CourseTheme::getCourse)
-                .map(course -> CourseDTO.from(course, courseLikeService.isCourseLikedByMember(course)))
-                .collect(Collectors.toList());
     }
 
 }

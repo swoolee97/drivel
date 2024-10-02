@@ -3,11 +3,11 @@ package com.ebiz.drivel.domain.course.api;
 import com.ebiz.drivel.domain.course.dto.CourseDTO;
 import com.ebiz.drivel.domain.course.dto.CourseDetailDTO;
 import com.ebiz.drivel.domain.course.dto.CourseResponse;
+import com.ebiz.drivel.domain.course.dto.CourseReviewDTO;
 import com.ebiz.drivel.domain.course.dto.CourseTagDTO;
 import com.ebiz.drivel.domain.course.service.CourseLikeService;
 import com.ebiz.drivel.domain.course.service.CourseQueryHelper.OrderBy;
 import com.ebiz.drivel.domain.course.service.CourseService;
-import com.ebiz.drivel.domain.review.dto.ReviewDTO;
 import com.ebiz.drivel.domain.review.service.ReviewService;
 import com.ebiz.drivel.domain.waypoint.dto.CourseDetailResponse;
 import com.ebiz.drivel.global.dto.BaseResponse;
@@ -32,16 +32,18 @@ public class CourseController {
     private final ReviewService reviewService;
 
     @GetMapping
-    public ResponseEntity<Page<CourseDetailDTO>> getCoursesInfo(@RequestParam(required = false) Long themeId,
+    public ResponseEntity<Page<CourseDetailDTO>> getCoursesInfo(@RequestParam(required = false) Long regionId,
+                                                                @RequestParam(required = false) Long themeId,
                                                                 @RequestParam(required = false) Long styleId,
                                                                 @RequestParam(required = false) Long togetherId,
                                                                 @RequestParam(required = false) OrderBy orderBy,
                                                                 Pageable pageable) {
-        Page<CourseDetailDTO> courses = courseService.getFilteredCourses(themeId, styleId, togetherId, orderBy,
+        Page<CourseDetailDTO> courses = courseService.getFilteredCourses(regionId, themeId, styleId, togetherId,
+                orderBy,
                 pageable);
         return ResponseEntity.ok(courses);
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailResponse> getCourseDetail(@PathVariable Long id) {
         CourseDetailResponse courseDetailResponse = courseService.getCourseDetail(id);
@@ -77,9 +79,9 @@ public class CourseController {
     }
 
     @GetMapping("/{id}/reviews")
-    public ResponseEntity<Page<ReviewDTO>> getReviewsByCourse(@PathVariable Long id, Pageable pageable) {
-        Page<ReviewDTO> reviews = reviewService.findReviewsByCourse(id, pageable);
-        return ResponseEntity.ok(reviews);
+    public ResponseEntity<CourseReviewDTO> getReviewsByCourse(@PathVariable Long id, Pageable pageable) {
+        CourseReviewDTO courseReviewDTO = reviewService.findReviewsByCourse(id, pageable);
+        return ResponseEntity.ok(courseReviewDTO);
     }
 
 }
